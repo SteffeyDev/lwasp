@@ -7,6 +7,14 @@ import string
 import smtplib
 from os import path
 import json
+import urllib2
+
+def internet_on():
+    try:
+        response=urllib2.urlopen('http://74.125.228.100',timeout=1)
+        return True
+    except urllib2.URLError as err: pass
+    return False
 
 def saveSettings(settings):
     with open(getDirPath() + '/settings.json', 'w') as setFile:
@@ -91,12 +99,23 @@ def getDirPath():
 def getSafeDirPath():
     return getDirPath().replace(" ", "\\ ")
 
+def getIP():
+    #get ip addresses on system, store in settings, check each time computer restarts in case changes
+    found_ips = []
+    ips = re.findall( r'[0-9]+(?:\.[0-9]+){3}', commands.getoutput("/sbin/ifconfig"))
+    for ip in ips:
+        if ip.startswith("255") or ip.startswith("127") or ip.endswith("255"):
+            continue
+        found_ips.append(ip)
+
+    return found_ips[0]
+
 #emails scoring report, either automatically or by the program on the desktop
 def sendScoringReport():
 
     settings = getSettings()
 
-    message = 'Here is the report for the team <b>' + settings['id'] + '</b> using the image <b>' + settings['name'] + '</b><br><br>'
+    message = 'Here is the report for the team <b>' + settings['id'] + '</b> using the image <b>' + settings['name'] + '</b> with the IP address <b>' + str(getIP()) + '</b>.<br><br>'
 
     pointsTotal = 0
     pointsGained = 0

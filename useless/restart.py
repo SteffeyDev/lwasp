@@ -15,7 +15,7 @@ import re
 import getpass
 import shutil
 
-from utility import * 
+from utility import *
 
 print 'Adding command "refresh" in /usr/bin'
 #adds refresh command to bash, so users can just type "refresh" to run analyze.py
@@ -79,7 +79,22 @@ if settings['start'] == -1:
     now = datetime.datetime.now()
     start = (now.hour * 3600) + (now.minute * 60) + (now.second)
 
-    addSetting('start', start, True, True)
+    #addSetting('start', start, True, True)
+    setFile = open(getDirPath() + '/settings.json', 'r')
+    settings = json.loads(decrypt(setFile, "f8R843nF9d1nXEoIz7D01mE"))
+    settings['start'] = start
+    with open(getDirPath() + '/settings.json', 'w') as setFile:
+        text = json.dumps(settings, check_circular=False)
+        encrypt(text, setFile, "f8R843nF9d1nXEoIz7D01mE")
+        setFile.close()
+
+    setFile = open('/usr/ScoringEngine/settings.json', 'r')
+    usersettings = json.loads(setFile.read())
+    usersettings['start'] = start
+    with open('/usr/ScoringEngine/settings.json', 'w') as userWriteFile:
+        text = json.dumps(settings, check_circular=False)
+        userWriteFile.write(text)
+        userWriteFile.close()
 
 #run the analyze.py to catch any points that resulted from restarting the machine
 os.system('python ' + getSafeDirPath() + '/analyze')
