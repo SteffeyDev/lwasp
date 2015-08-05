@@ -3,11 +3,14 @@ Welcome to the USELESS service, the Universal Security-Enhancing Linux Engine fo
 USELESS is built on python and bash for the backend; javascript with react and jquery for the front end.
 
 Initializing it is simple:
-1) Follow the instructions in the USELESS Elements Generator Excel file to create the elements.csv file in the useless directory (make sure to allow macros!)
+1) Follow the instructions in the USELESS Elements Generator Excel file to create the elements.csv file in the useless directory (make sure to allow macros if using excel)
 2) If you have your own logo, please replace the default with it, and make sure it is named logo.png.  This logo is used for the desktop shortcuts and on the scoring report, and is an easy way to personalize USELESS
 3) Move the useless directory onto the purposefully vulnerable linux image that needs to be scored (recomended in /etc/)
 4) cd into the useless folder on the image and run ‘sudo python initialize.py’
-5) Answer the prompts
+5) Answer the prompts:
+	- Timed Image: If yes, will count down timer on scoring report and prevent the score from being updated once time is up
+	- Email: If a timed image, will email the scoring report once the time is elapsed on the image.  If not a timed image, will create a desktop shortcut to send scoring report.
+	- Image Name: The general name for the image, will be at the top of the scoring report and in the email
 6) Shut down the image, and distribute it to competitors.  The scoring engine will start on next boot.
 
 What the competitor/aspiring cyber security professional will have to do:
