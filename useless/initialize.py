@@ -14,6 +14,10 @@ from utility import *
 
 print "\nCreating scoring file"
 
+if not internet_on:
+    print "Fatal Error: No internet connection, please connect to a network to initialize USELESS."
+    sys.exit()
+
 print "Installing inotify-tools and needed python libraries. This may take a minute."
 #installs inotifywait to watch files for changes
 do("sudo apt-get install inotify-tools python-pygame python-tk -y")
@@ -25,6 +29,8 @@ except:
     if not os.path.isdir('/usr/ScoringEngine'):
         print ' ** ScoringEngine folder not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the ScoringEngine folder in it.'
         sys.exit()
+    else:
+         os.remove(getSafeDirPath() + "/ScoringEngine")
 # source = os.listdir(safeDirpath + "/ScoringEngine/")
 # destination = "/usr/ScoringEngine/"
 # for files in source:
@@ -42,7 +48,7 @@ except:
 print "Creating Scoring Report on Desktop"
 #creates a desktop file to launch a firefox page in its own window, uses logo.png file
 with open(expanduser("~") + '/Desktop/scoring.desktop', 'w') as deskFile:
-    deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=sudo ." + getSafeDirPath() + "/open.bash\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+    deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/ScoringEngine/ScoringReport.html\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
     deskFile.close()
     do("chmod +x ~/Desktop/scoring.desktop") # makes executable
     do("chmod +x open.bash") # makes executable
