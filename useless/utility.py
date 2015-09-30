@@ -18,32 +18,36 @@ def internet_on():
 
 def saveSettings(settings):
     with open(getDirPath() + '/settings.json', 'w') as setFile:
-        text = json.dumps(settings, check_circular=False)
+        text = json.dumps(settings)
         encrypt(text, setFile, "f8R843nF9d1nXEoIz7D01mE")
-        setFile.close()
+        #encrypt(text, setFile, "password")
 
 def saveUserSettings(settings):
+    text = json.dumps(settings)
     with open('/usr/ScoringEngine/settings.json', 'w') as userWriteFile:
-        text = json.dumps(settings, check_circular=False)
         userWriteFile.write(text)
         userWriteFile.close()
 
 def getSettings():
     setFile = open(getDirPath() + '/settings.json', 'r')
-    return json.loads(decrypt(setFile, "f8R843nF9d1nXEoIz7D01mE"))
+    text = json.loads(decrypt(setFile, "f8R843nF9d1nXEoIz7D01mE"))
+    setFile.close()
+    return text
 
 def getUserSettings():
     setFile = open('/usr/ScoringEngine/settings.json', 'r')
-    return json.loads(setFile.read())
+    text = json.loads(setFile.read())
+    setFile.close()
+    return text
 
 def addSetting(key, setting, etc, usr):
     if etc:
         settings = getSettings()
-        settings[key] = settings
+        settings[key] = setting
         saveSettings(settings)
     if usr:
         settings = getUserSettings()
-        settings[key] = settings
+        settings[key] = setting
         saveUserSettings(settings)
 
 def derive_key_and_iv(password, salt, key_length, iv_length):
@@ -85,6 +89,7 @@ def encrypt(in_text, out_file, password, key_length=32):
             chunk += padding_length * chr(padding_length)
             finished = True
         out_file.write(cipher.encrypt(chunk))
+    out_file.close()
 
 #Function to run a bash command
 def do(cmd):
@@ -205,3 +210,33 @@ def notify(title, message):
 #Sets up an inotifywait on the file passed in to call analyze.py on file change, delete, etc
 def watch(filepath):
     do("while true; do sudo inotifywait -e modify,close_write,moved_to,create,delete " + filepath + " && sudo python analyze.py; done &")
+
+def encode(thing):
+    textStr = "{"
+    i = 0
+    for key, value in thing.iteritems():
+        print key
+        if i != 0:
+            textStr += ","
+        textStr += "\"" + key + "\":"
+        if type(value) is int:
+            textStr += `value`
+        else:
+            print value
+            newStr = "\"" + value + "\""
+            textStr += newStr
+        i = i + 1
+    textStr += "}"
+    return textStr
+
+def decode(text):
+    dictStr = text.replace('{','').replace('}','').split(',')
+    dict = {}
+    for item in dictStr:
+        key = item.split(":")[0].replace('\"','')
+        value = item.split(":")[1]
+        if "\"" in value:
+            dict[key] = value.replace('\"','')
+        else:
+            dict[key] = int(value)
+    return dict

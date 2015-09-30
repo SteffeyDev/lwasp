@@ -7,9 +7,12 @@ import gtk
 from utility import *
 
 def setID(text):
-    addSetting('id',text,True,True)
-    notify("Saved!", "The ID that you just entered has been saved")
-    sys.exit()
+    if text != "":
+        addSetting('id',text,True,True)
+        notify("Saved!", "The ID that you just entered has been saved")
+        sys.exit()
+    else:
+        notify("Oops!", "Please enter a valid ID")
 
 def responseToDialog(entry, dialog, response):
     dialog.response(response)

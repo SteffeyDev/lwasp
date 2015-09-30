@@ -24,6 +24,13 @@ pygame.mixer.init()
 fileError = False
 saveError = False
 
+if os.path.isfile(getSafeDirPath() + '/holder'):
+    print "\n * analyze already running, exiting...\n"
+    sys.exit()
+
+file = open(getDirPath() + '/holder','w')
+file.close
+
 #method to parse the boolean values in the csv
 def parseBool(string):
     if string.lower() == "true": return True
@@ -220,7 +227,6 @@ with open(getDirPath() + '/recording', 'r') as readFile:
             #updates and re-encrypts recording file
             with open(getDirPath() + '/recording', 'w') as recFile:
                 encrypt(json.dumps(rows), recFile, "A7jcCd88fl93ndAvy1d8cX0dl")
-                recFile.close()
 
             #save again to be accessed by scoring report html page
             with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
@@ -263,3 +269,5 @@ if penalty:
 #waits until sound is finished playing to end script
 while pygame.mixer.music.get_busy():
     continue
+
+os.remove(getSafeDirPath() + '/holder')

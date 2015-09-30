@@ -29,8 +29,8 @@ except:
     if not os.path.isdir('/usr/ScoringEngine'):
         print ' ** ScoringEngine folder not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the ScoringEngine folder in it.'
         sys.exit()
-    else:
-         os.remove(getSafeDirPath() + "/ScoringEngine")
+
+
 # source = os.listdir(safeDirpath + "/ScoringEngine/")
 # destination = "/usr/ScoringEngine/"
 # for files in source:
@@ -61,14 +61,14 @@ try:
     #Open input file and new file
     rawFile = open('elements.csv', 'r')
 
-    print "Unloading elements.csv file into recording.csv"
+    print "Unloading elements.csv file into recording"
     #loading recording file
     recording = []
     points = 0
     count = 0
     itt = 0
-    for line in rawFile.read().split('\n'): #for each row in the csv
-        if line == '':
+    for line in rawFile.read().replace('\r','').split('\n'): #for each row in the csv
+        if line == '' or line.replace(',','') == '':
             continue
         elements = line.split(',') #get all of the elements
         if len(elements) > 4: #if it is a valid line
@@ -80,7 +80,7 @@ try:
 
             #checks mode
             if mode != "v" and mode != "p":
-                print "\n* Syntax error in the mode of element " + str(itt) + ". Please only use V and P in this column."
+                print "\n* Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column."
                 sys.exit()
             dict['mode'] = (mode == "v")
 
@@ -188,7 +188,7 @@ if relaxing == "y":
     #gets time until image expires
     seconds = 0
     while True:
-        secondsStr = input('\nEnter time limit for this image in seconds: ')
+        secondsStr = raw_input('\nEnter time limit for this image in seconds: ')
         try:
             seconds = int(secondsStr)
             if seconds <= 0:
