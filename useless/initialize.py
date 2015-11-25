@@ -142,8 +142,6 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 #mark as needed to start time on next reboot
 settings['start'] = -1
 
-
-
 print 'Setting up script at /etc/init.d/cse.bash to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('cse.bash','w')
