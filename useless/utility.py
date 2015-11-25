@@ -8,6 +8,8 @@ import smtplib
 from os import path
 import json
 import urllib2
+import re
+import commands
 
 def internet_on():
     try:
