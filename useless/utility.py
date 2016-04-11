@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 from hashlib import md5
 from Crypto.Cipher import AES
 from Crypto import Random

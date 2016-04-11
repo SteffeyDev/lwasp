@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 #Needed import statemnts
 from tempfile import mkstemp
 from shutil import move

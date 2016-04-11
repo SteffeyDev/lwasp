@@ -1,3 +1,4 @@
+// Modify this file, DO NOT MODIFY main.js, use a JSX to JS Transformer as needed
 // Copyright (C) 2015 Peter Steffey
 
 //converts string of seconds into a proper date format
@@ -25,7 +26,7 @@ function writeToFile(settings) {
 
 
 //basically contains everywhere
-var Main = React.createClass({displayName: "Main",
+var Main = React.createClass({
   componentDidMount: function() {
     this.readTextFile();
     this.readSettingsFile();
@@ -221,14 +222,14 @@ var Main = React.createClass({displayName: "Main",
         if (item['complete'] == true) {                               // if analyze.py has marked this item as complete
           numberOfComplete++;                                         // iterate number of complete items
           pointsGained += item['points'];                             // append to number of points gained
-          completeList.push(React.createElement(ListItem, {item: item, key: i}))         // returns the custum html element for this item
+          completeList.push(<ListItem item={item} key={i} />)         // returns the custum html element for this item
         }
       }
       else {
         if (item['complete'] == true) {
           numberOfPenalties++;                                      // if analyze.py has marked this item as complete
           pointsLost += item['points'];                             // append to number of points gained
-          penaltyList.push(React.createElement(ListItem, {item: item, key: i}))        // returns the custum html element for this item
+          penaltyList.push(<ListItem item={item} key={i} />)        // returns the custum html element for this item
         }
       }
     });
@@ -238,7 +239,7 @@ var Main = React.createClass({displayName: "Main",
       backDivStyle.height = 750 + (20 * (numberTotal+numberOfPenalties));
     }
 
-    var id = (settings['id'] == '' ? React.createElement("h3", {style: redCenterStyle}, "Team ID: Please run the 'Set ID' program on the desktop") : React.createElement("h3", {style: centerStyle}, "Team ID: ", settings['id']));
+    var id = (settings['id'] == '' ? <h3 style={redCenterStyle}>Team ID: Please run the 'Set ID' program on the desktop</h3> : <h3 style={centerStyle}>Team ID: {settings['id']}</h3>);
 
     numberOfPointsRecieved = pointsGained - pointsLost;
 
@@ -258,37 +259,37 @@ var Main = React.createClass({displayName: "Main",
     var ipStr = this.state.ip;
     var ip = null;
     if (ipStr != '') {
-      ip = React.createElement("h3", {style: centerStyle}, "Image IP Address: ", ipStr);
+      ip = <h3 style={centerStyle}>Image IP Address: {ipStr}</h3>;
     }
 
     return (
-      React.createElement("div", {style: backDivStyle}, 
-        React.createElement("div", {style: containerDivStyle}, 
-          React.createElement("img", {src: "logo.png", style: imageStyle}), 
-          React.createElement("h1", {style: centerStyle}, "USELESS CyberSecurity Training Image: ", settings['name']), 
-          React.createElement("h2", {style: centerStyle}, "Report Generated at ", Date()), 
-          limit == -1 ? null : React.createElement("h3", {style: limitStyle2}, "Image Running Time: ", runningTimeLabel), 
-          limit == -1 ? null : React.createElement("h3", {style: limitStyle}, "Image Time Remaining: ", timeLeftLabel), 
-          id, 
-          ip, 
-          React.createElement("h2", {style: centerStyle}, numberOfPointsRecieved, " out of ", numberOfPointsTotal, " points received"), 
-          React.createElement("br", null), 
-          React.createElement("h3", {style: leftStyle}, "Connection Status: ", React.createElement("span", {style: greenStyle}, "Scoring Data Uploaded Successfully: No Errors Detected")), 
-          React.createElement("br", null), 
-          React.createElement("p", {style: textStyle}, "Internet Connectivity Check: ", React.createElement("span", {style: greenStyle}, "OK")), 
-          React.createElement("p", {style: textStyle}, "CyberPatriot Connection Status: ", React.createElement("span", {style: greenStyle}, "OK")), 
-          React.createElement("p", {style: textStyle}, "CyberPatriot Score Upload Status: ", React.createElement("span", {style: greenStyle}, "OK")), 
-          React.createElement("h3", {style: leftStyle}, numberOfPenalties, " penalties assessed, for a loss of ", pointsLost, " points:"), 
-          React.createElement("li", {style: listStyle}, penaltyList), 
-          React.createElement("h3", {style: leftStyle}, numberOfComplete, " out of ", numberTotal, " scored security issues fixed, for a gain of ", pointsGained, " points:"), 
-          React.createElement("li", {style: listStyle}, completeList)
-        )
-      )
+      <div style={backDivStyle}>
+        <div style={containerDivStyle}>
+          <img src="logo.png" style={imageStyle} />
+          <h1 style={centerStyle}>USELESS CyberSecurity Training Image: {settings['name']}</h1>
+          <h2 style={centerStyle}>Report Generated at {Date()}</h2>
+          {limit == -1 ? null : <h3 style={limitStyle2}>Image Running Time: {runningTimeLabel}</h3>}
+          {limit == -1 ? null : <h3 style={limitStyle}>Image Time Remaining: {timeLeftLabel}</h3>}
+          {id}
+          {ip}
+          <h2 style={centerStyle}>{numberOfPointsRecieved} out of {numberOfPointsTotal} points received</h2>
+          <br></br>
+          <h3 style={leftStyle}>Connection Status: <span style={greenStyle}>Scoring Data Uploaded Successfully: No Errors Detected</span></h3>
+          <br></br>
+          <p style={textStyle}>Internet Connectivity Check: <span style={greenStyle}>OK</span></p>
+          <p style={textStyle}>CyberPatriot Connection Status: <span style={greenStyle}>OK</span></p>
+          <p style={textStyle}>CyberPatriot Score Upload Status: <span style={greenStyle}>OK</span></p>
+          <h3 style={leftStyle}>{numberOfPenalties} penalties assessed, for a loss of {pointsLost} points:</h3>
+          <li style={listStyle}>{penaltyList}</li>
+          <h3 style={leftStyle}>{numberOfComplete} out of {numberTotal} scored security issues fixed, for a gain of {pointsGained} points:</h3>
+          <li style={listStyle}>{completeList}</li>
+        </div>
+      </div>
     );
   }
 });
 
-var SetButton = React.createClass({displayName: "SetButton",
+var SetButton = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
   set: function () {
     this.setState({"editing": true, "teamID": ""});
@@ -315,18 +316,18 @@ var SetButton = React.createClass({displayName: "SetButton",
       marginTop: -10,
       float: 'top'
     };
-    var internal = (this.state.editing ? React.createElement("div", {style: this.props.style}, React.createElement("input", {valueLink: this.linkState('teamID')}), React.createElement("button", {style: buttonStyle, onClick: this.done}, "Done")) : React.createElement("div", null, React.createElement("h3", {style: this.props.style}, "Team ID: ", this.state.teamID, React.createElement("button", {style: buttonStyle, onClick: this.set}, this.state.label))));
+    var internal = (this.state.editing ? <div style={this.props.style}><input valueLink={this.linkState('teamID')}></input><button style={buttonStyle} onClick={this.done}>Done</button></div> : <div><h3 style={this.props.style}>Team ID: {this.state.teamID}<button style={buttonStyle} onClick={this.set}>{this.state.label}</button></h3></div>);
     return internal;
   }
 });
 
-var ListItem = React.createClass({displayName: "ListItem",
+var ListItem = React.createClass({
   render: function () {
     var style = {
       paddingLeft: 15
     };
-    return React.createElement("li", {key: this.props.key, style: style}, this.props.item['title'], " - ", this.props.item['points'], " pts")
+    return <li key={this.props.key} style={style}>{this.props.item['title']} - {this.props.item['points']} pts</li>
   }
 });
 
-React.render(React.createElement(Main, null), document.getElementById('mountingpoint'));
+React.render(<Main />, document.getElementById('mountingpoint'));

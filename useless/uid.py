@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 #!/usr/bin/env python
 from Tkinter import *
 import os

@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import json
 import commands
 import re

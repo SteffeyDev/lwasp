@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 #Needed import statemnts
 import os
 import string

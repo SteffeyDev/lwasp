@@ -1,3 +1,4 @@
+# Copyright (C) 2015 Peter Steffey 
 
 import os.path
 import time
