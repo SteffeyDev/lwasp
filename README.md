@@ -1,5 +1,5 @@
-<img src="https://raw.githubusercontent.com/SteffeyDev/useless/master/useless/ScoringEngine/logo.png" width="180"></image>
-<h1 style="float:left;">USELESS</h1>
+![logo.png](https://bitbucket.org/repo/g4odBK/images/2853706246-logo.png)
+#USELESS
 
 ###### The Universal Security-Enhancing Linux Engine for Synchronous Scoring
 
