@@ -143,12 +143,12 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 
 print '\nSetting up script at /etc/init.d/cse.bash to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
-bootfile = open('cse.bash','w')
+bootfile = open('cse','w')
 bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + getSafeDirPath() + '/restart')
 bootfile.close()
-shutil.move('cse.bash', '/etc/init.d/cse.bash')
-do("chmod ugo+x /etc/init.d/cse.bash")
-do("sudo update-rc.d cse.bash defaults")
+shutil.move('cse.bash', '/etc/init.d/cse')
+do("sudo chmod ugo+x /etc/init.d/cse")
+do("sudo ln -s /etc/init.d/cse /etc/rc3.d/S02cse")
 
 if os.path.isfile('/etc/rc6.d/K20cse.bash'):
     os.remove('/etc/rc6.d/K20cse.bash')

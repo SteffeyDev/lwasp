@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Peter Steffey 
+# Copyright (C) 2015 Peter Steffey
 
 #write out current crontab
 crontab -l > mycron

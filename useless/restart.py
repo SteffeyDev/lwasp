@@ -84,5 +84,6 @@ if not hasattr(settings, 'start'):
     addSetting('start', start, True, True)
 
 #run the analyze.py to catch any points that resulted from restarting the machine
-os.remove(getSafeDirPath() + '/holder')
+if os.path.isfile(getSafeDirPath() + '/holder'):
+    os.remove(getSafeDirPath() + '/holder')
 os.system('python ' + getSafeDirPath() + '/analyze')

@@ -1,4 +1,4 @@
-# Copyright (C) 2015 Peter Steffey 
+# Copyright (C) 2015 Peter Steffey
 
 import os.path
 import time
@@ -253,9 +253,9 @@ except:
 #informs user of any errors, gives steps to resolve
 if fileError:
     if saveError:
-        print "\nERROR: Some of the item checks failed, and thus cannot be scored.  Please check the output of this command denoted with a *."
+        print "\nWARNING: Some of the item checks failed, and thus cannot be scored.  Please check the output of this command denoted with a *."
     else:
-        print "\nERROR: Some of the item checks failed, and thus cannot be scored.  Please check the output of this command denoted with a *. What could be checked has been saved successfully."
+        print "\nWARNING: Some of the item checks failed, and thus cannot be scored.  Please check the output of this command denoted with a *. What could be checked has been saved successfully."
 if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
