@@ -25,7 +25,7 @@ function writeToFile(settings) {
 
 
 
-//basically contains everywhere
+//basically contains everything
 var Main = React.createClass({
   componentDidMount: function() {
     this.readTextFile();

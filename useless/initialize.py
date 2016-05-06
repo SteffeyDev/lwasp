@@ -20,11 +20,11 @@ if not internet_on:
     print "Fatal Error: No internet connection, please connect to a network to initialize USELESS."
     sys.exit()
 
-print "Installing inotify-tools and needed python libraries. This may take a minute."
+print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
 #installs inotifywait to watch files for changes
 do("sudo apt-get install inotify-tools python-pygame python-tk -y")
 
-print "Generating front end in /usr/ScoringEngine"
+print "\nGenerating front end in /usr/ScoringEngine"
 try:
     shutil.move(getSafeDirPath() + "/ScoringEngine", "/usr/ScoringEngine")
 except:
@@ -47,7 +47,7 @@ except:
         print ' ** success.wav file not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the success.wav folder in it.'
         sys.exit()
 
-print "Creating Scoring Report on Desktop"
+print "\nCreating Scoring Report on Desktop"
 #creates a desktop file to launch a firefox page in its own window, uses logo.png file
 with open(expanduser("~") + '/Desktop/scoring.desktop', 'w') as deskFile:
     deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/ScoringEngine/ScoringReport.html\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
@@ -63,7 +63,7 @@ try:
     #Open input file and new file
     rawFile = open('elements.csv', 'r')
 
-    print "Unloading elements.csv file into recording"
+    print "\nUnloading elements.csv file into recording"
     #loading recording file
     recording = []
     points = 0
@@ -128,7 +128,7 @@ try:
         encrypt(json.dumps(recording), writeFile, "A7jcCd88fl93ndAvy1d8cX0dl")
         writeFile.close()
 
-    print "Deleting elements.csv"
+    print "\nDeleting elements.csv"
     do("sudo rm elements.csv")
     rawFile.close()
 except:
@@ -144,7 +144,7 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 #mark as needed to start time on next reboot
 settings['start'] = -1
 
-print 'Setting up script at /etc/init.d/cse.bash to create file watches on boot'
+print '\nSetting up script at /etc/init.d/cse.bash to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('cse.bash','w')
 bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + getSafeDirPath() + '/restart')
@@ -157,7 +157,7 @@ if os.path.isfile('/etc/rc6.d/K20cse.bash'):
     os.remove('/etc/rc6.d/K20cse.bash')
 
 #makes sure competitor can't modify code to reveal what is scored
-print 'Compiling python'
+print '\nCompiling python'
 if not os.path.isfile('analyze'):
     do("sudo python -O -m py_compile analyze.py")
     os.rename('analyze.pyo', 'analyze')
@@ -170,10 +170,10 @@ if not os.path.isfile('utility.pyo'):
     do("sudo python -O -m py_compile utility.py")
     os.remove('utility.py')
 
-print 'Adding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
+print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
 
-print 'Adding Set ID script on desktop'
+print '\nAdding Set ID script on desktop'
 with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
     deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + getSafeDirPath() + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
     deskFile.close()

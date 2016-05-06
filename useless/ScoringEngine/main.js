@@ -1,3 +1,4 @@
+// Modify this file, DO NOT MODIFY main.js, use a JSX to JS Transformer as needed
 // Copyright (C) 2015 Peter Steffey
 
 //converts string of seconds into a proper date format
@@ -24,7 +25,7 @@ function writeToFile(settings) {
 
 
 
-//basically contains everywhere
+//basically contains everything
 var Main = React.createClass({displayName: "Main",
   componentDidMount: function() {
     this.readTextFile();

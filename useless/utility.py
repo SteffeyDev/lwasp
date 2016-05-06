@@ -1,8 +1,6 @@
 # Copyright (C) 2015 Peter Steffey
 
 from hashlib import md5
-from Crypto.Cipher import AES
-from Crypto import Random
 import subprocess
 import os
 import string
@@ -12,6 +10,14 @@ import json
 import urllib2
 import re
 import commands
+
+try:
+    from Crypto.Cipher import AES
+    from Crypto import Random
+except:
+    do('sudo apt-get install python-crypto -y')
+    from Crypto.Cipher import AES
+    from Crypto import Random
 
 def internet_on():
     try:
