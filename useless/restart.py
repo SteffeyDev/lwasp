@@ -75,7 +75,7 @@ for item in toWatch:
 settings = getSettings()
 
 #if this is the first boot after initialization
-if settings['start'] == -1:
+if not hasattr(settings, 'start'):
 
     #get the current time string in seconds
     now = datetime.datetime.now()
