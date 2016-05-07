@@ -37,14 +37,13 @@ except:
 
 while True:
     locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/useless, or use absolute filepath): ')
-    try:
-        locString = locString.replace("useless", "")
-        locString = "/etc" if (locString == "") else locString
-
-        break
-    except:
-        print "Invalid location path, please try again"
+    locString = locString.replace("useless", "")
+    locString = "/etc" if (locString == "") else locString
+    if not os.path.exists(locString):
+        print "* Invalid location path, please try again"
         continue
+    break
+
 
 # source = os.listdir(safeDirpath + "/ScoringEngine/")
 # destination = "/usr/ScoringEngine/"
@@ -157,7 +156,7 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('useless','w')
-bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + locString + '/restart')
+bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + locString + '/useless/restart')
 bootfile.close()
 shutil.move('useless', '/etc/init.d/useless')
 do("sudo chmod ugo+x /etc/init.d/useless")
@@ -165,7 +164,7 @@ do("sudo ln -s /etc/init.d/useless /etc/rc3.d/S02useless")
 
 print '\nAdding Set ID script on desktop'
 with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
-    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/useless/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
     deskFile.close()
     do("chmod +x ~/Desktop/useless.desktop")
     do("chmod +x " + getSafeDirPath() + "/uid.py")
@@ -226,7 +225,7 @@ if question == "y":
         print "Creating Send Scoring Report button on desktop"
         #creates a desktop file to launch a firefox page in its own window, uses logo.png file
         with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/useless/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
             deskFile.close()
             do("chmod +x ~/Desktop/email.desktop") # makes executable
     else:
@@ -305,7 +304,7 @@ else:
 
 name = ""
 while True:
-    name = str(raw_input('\nEnter the common name for this image: '))
+    name = str(raw_input('\nThe common image name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports\nEnter the common name for this image: '))
     response = raw_input('You entered "' + name + '", is this correct? [y/n]: ')
     if response == "y":
         break
@@ -317,14 +316,12 @@ usersettings['name'] = name
 settings['id'] = ""
 usersettings['id'] = ""
 
-print '\n\n\n* This name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports'
-
 saveSettings(settings)
 saveUserSettings(usersettings)
 do("sudo chown " + os.environ['SUDO_USER'] + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
 do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json")
 
-print "Moving this folder to " + locString
+print "\nMoving this folder to " + locString
 shutil.move(getSafeDirPath(), locString)
 
-print '\n* Scoring Engine Initialized.  The next time this computer boots up, the timer will start and the scoring engine will be running.\n'
+print '\n\n* Scoring Engine Initialized. Please shut down the image now be running \'sudo poweroff\'. The next time this computer boots up, the timer will start and the scoring engine will be running.\n'
