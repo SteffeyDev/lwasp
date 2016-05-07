@@ -178,7 +178,7 @@ new = False
 penalty = False
 
 with open(getDirPath() + '/recording', 'r') as readFile:
-    text = decrypt(readFile, "A7jcCd88fl93ndAvy1d8cX0dl")
+    text = decrypt(readFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
     rows = json.loads(text)
 
     #for each line in the recording file
@@ -221,13 +221,14 @@ with open(getDirPath() + '/recording', 'r') as readFile:
                         notify("You Lost Points!", title)
         i = i + 1
 
+    readFile.close()
     #if one or more of the values is changed, rewrites the recording file with these changes
     if changed:
 
         try:
             #updates and re-encrypts recording file
             with open(getDirPath() + '/recording', 'w') as recFile:
-                encrypt(json.dumps(rows), recFile, "A7jcCd88fl93ndAvy1d8cX0dl")
+                encrypt(json.dumps(rows), recFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
 
             #save again to be accessed by scoring report html page
             with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:

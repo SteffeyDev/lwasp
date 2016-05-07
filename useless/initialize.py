@@ -40,7 +40,7 @@ while True:
     locString = locString.replace("useless", "")
     locString = "/etc" if (locString == "") else locString
     if not os.path.exists(locString):
-        print "* Invalid location path, please try again"
+        print "Invalid location path, please try again"
         continue
     break
 
@@ -137,8 +137,8 @@ try:
 
     #creates and encrypts recording file
     with open('recording', 'w') as writeFile:
-        encrypt(json.dumps(recording), writeFile, "A7jcCd88fl93ndAvy1d8cX0dl")
-        writeFile.close()
+        encrypt(json.dumps(recording), writeFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
+        #writeFile.close()
 
     print "\nDeleting elements.csv"
     do("sudo rm elements.csv")
@@ -304,7 +304,7 @@ else:
 
 name = ""
 while True:
-    name = str(raw_input('\nThe common image name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports\nEnter the common name for this image: '))
+    name = str(raw_input('\nThe common image name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports.\nEnter the common name for this image: '))
     response = raw_input('You entered "' + name + '", is this correct? [y/n]: ')
     if response == "y":
         break
@@ -324,4 +324,4 @@ do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json"
 print "\nMoving this folder to " + locString
 shutil.move(getSafeDirPath(), locString)
 
-print '\n\n* Scoring Engine Initialized. Please shut down the image now be running \'sudo poweroff\'. The next time this computer boots up, the timer will start and the scoring engine will be running.\n'
+print '\n\n* Scoring Engine Initialized. Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start and the scoring engine will be running.\n'

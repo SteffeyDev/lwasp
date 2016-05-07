@@ -19,6 +19,7 @@ def do(cmd):
 try:
     from Crypto.Cipher import AES
     from Crypto import Random
+
 except:
     print "\nInstalling python-crypto library..."
     do('sudo apt-get install python-crypto -y')
@@ -35,7 +36,7 @@ def internet_on():
 def saveSettings(settings):
     with open(getDirPath() + '/settings.json', 'w') as setFile:
         text = json.dumps(settings)
-        encrypt(text, setFile, "f8R843nF9d1nXEoIz7D01mE")
+        encrypt(text, setFile)#, "f8R843nF9d1nXEoIz7D01mE")
         #encrypt(text, setFile, "password")
 
 def saveUserSettings(settings):
@@ -46,7 +47,7 @@ def saveUserSettings(settings):
 
 def getSettings():
     setFile = open(getDirPath() + '/settings.json', 'r')
-    text = json.loads(decrypt(setFile, "f8R843nF9d1nXEoIz7D01mE"))
+    text = json.loads(decrypt(setFile))#, "f8R843nF9d1nXEoIz7D01mE"))
     setFile.close()
     return text
 
@@ -73,38 +74,42 @@ def derive_key_and_iv(password, salt, key_length, iv_length):
         d += d_i
     return d[:key_length], d[key_length:key_length+iv_length]
 
-def decrypt(in_file, password, key_length=32):
-    bs = AES.block_size
-    salt = in_file.read(bs)[len('Salted__'):]
-    key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    next_chunk = ''
-    finished = False
-    returnStr = ''
-    while not finished:
-        chunk, next_chunk = next_chunk, cipher.decrypt(in_file.read(1024 * bs))
-        if len(next_chunk) == 0:
-            padding_length = ord(chunk[-1])
-            chunk = chunk[:-padding_length]
-            finished = True
-        returnStr += chunk
-    return returnStr
+def decrypt(in_file):#, password, key_length=32):
+    # bs = AES.block_size
+    # salt = in_file.read(bs)[len('Salted__'):]
+    # key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
+    # cipher = AES.new(key, AES.MODE_CBC, iv)
+    # next_chunk = ''
+    # finished = False
+    # returnStr = ''
+    # while not finished:
+    #     chunk, next_chunk = next_chunk, cipher.decrypt(in_file.read(1024 * bs))
+    #     if len(next_chunk) == 0:
+    #         padding_length = ord(chunk[-1])
+    #         chunk = chunk[:-padding_length]
+    #         finished = True
+    #     returnStr += chunk
+    # return returnStr
+    obj = AES.new("2Ad8fj3HdF83jD8f", AES.MODE_CFB, 'nC8eiOsx10J8dshI')
+    return obj.decrypt(in_file.read())
 
-def encrypt(in_text, out_file, password, key_length=32):
-    bs = AES.block_size
-    salt = Random.new().read(bs - len('Salted__'))
-    key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
-    cipher = AES.new(key, AES.MODE_CBC, iv)
-    out_file.write('Salted__' + salt)
-    finished = False
-    n = 1024 * bs
-    array = [in_text[i:i+n] for i in range(0, len(in_text), n)]
-    for chunk in array:
-        if len(chunk) == 0 or len(chunk) % bs != 0:
-            padding_length = (bs - len(chunk) % bs) or bs
-            chunk += padding_length * chr(padding_length)
-            finished = True
-        out_file.write(cipher.encrypt(chunk))
+def encrypt(in_text, out_file):#, password, key_length=32):
+    # bs = AES.block_size
+    # salt = Random.new().read(bs - len('Salted__'))
+    # key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
+    # cipher = AES.new(key, AES.MODE_CBC, iv)
+    # out_file.write('Salted__' + salt)
+    # finished = False
+    # n = 1024 * bs
+    # array = [in_text[i:i+n] for i in range(0, len(in_text), n)]
+    # for chunk in array:
+    #     if len(chunk) == 0 or len(chunk) % bs != 0:
+    #         padding_length = (bs - len(chunk) % bs) or bs
+    #         chunk += padding_length * chr(padding_length)
+    #         finished = True
+    #     out_file.write(cipher.encrypt(chunk))
+    obj = AES.new("2Ad8fj3HdF83jD8f", AES.MODE_CFB, 'nC8eiOsx10J8dshI')
+    out_file.write(obj.encrypt(in_text))
     out_file.close()
 
 #gets path to current directory for using in the open command
@@ -142,7 +147,7 @@ def sendScoringReport():
     penaltiesArray = []
     penaltyPoint = 0
     with open(getDirPath() + '/recording', 'r') as readFile:
-        text = decrypt(readFile, "A7jcCd88fl93ndAvy1d8cX0dl")
+        text = decrypt(readFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
         rows = json.loads(text)
         for row in rows:
             if row['mode'] == True:
