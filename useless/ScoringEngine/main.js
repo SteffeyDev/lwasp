@@ -88,7 +88,6 @@ var Main = React.createClass({displayName: "Main",
     var parent = this;
     setInterval(function() {
       parent.readTextFile();
-      console.log('test');
       parent.forceUpdate();
     }, 1000); // 1000 ms = 1 second
   },

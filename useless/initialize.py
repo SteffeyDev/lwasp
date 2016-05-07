@@ -22,7 +22,7 @@ if not internet_on:
 
 print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
 #installs inotifywait to watch files for changes
-do("sudo apt-get install inotify-tools python-pygame python-tk -y")
+do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 -y")
 
 print "\nGenerating front end in /usr/ScoringEngine"
 try:
@@ -140,6 +140,17 @@ except:
 with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
     scoreFile.write("")
     scoreFile.close()
+
+while True:
+    locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/useless, or use absolute filepath): ')
+    try:
+        locString = locString.replace("useless", "")
+        shutil.move(getSafeDirPath(), locString == "" ? "/etc", locString);
+        break
+    except:
+        print "Invalid location path, please try again
+        continue
+
 
 print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
@@ -302,7 +313,7 @@ usersettings['name'] = name
 settings['id'] = ""
 usersettings['id'] = ""
 
-print '\n* This name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation'
+print '\n\n\n* This name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports'
 
 saveSettings(settings)
 saveUserSettings(usersettings)
