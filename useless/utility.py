@@ -11,10 +11,16 @@ import urllib2
 import re
 import commands
 
+#Function to run a bash command
+def do(cmd):
+    p = subprocess.Popen(cmd , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p.wait()
+
 try:
     from Crypto.Cipher import AES
     from Crypto import Random
 except:
+    print "\nInstalling python-crypto library..."
     do('sudo apt-get install python-crypto -y')
     from Crypto.Cipher import AES
     from Crypto import Random
@@ -100,11 +106,6 @@ def encrypt(in_text, out_file, password, key_length=32):
             finished = True
         out_file.write(cipher.encrypt(chunk))
     out_file.close()
-
-#Function to run a bash command
-def do(cmd):
-    p = subprocess.Popen(cmd , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.wait()
 
 #gets path to current directory for using in the open command
 def getDirPath():

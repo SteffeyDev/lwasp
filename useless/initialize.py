@@ -14,6 +14,8 @@ import smtplib
 
 from utility import *
 
+os.chdir(getDirPath())
+
 print "\nCreating scoring file"
 
 if not internet_on:
@@ -26,12 +28,23 @@ do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 -y")
 
 print "\nGenerating front end in /usr/ScoringEngine"
 try:
-    shutil.move(getSafeDirPath() + "/ScoringEngine", "/usr/ScoringEngine")
+    shutil.move("ScoringEngine", "/usr/ScoringEngine")
 except:
     if not os.path.isdir('/usr/ScoringEngine'):
         print ' ** ScoringEngine folder not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the ScoringEngine folder in it.'
         sys.exit()
 
+
+while True:
+    locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/useless, or use absolute filepath): ')
+    try:
+        locString = locString.replace("useless", "")
+        locString = "/etc" if (locString == "") else locString
+
+        break
+    except:
+        print "Invalid location path, please try again"
+        continue
 
 # source = os.listdir(safeDirpath + "/ScoringEngine/")
 # destination = "/usr/ScoringEngine/"
@@ -124,7 +137,7 @@ try:
     usersettings['count'] = count
 
     #creates and encrypts recording file
-    with open(getDirPath() + '/recording', 'w') as writeFile:
+    with open('recording', 'w') as writeFile:
         encrypt(json.dumps(recording), writeFile, "A7jcCd88fl93ndAvy1d8cX0dl")
         writeFile.close()
 
@@ -141,25 +154,21 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
     scoreFile.write("")
     scoreFile.close()
 
-while True:
-    locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/useless, or use absolute filepath): ')
-    try:
-        locString = locString.replace("useless", "")
-        shutil.move(getSafeDirPath(), locString == "" ? "/etc", locString);
-        break
-    except:
-        print "Invalid location path, please try again
-        continue
-
-
 print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('useless','w')
-bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + getSafeDirPath() + '/restart')
+bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + locString + '/restart')
 bootfile.close()
 shutil.move('useless', '/etc/init.d/useless')
 do("sudo chmod ugo+x /etc/init.d/useless")
 do("sudo ln -s /etc/init.d/useless /etc/rc3.d/S02useless")
+
+print '\nAdding Set ID script on desktop'
+with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
+    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+    deskFile.close()
+    do("chmod +x ~/Desktop/useless.desktop")
+    do("chmod +x " + getSafeDirPath() + "/uid.py")
 
 #makes sure competitor can't modify code to reveal what is scored
 print '\nCompiling python'
@@ -178,12 +187,7 @@ if not os.path.isfile('utility.pyo'):
 print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
 
-print '\nAdding Set ID script on desktop'
-with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
-    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + getSafeDirPath() + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
-    deskFile.close()
-    do("chmod +x ~/Desktop/useless.desktop")
-    do("chmod +x " + getSafeDirPath() + "/uid.py")
+
 
 emailQuestion = ""
 
@@ -222,7 +226,7 @@ if question == "y":
         print "Creating Send Scoring Report button on desktop"
         #creates a desktop file to launch a firefox page in its own window, uses logo.png file
         with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + getSafeDirPath() + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
             deskFile.close()
             do("chmod +x ~/Desktop/email.desktop") # makes executable
     else:
@@ -319,5 +323,8 @@ saveSettings(settings)
 saveUserSettings(usersettings)
 do("sudo chown " + os.environ['SUDO_USER'] + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
 do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json")
+
+print "Moving this folder to " + locString
+shutil.move(getSafeDirPath(), locString)
 
 print '\n* Scoring Engine Initialized.  The next time this computer boots up, the timer will start and the scoring engine will be running.\n'
