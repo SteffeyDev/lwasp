@@ -24,7 +24,7 @@ if not internet_on:
 
 print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
 #installs inotifywait to watch files for changes
-do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 -y")
+do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
 
 print "\nGenerating front end in /usr/ScoringEngine"
 try:
@@ -52,8 +52,9 @@ while True:
 
 #moves sound to generally accessable system folder
 try:
-    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/ubuntu/success.wav")
-    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/ubuntu/error.mp3")
+    os.mkdir("/usr/share/sounds/useless")
+    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/useless/success.wav")
+    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/useless/error.mp3")
 except:
     if not os.path.isfile('/usr/share/sounds/ubuntu/success.wav'):
         print ' ** success.wav file not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the success.wav folder in it.'
@@ -185,8 +186,6 @@ if not os.path.isfile('utility.pyo'):
 
 print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
-
-
 
 emailQuestion = ""
 

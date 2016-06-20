@@ -261,12 +261,12 @@ if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
 if new: #play sound
-    pygame.mixer.music.load("/usr/share/sounds/ubuntu/success.wav")
+    pygame.mixer.music.load("/usr/share/sounds/useless/success.wav")
     pygame.mixer.music.play()
 while pygame.mixer.music.get_busy():
     continue
 if penalty:
-    pygame.mixer.music.load("/usr/share/sounds/ubuntu/error.mp3")
+    pygame.mixer.music.load("/usr/share/sounds/useless/error.mp3")
     pygame.mixer.music.play()
 #waits until sound is finished playing to end script
 while pygame.mixer.music.get_busy():
