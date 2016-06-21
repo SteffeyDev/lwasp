@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (C) 2015 Peter Steffey
 
 #Needed import statemnts
@@ -157,11 +158,11 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('useless','w')
-bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + locString + '/useless/restart')
+bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/useless/restart\n;;\n*)\n;;\nesac\nexit 0')
 bootfile.close()
 shutil.move('useless', '/etc/init.d/useless')
 do("sudo chmod ugo+x /etc/init.d/useless")
-do("sudo ln -s /etc/init.d/useless /etc/rc3.d/S02useless")
+do("sudo update-rc.d useless defaults")
 
 print '\nAdding Set ID script on desktop'
 with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
