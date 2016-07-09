@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (C) 2015 Peter Steffey
 
 #Needed import statemnts
@@ -24,7 +25,7 @@ if not internet_on:
 
 print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
 #installs inotifywait to watch files for changes
-do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 -y")
+do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
 
 print "\nGenerating front end in /usr/ScoringEngine"
 try:
@@ -52,8 +53,9 @@ while True:
 
 #moves sound to generally accessable system folder
 try:
-    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/ubuntu/success.wav")
-    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/ubuntu/error.mp3")
+    os.mkdir("/usr/share/sounds/useless")
+    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/useless/success.wav")
+    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/useless/error.mp3")
 except:
     if not os.path.isfile('/usr/share/sounds/ubuntu/success.wav'):
         print ' ** success.wav file not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the success.wav folder in it.'
@@ -156,11 +158,11 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
 print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
 bootfile = open('useless','w')
-bootfile.write('#!/bin/bash\nsudo /usr/bin/python ' + locString + '/useless/restart')
+bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/useless/restart\n;;\n*)\n;;\nesac\nexit 0')
 bootfile.close()
 shutil.move('useless', '/etc/init.d/useless')
 do("sudo chmod ugo+x /etc/init.d/useless")
-do("sudo ln -s /etc/init.d/useless /etc/rc3.d/S02useless")
+do("sudo update-rc.d useless defaults")
 
 print '\nAdding Set ID script on desktop'
 with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
@@ -185,8 +187,6 @@ if not os.path.isfile('utility.pyo'):
 
 print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
-
-
 
 emailQuestion = ""
 

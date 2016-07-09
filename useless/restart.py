@@ -40,7 +40,7 @@ toWatch.append('/etc/ufw')
 do('sudo rm ' + getSafeDirPath() + '/initialize.py')
 
 with open(getDirPath() + '/recording', 'r') as readFile:
-    text = decrypt(readFile, "A7jcCd88fl93ndAvy1d8cX0dl")
+    text = decrypt(readFile)
 
     #for each vulnerability in the elements.csv file
     vulnerabilities = json.loads(text)

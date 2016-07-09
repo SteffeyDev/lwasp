@@ -14,8 +14,12 @@ import subprocess
 import commands
 import re
 import smtplib
+import traceback
+import codecs
 
 from utility import *
+
+debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 
 #for sounds
 import pygame
@@ -30,7 +34,7 @@ if os.path.isfile(getSafeDirPath() + '/holder'):
     sys.exit()
 
 file = open(getDirPath() + '/holder','w')
-file.close
+file.close()
 
 #method to parse the boolean values in the csv
 def parseBool(string):
@@ -41,8 +45,15 @@ def parseBool(string):
 def checkFileContents(filepath, contents, mode):
     try:
         for contains in contents:
-            file = open(string.replace(filepath, '~', expanduser("~")), 'r') # if ~ exists in string, replace it with the user's home directory absolute path
+            if debug:
+                print "Using file path: " + string.replace(filepath, '~', expanduser("~"))
+            file = codecs.open(string.replace(filepath, '~', expanduser("~")),'r','utf-8') # open(string.replace(filepath, '~', expanduser("~")), 'r') # if ~ exists in string, replace it with the user's home directory absolute path
             text = ' '.join(file.read().split())
+            contains = string.replace(contains, "\"", "")
+            text = string.replace(text, "\"", "")
+            if debug:
+                print "Looking for text:", contains
+                print "File text:", text
             if mode:
                 if contains not in text:
                     file.close()
@@ -54,11 +65,15 @@ def checkFileContents(filepath, contents, mode):
         file.close()
         return True
     except:
-        print " * Could not find necessary file. Please contact your administrator"
+        if debug:
+            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
+        print " * Could not find or process necessary file. Please contact your administrator"
         return None
 
 #check if a file exists at a given filepath using os.path
 def checkFileExists(filepath, should):
+    if debug:
+        print "Using Filepath: " + filepath
     if os.path.isfile(filepath) or os.path.isdir(filepath): return should
     return not should
 
@@ -73,6 +88,8 @@ def checkForensicsQuestion(filepath, answers):
     try:
         count = 0
         for ans in answers:
+            if debug:
+                print "Using filepath:", filepath
             file = open(filepath, 'r')
             for line in file.read().split('\n'):
                 if line[:7] == "ANSWER:":
@@ -81,7 +98,9 @@ def checkForensicsQuestion(filepath, answers):
         if count == len(answers): return True # if all are answered
         return False
     except:
-        print " * Could not find Forensics question at " + filepath + ". Please contact your administrator"
+        if debug:
+            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
+        print " * Could not find or process Forensics question at " + filepath + ". Please contact your administrator"
         return None
 
 #check if updates are installed for a specific service
@@ -102,6 +121,8 @@ def checkPort(port, open):
                 return open
         return not open
     except:
+        if debug:
+            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
         print " * Could not execute command.  Please contact your administrator"
         return None
 
@@ -111,18 +132,24 @@ def checkPermissions(filepath, permission):
         current = oct(os.stat(filepath)[stat.ST_MODE])[-3:]
         return int(permission) == int(current)
     except:
+        if debug:
+            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
         print " * Could not find necessary file. Please contact your administrator"
         return None
 
 #generic command analysis for output, allowing greater flexibility
 def checkCommand(command, content, should):
     try:
-        output = subprocess.check_output(command.split(' '))
-        shortOutput = ' '.join(output.split())
+        output = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0]
+        shortOutput = ' '.join(output.split()).decode('utf-8')
+        if debug:
+            print "Command Output:", shortOutput
         if content in shortOutput:
             return should
         return not should
     except:
+        if debug:
+            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
         print " * Could not execute command.  Please contact your administrator"
         return None
 
@@ -261,12 +288,12 @@ if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
 if new: #play sound
-    pygame.mixer.music.load("/usr/share/sounds/ubuntu/success.wav")
+    pygame.mixer.music.load("/usr/share/sounds/useless/success.wav")
     pygame.mixer.music.play()
 while pygame.mixer.music.get_busy():
     continue
 if penalty:
-    pygame.mixer.music.load("/usr/share/sounds/ubuntu/error.mp3")
+    pygame.mixer.music.load("/usr/share/sounds/useless/error.mp3")
     pygame.mixer.music.play()
 #waits until sound is finished playing to end script
 while pygame.mixer.music.get_busy():
