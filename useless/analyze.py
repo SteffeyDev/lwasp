@@ -22,8 +22,12 @@ from utility import *
 debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 
 #for sounds
-import pygame
-pygame.mixer.init()
+sounds = False
+try:
+    import pygame
+    pygame.mixer.init()
+    sounds = True
+
 
 #tracks errors to show messages at end
 fileError = False
@@ -287,16 +291,17 @@ if fileError:
 if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
-if new: #play sound
-    pygame.mixer.music.load("/usr/share/sounds/useless/success.wav")
-    pygame.mixer.music.play()
-while pygame.mixer.music.get_busy():
-    continue
-if penalty:
-    pygame.mixer.music.load("/usr/share/sounds/useless/error.mp3")
-    pygame.mixer.music.play()
+if sound:
+    if new: #play sound
+        pygame.mixer.music.load("/usr/share/sounds/useless/success.wav")
+        pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        continue
+    if penalty:
+        pygame.mixer.music.load("/usr/share/sounds/useless/error.mp3")
+        pygame.mixer.music.play()
 #waits until sound is finished playing to end script
-while pygame.mixer.music.get_busy():
-    continue
+    while pygame.mixer.music.get_busy():
+        continue
 
 os.remove(getSafeDirPath() + '/holder')
