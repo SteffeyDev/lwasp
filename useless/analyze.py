@@ -27,7 +27,9 @@ try:
     import pygame
     pygame.mixer.init()
     sounds = True
-
+except:
+    if debug:
+        print "No sound device avaliable"
 
 #tracks errors to show messages at end
 fileError = False
