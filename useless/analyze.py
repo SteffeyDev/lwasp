@@ -10,7 +10,6 @@ import datetime
 import json
 import sys
 import subprocess
-
 import commands
 import re
 import smtplib
@@ -20,16 +19,6 @@ import codecs
 from utility import *
 
 debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
-
-#for sounds
-sounds = False
-try:
-    import pygame
-    pygame.mixer.init()
-    sounds = True
-except:
-    if debug:
-        print "No sound device avaliable"
 
 #tracks errors to show messages at end
 fileError = False
@@ -293,17 +282,12 @@ if fileError:
 if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
-if sound:
-    if new: #play sound
-        pygame.mixer.music.load("/usr/share/sounds/useless/success.wav")
-        pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        continue
-    if penalty:
-        pygame.mixer.music.load("/usr/share/sounds/useless/error.mp3")
-        pygame.mixer.music.play()
-#waits until sound is finished playing to end script
-    while pygame.mixer.music.get_busy():
-        continue
+user = os.environ['SUDO_USER'];
+if new and penalty:
+    os.system('sudo -u ' + user + ' sound both')
+elif new: #play sound
+    os.system('sudo -u ' + user + ' sound new')
+elif penalty:
+    os.system('sudo -u ' + user + ' sound penalty')
 
 os.remove(getSafeDirPath() + '/holder')

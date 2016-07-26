@@ -184,6 +184,10 @@ if not os.path.isfile('restart'):
 if not os.path.isfile('utility.pyo'):
     do("sudo python -O -m py_compile utility.py")
     os.remove('utility.py')
+if not os.path.isfile('sound.py'):
+    do("sudo python -O -m py_compile sound.py")
+    os.rename('sound.pyo', 'sound')
+    os.remove('sound.py')
 
 print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
