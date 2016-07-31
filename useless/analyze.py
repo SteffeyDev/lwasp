@@ -284,10 +284,10 @@ if saveError:
 
 user = os.environ['SUDO_USER'];
 if new and penalty:
-    os.system('sudo -u ' + user + ' sound both')
+    playSound('both')
 elif new: #play sound
-    os.system('sudo -u ' + user + ' sound new')
+    playSound('new')
 elif penalty:
-    os.system('sudo -u ' + user + ' sound penalty')
+    playSound('penalty')
 
 os.remove(getSafeDirPath() + '/holder')

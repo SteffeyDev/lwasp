@@ -184,10 +184,13 @@ if not os.path.isfile('restart'):
 if not os.path.isfile('utility.pyo'):
     do("sudo python -O -m py_compile utility.py")
     os.remove('utility.py')
-if not os.path.isfile('sound.py'):
-    do("sudo python -O -m py_compile sound.py")
-    os.rename('sound.pyo', 'sound')
-    os.remove('sound.py')
+# if not os.path.isfile('sound'):
+#     do("sudo python -O -m py_compile sound.py")
+#     os.rename('sound.pyo', 'sound')
+#     os.remove('sound.py')
+#     do('sudo chmod +x sound')
+#     user = os.environ['SUDO_USER'];
+#     do('sudo chown ' + user + ' sound')
 
 print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
 do("sudo bash cron.bash")
@@ -328,4 +331,4 @@ do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json"
 print "\nMoving this folder to " + locString
 shutil.move(getSafeDirPath(), locString)
 
-print '\n\n* Scoring Engine Initialized. Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start and the scoring engine will be running.\n'
+print '\n\n* Scoring Engine Initialized. Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.\n'
