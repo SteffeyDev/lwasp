@@ -110,14 +110,38 @@ class UserBox(Gtk.ScrolledWindow):
                 password_changed_check.set_active(True)
             options_box.pack_start(password_changed_check, True, True, 0)
 
+        if line.split(":")[1] == " ":
+            delete_button = Gtk.Button("Remove Account")
+            delete_button.index = len(self.items)
+            delete_button.connect("clicked", self.delete_user)
+            options_box.pack_end(delete_button, False, False, 0)
+
         self.items.append(Item(username = username, expanded = False, box = user_box, options_box = options_box))
+
+    def delete_user(self, button):
+        username = self.items[button.index].username
+        toremove = []
+        for i in range(0, len(w.commands) - 1):
+            if username in w.commands[i]:
+                toremove.append(w.commands[i])
+        for item in toremove:
+            w.commands.remove(item)
+        toremove = []
+        for i in range(0, len(w.elements) - 1):
+            if username in w.elements[i]:
+                toremove.append(w.elements[i])
+        for item in toremove:
+            w.elements.remove(item)
+        del self.items[button.index]
+        self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
+        self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
 
     def add_user(self, button):
         username = self.username_entry.get_text()
         full_name = self.name_entry.get_text()
         password = self.password_entry.get_text()
         if username == "" or full_name == "" or password == "": return
-        self.add_row(self.username_entry.get_text() + ":")
+        self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
         self.refresh_after_add()
         add(w.commands, "sudo useradd -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
@@ -126,7 +150,7 @@ class UserBox(Gtk.ScrolledWindow):
         username = self.username_entry.get_text()
         full_name = self.name_entry.get_text()
         password = self.password_entry.get_text()
-        self.add_row(username + ":", True)
+        self.add_row(username + ": : : :" + full_name, True)
         self.refresh_after_add()
         user_id = 900 + len(self.expanded)
         add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_ID) + " -c \"" + full_name + "\" " + username)
@@ -138,6 +162,8 @@ class UserBox(Gtk.ScrolledWindow):
     def refresh_after_add(self):
         self.master_box.show_all()
         self.username_entry.set_text("")
+        self.name_entry.set_text("")
+        self.password_entry.set_text("")
         self.master_box.reorder_child(self.add_box, len(self.items) * 2)
 
     def check_button_clicked(self, button):
