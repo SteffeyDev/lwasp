@@ -273,11 +273,6 @@ var Main = React.createClass({
           {ip}
           <h2 style={centerStyle}>{numberOfPointsRecieved} out of {numberOfPointsTotal} points received</h2>
           <br></br>
-          <h3 style={leftStyle}>Connection Status: <span style={greenStyle}>Scoring Data Uploaded Successfully: No Errors Detected</span></h3>
-          <br></br>
-          <p style={textStyle}>Internet Connectivity Check: <span style={greenStyle}>OK</span></p>
-          <p style={textStyle}>CyberPatriot Connection Status: <span style={greenStyle}>OK</span></p>
-          <p style={textStyle}>CyberPatriot Score Upload Status: <span style={greenStyle}>OK</span></p>
           <h3 style={leftStyle}>{numberOfPenalties} penalties assessed, for a loss of {pointsLost} points:</h3>
           <li style={listStyle}>{penaltyList}</li>
           <h3 style={leftStyle}>{numberOfComplete} out of {numberTotal} scored security issues fixed, for a gain of {pointsGained} points:</h3>

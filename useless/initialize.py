@@ -328,8 +328,9 @@ saveUserSettings(usersettings)
 do("sudo chown " + os.environ['SUDO_USER'] + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
 do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json")
 
+user = os.environ['SUDO_USER'];
 print "\nDeleting Bash History"
-do("history -c; rm ~/.bash_history")
+do("sudo -u " + user + " bash -c 'history -c; echo \"\" > ~/.bash_history'")
 
 print "\nMoving this folder to " + locString
 shutil.move(getSafeDirPath(), locString)
