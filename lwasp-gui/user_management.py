@@ -4,25 +4,33 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from gui_utility import *
 import w
+from collections import namedtuple
+
+Item = namedtuple("Items", "username expanded options_box box")
 
 class UserBox(Gtk.ScrolledWindow):
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
-        self.expanded = []
-        self.options_boxes = []
-        self.boxes = []
+        self.items = []
+
 
         self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        print "master: ", self.master_box
 
         self.autologin_user = "n/a"
 
         if isfile('/etc/lightdm/lightdm.conf'):
-            with open('/etc/lightdm/lightdm.conf') as lightdm:
+            with open('/etc/lightdm/lightdm.conf', 'r') as lightdm:
                 for line in lightdm:
                     if "autologin-user" in line:
-                        self.autologin_user = line.split("=")[1]
+                        self.autologin_user = line.rstrip().split("=")[1]
                         break
+
+        self.admins = []
+        with open('/etc/group', 'r') as groups:
+            for line in groups:
+                if 'sudo:' in line:
+                    self.admins = line.rstrip().split(":")[3].split(',')
+                    break
 
         users = open('/etc/passwd', 'r')
         number_of_lines = 0
@@ -55,7 +63,6 @@ class UserBox(Gtk.ScrolledWindow):
         self.add(self.master_box)
 
     def add_row(self, line, backdoor=False):
-        print line
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         username = line.split(":")[0]
@@ -68,7 +75,7 @@ class UserBox(Gtk.ScrolledWindow):
         user_wrapper_box.pack_start(label, False, True, 0)
         button = Gtk.Button(label="Expand")
         button.props.halign = Gtk.Align.END
-        button.index = len(self.expanded)
+        button.index = len(self.items)
         button.connect("clicked", self.expand_button_clicked)
         user_wrapper_box.pack_end(button, False, True, 0)
         user_box.pack_start(user_wrapper_box, False, False, 0)
@@ -78,29 +85,32 @@ class UserBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(separator, False, True, 0)
 
         options_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        option_range = range(0, 3)
-        if backdoor:
-            option_range = range(2, 3)
-        if username == self.autologin_user:
-            option_range = range(0, 4)
-        for i in option_range:
+
+        for i in range(0,4):
 
             label = ""
-            if i == 0: label = "Score for Password Change"
-            if i == 1: label = "Score for Revoking Admin Acess"
-            if i == 2: label = "Score for Account Deletion"
-            if i == 3: label = "Score for Turning Off Auto-Login"
+            if i == 0:
+                if backdoor: continue
+                label = "Score for Password Change"
+            if i == 1:
+                if backdoor: continue
+                if username not in self.admins: continue
+                label = "Score for Revoking Admin Acess"
+            if i == 2:
+                label = "Score for Account Deletion"
+            if i == 3:
+                if username != self.autologin_user: continue
+                label = "Score for Turning Off Auto-Login"
 
             password_changed_check = Gtk.CheckButton(label)
             password_changed_check.connect("clicked", self.check_button_clicked)
             password_changed_check.type = i
+            password_changed_check.index = len(self.items)
             if backdoor:
                 password_changed_check.set_active(True)
             options_box.pack_start(password_changed_check, True, True, 0)
 
-        self.options_boxes.append(options_box)
-        self.boxes.append(user_box)
-        self.expanded.append(False)
+        self.items.append(Item(username = username, expanded = False, box = user_box, options_box = options_box))
 
     def add_user(self, button):
         username = self.username_entry.get_text()
@@ -122,38 +132,37 @@ class UserBox(Gtk.ScrolledWindow):
         add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_ID) + " -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
         add(w.commands, "sudo shuf -o /etc/passwd /etc/passwd")
-        add(w.elements, "Backdoor user " + username + " removed,V,5,FileContents,/etc/passwd,FALSE" + username)
+        add(w.elements, "Backdoor user " + username + " removed,V,5,FileContents,/etc/passwd,FALSE," + username)
         # add user to system and elements file
 
     def refresh_after_add(self):
         self.master_box.show_all()
         self.username_entry.set_text("")
-        self.master_box.reorder_child(self.add_box, len(self.expanded) * 2)
+        self.master_box.reorder_child(self.add_box, len(self.items) * 2)
 
     def check_button_clicked(self, button):
+        item = self.items[button.index]
         if button.type == 0:
-            #elements add item
-            hh = ''
+            add(w.elements, 'Password changed for user ' + item.username + ',V,5,FileContents,/var/log/auth.log,TRUE,password changed for ' + item.username)
         elif button.type == 1:
-            #same
-            hh = ''
+            add(w.elements, 'User ' + item.username + ' is no longer an administrator,V,5,FileContents,/var/log/auth.log,FALSE,delete \'' + item.username + '\' from group \'sudo\'')
         elif button.type == 2:
-            #same
-            hh = ''
+            add(w.elements, 'User ' + item.username + ' was deleted,V,5,FileContents,/etc/passwd,FALSE,' + item.username)
         else:
-            #same
-            hh = ''
+            add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/lightdm/lightdm.conf,FALSE,autologin-user=' + item.username)
+
+        print w.elements
 
     def expand_button_clicked(self, button):
+        item = self.items[button.index]
+        box = item.box
 
-        box = self.boxes[button.index]
-
-        if self.expanded[button.index] == True:
+        if item.expanded == True:
             button.set_label("Expand")
-            box.remove(self.options_boxes[button.index])
+            box.remove(item.options_box)
         else:
             button.set_label("Collapse")
-            box.pack_end(self.options_boxes[button.index], True, True, 0)
+            box.pack_end(item.options_box, True, True, 0)
             box.show_all()
 
-        self.expanded[button.index] = not self.expanded[button.index]
+        self.items[button.index] = self.items[button.index]._replace(expanded = not item.expanded)
