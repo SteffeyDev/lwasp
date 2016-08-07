@@ -20,7 +20,7 @@ os.chdir(getDirPath())
 print "\nCreating scoring file"
 
 if not internet_on:
-    print "Fatal Error: No internet connection, please connect to a network to initialize USELESS."
+    print "Fatal Error: No internet connection, please connect to a network to initialize LWASP."
     sys.exit()
 
 print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
@@ -32,13 +32,13 @@ try:
     shutil.move("ScoringEngine", "/usr/ScoringEngine")
 except:
     if not os.path.isdir('/usr/ScoringEngine'):
-        print ' ** ScoringEngine folder not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the ScoringEngine folder in it.'
+        print ' ** ScoringEngine folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the ScoringEngine folder in it.'
         sys.exit()
 
 
 while True:
-    locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/useless, or use absolute filepath): ')
-    locString = locString.replace("useless", "")
+    locString = raw_input('\nWhere do you want the scoring engine files to live? (leave blank for /etc/lwasp, or use absolute filepath): ')
+    locString = locString.replace("lwasp", "")
     locString = "/etc" if (locString == "") else locString
     if not os.path.exists(locString):
         print "Invalid location path, please try again"
@@ -53,12 +53,12 @@ while True:
 
 #moves sound to generally accessable system folder
 try:
-    os.mkdir("/usr/share/sounds/useless")
-    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/useless/success.wav")
-    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/useless/error.mp3")
+    os.mkdir("/usr/share/sounds/lwasp")
+    shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/lwasp/success.wav")
+    shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/lwasp/error.mp3")
 except:
-    if not os.path.isfile('/usr/share/sounds/ubuntu/success.wav'):
-        print ' ** success.wav file not found, useless folder has been corrupted in transport, please obtain a copy of useless that has the success.wav folder in it.'
+    if not os.path.isfile('/usr/share/sounds/lwasp/success.wav'):
+        print ' ** success.wav file not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the success.wav folder in it.'
         sys.exit()
 
 print "\nCreating Scoring Report on Desktop"
@@ -155,20 +155,20 @@ with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
     scoreFile.write("")
     scoreFile.close()
 
-print '\nSetting up script at /etc/init.d/useless to create file watches on boot'
+print '\nSetting up script at /etc/init.d/lwasp to create file watches on boot'
 #run restart every time the image restarts to fun cleanup function
-bootfile = open('useless','w')
-bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/useless/restart\n;;\n*)\n;;\nesac\nexit 0')
+bootfile = open('lwasp','w')
+bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/lwasp/restart\n;;\n*)\n;;\nesac\nexit 0')
 bootfile.close()
-shutil.move('useless', '/etc/init.d/useless')
-do("sudo chmod ugo+x /etc/init.d/useless")
-do("sudo update-rc.d useless defaults")
+shutil.move('lwasp', '/etc/init.d/lwasp')
+do("sudo chmod ugo+x /etc/init.d/lwasp")
+do("sudo update-rc.d lwasp defaults")
 
 print '\nAdding Set ID script on desktop'
-with open(expanduser("~") + '/Desktop/useless.desktop', 'w') as deskFile:
-    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/useless/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+with open(expanduser("~") + '/Desktop/lwasp.desktop', 'w') as deskFile:
+    deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/lwasp/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
     deskFile.close()
-    do("chmod +x ~/Desktop/useless.desktop")
+    do("chmod +x ~/Desktop/lwasp.desktop")
     do("chmod +x " + getSafeDirPath() + "/uid.py")
 
 #makes sure competitor can't modify code to reveal what is scored
@@ -232,7 +232,7 @@ if question == "y":
         print "Creating Send Scoring Report button on desktop"
         #creates a desktop file to launch a firefox page in its own window, uses logo.png file
         with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/useless/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+            deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/lwasp/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
             deskFile.close()
             do("chmod +x ~/Desktop/email.desktop") # makes executable
     else:
@@ -291,7 +291,7 @@ if question == "y":
 
         settings['password'] = password
 
-        message = "This is a USELESS test email."
+        message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
 
         sendEmail(message, settings)
 
