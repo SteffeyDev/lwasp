@@ -2,6 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from user_management import UserBox
+from services import AppsBox
 
 import w
 w.init()
@@ -22,6 +23,7 @@ class MyWindow(Gtk.Window):
 				page = UserBox()
 				label = "Users"
 			elif i == 1:
+				page = AppsBox()
 				label = "Services"
 			elif i == 2:
 				label = "Forensics ?s"
