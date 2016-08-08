@@ -115,9 +115,17 @@ class AppsBox(Gtk.ScrolledWindow):
 
     def add_app(self, button):
         app = self.name_entry.get_text()
-        if app == "": return
+        for item in self.items:
+            if app == item.name:
+                show_error(self.get_toplevel(), "App Exists", "This service is already installed on your system.")
+                return
+        if app == "":
+            show_error(self.get_toplevel(), "Insufficient Information", "You must provide the name of the service to install")
+            return
         check = subprocess.Popen(["apt-cache", "search", "--names-only", "^" + app + "$"], stdout=subprocess.PIPE).communicate()[0]
-        if check == "": return
+        if check == "":
+            show_error(self.get_toplevel(), "App Does Not Exist", "The service you want to add is not available in the apt-get repositories on this system.")
+            return
         self.add_row(app, True)
         self.refresh_after_add()
         add(w.commands, "sudo apt-get install " + app + " -y")

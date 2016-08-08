@@ -141,9 +141,7 @@ class UserBox(Gtk.ScrolledWindow):
         full_name = self.name_entry.get_text()
         password = self.password_entry.get_text()
         if username == "" or full_name == "" or password == "":
-            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
-            dialog.set_markup("You must fill out all three fields to create a user")
-            dialog.run()
+            show_error(self.get_toplevel(), "Insufficient Information", "You must fill out all three fields to create a user")
             return
         self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
         self.refresh_after_add()
@@ -154,6 +152,9 @@ class UserBox(Gtk.ScrolledWindow):
         username = self.username_entry.get_text()
         full_name = self.name_entry.get_text()
         password = self.password_entry.get_text()
+        if username == "" or password == "":
+            show_error(self.get_toplevel(), "Insufficient Information", "You must fill out the username and password fields to create a backdoor user")
+            return
         self.add_row(username + ": : : :" + full_name, True)
         self.refresh_after_add()
         user_id = 900 + len(self.expanded)
