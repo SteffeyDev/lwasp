@@ -6,6 +6,7 @@ from gui_utility import *
 import w
 from collections import namedtuple
 import subprocess
+from os.path import isfile
 
 Item = namedtuple("Items", "name expanded options_box box")
 
@@ -23,7 +24,8 @@ class AppsBox(Gtk.ScrolledWindow):
             valid_services.append(service)
 
         # time consuming
-        self.updates = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stdout=subprocess.PIPE).communicate()[0]
+        updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE).communicate()[1]
+        self.updates = updates_string.rstrip()
 
         apps = subprocess.Popen(["dpkg", "-l"], stdout=subprocess.PIPE).communicate()[0]
         apps_list = apps.split('\n')
@@ -75,6 +77,7 @@ class AppsBox(Gtk.ScrolledWindow):
             elif i == 3:
                 label = "Penalize for Uninstalling (Critical Service)"
             elif i == 4:
+                print app
                 if app not in self.updates: break
                 label = "Score for Updating"
 
@@ -129,15 +132,15 @@ class AppsBox(Gtk.ScrolledWindow):
         filename = ""
 
         if button.type == 1 or button.type == 3:
-            if isFile('/etc/init.d/' + item.name):
+            if isfile('/etc/init.d/' + item.name):
                 filename = "/etc/init.d/" + item.name
-            elif isFile('/usr/bin/' + services[item.name]):
+            elif isfile('/usr/bin/' + services[item.name]):
                 filename = '/usr/bin/' + services[item.name]
-            elif isFile('/usr/sbin/' + services[item.name]):
+            elif isfile('/usr/sbin/' + services[item.name]):
                 filename = '/usr/sbin/' + services[item.name]
-            elif isFile('/bin/' + services[item.name]):
+            elif isfile('/bin/' + services[item.name]):
                 filename = '/bin/' + services[item.name]
-            elif isFile('/sbin/' + services[item.name]):
+            elif isfile('/sbin/' + services[item.name]):
                 filename = '/sbin/' + services[item.name]
 
         if button.type == 0:
@@ -155,7 +158,7 @@ class AppsBox(Gtk.ScrolledWindow):
             version = ""
             for line in dpkg_update_list:
                 if "Candidate:" in line:
-                    version = line.split(" ")[2]
+                    version = line.split(" ")[3]
 
             print version
             add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + item.name + ',' + version)
