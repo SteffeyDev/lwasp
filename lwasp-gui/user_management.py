@@ -140,7 +140,11 @@ class UserBox(Gtk.ScrolledWindow):
         username = self.username_entry.get_text()
         full_name = self.name_entry.get_text()
         password = self.password_entry.get_text()
-        if username == "" or full_name == "" or password == "": return
+        if username == "" or full_name == "" or password == "":
+            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR, buttons=gtk.BUTTONS_OK)
+            dialog.set_markup("You must fill out all three fields to create a user")
+            dialog.run()
+            return
         self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
         self.refresh_after_add()
         add(w.commands, "sudo useradd -c \"" + full_name + "\" " + username)
