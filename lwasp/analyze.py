@@ -43,18 +43,33 @@ def checkFileContents(filepath, contents, mode):
             if debug:
                 print "Using file path: " + string.replace(filepath, '~', expanduser("~"))
             file = codecs.open(string.replace(filepath, '~', expanduser("~")),'r','utf-8') # open(string.replace(filepath, '~', expanduser("~")), 'r') # if ~ exists in string, replace it with the user's home directory absolute path
+            text = file.read()
+            text = string.replace(text, "\n", "(<^>]")
             text = ' '.join(file.read().split())
-            contains = string.replace(contains, "\"", "")
             text = string.replace(text, "\"", "")
+            text_list = text.split("(<^>]")
+            contains = string.replace(contains, "\"", "")
             if debug:
                 print "Looking for text:", contains
                 print "File text:", text
             if mode:
-                if contains not in text:
+                if "~" in contains:
+                    contains_pieces = contains.split("~")
+                    for line in text_list:
+                        if contains_pieces[0] in line and contains_pieces[1] in line:
+                            file.close()
+                            return False
+                elif contains not in line:
                     file.close()
                     return False
             else:
-                if contains in text:
+                if "~" in contains:
+                    contains_pieces = contains.split("~")
+                    for line in text_list:
+                        if contains_pieces[0] in line and contains_pieces[1] not in line:
+                            file.close()
+                            return False
+                elif contains in text:
                     file.close()
                     return False
         file.close()

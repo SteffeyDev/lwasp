@@ -5,3 +5,5 @@ def init():
     commands = []
     global elements
     elements = []
+    global users
+    users = []

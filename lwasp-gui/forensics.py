@@ -7,6 +7,7 @@ import w
 from collections import namedtuple
 import subprocess
 from os.path import isfile
+from os.path import expanduser
 
 Item = namedtuple("Items", "text answer")
 

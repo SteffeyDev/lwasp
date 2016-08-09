@@ -66,6 +66,9 @@ class UserBox(Gtk.ScrolledWindow):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         username = line.split(":")[0]
+
+        w.users.append(username)
+
         full_name = line.split(":")[4].replace(",", "")
         if backdoor:
             username += " (backdoor)"
@@ -120,6 +123,7 @@ class UserBox(Gtk.ScrolledWindow):
 
     def delete_user(self, button):
         username = self.items[button.index].username
+        w.users.remove(username)
         toremove = []
         for i in range(0, len(w.commands) - 1):
             if username in w.commands[i]:

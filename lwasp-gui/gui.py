@@ -8,6 +8,10 @@ from user_management import UserBox
 from services import AppsBox
 from forensics import ForensicsBox
 from updates import UpdatesBox
+from passwd import PasswdBox
+from firewall import FirewallBox
+from backdoor import BackdoorBox
+from misc import MiscBox
 
 import w
 w.init()
@@ -34,7 +38,7 @@ class MyWindow(Gtk.Window):
 
 		self.set_icon_from_file(self.get_resource_path("icon.png"))
 
-		for i in range(0, 8):
+		for i in range(0, 9):
 			page = Gtk.Box()
 			label = ""
 
@@ -51,12 +55,16 @@ class MyWindow(Gtk.Window):
 				page = UpdatesBox()
 				label = "Updates"
 			elif i == 4:
+				page = PasswdBox()
 				label = "Passwd Policy"
 			elif i == 5:
+				page = FirewallBox()
 				label = "Firewall"
 			elif i == 6:
-				label = "Sudo Conf."
-			elif i == 7:
+				page = BackdoorBox()
+				label = "Bad Files"
+			elif i == 8:
+				page = MiscBox()
 				label = "Misc"
 
 
