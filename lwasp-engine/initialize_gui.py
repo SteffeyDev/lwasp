@@ -54,9 +54,9 @@ class MyWindow(Gtk.Window):
 
         self.welcome_box = Gtk.Box(spacing=5)
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('ScoringEngine/logo.png', width=200, height=200, preserve_aspect_ratio=False)
-		image = Gtk.Image()
-		image.set_from_pixbuf(pixbuf)
-		self.welcome_box.pack_start(image, False, False, 0)
+        image = Gtk.Image()
+        image.set_from_pixbuf(pixbuf)
+        self.welcome_box.pack_start(image, False, False, 0)
         self.welcome_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "))
         get_started_button = Gtk.Button("Install")
         get_started_button.connect("clicked", self.install_dependencies)
