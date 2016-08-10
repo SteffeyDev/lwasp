@@ -48,7 +48,7 @@ class MyWindow(Gtk.Window):
         main_box.pack_end(self.progress_bar, False, False, 0)
         main_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
-        self.content_area = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        self.content_area = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.content_area.set_border_width(5)
         main_box.pack_start(self.content_area, True, True, 0)
 
@@ -362,7 +362,7 @@ class MyWindow(Gtk.Window):
             self.progress_bar.set_fraction(0.8)
 
             check_dialog = Gtk.Dialog(title="Email Setting Confirmation")
-            check_dialog.vbox.pack_start(Gtk.Label("A test email was sent to " + settings['email'] + "using these SMTP server settings, please confirm whether or not you recieved this email."))
+            check_dialog.vbox.pack_start(Gtk.Label("A test email was sent to " + settings['email'] + "using these SMTP server settings, please confirm whether or not you recieved this email."), False, False, 0)
 
             recieved_button = Gtk.Button(label="Email Recieved")
             recieved_button.connect("clicked", self.finish_installation)
