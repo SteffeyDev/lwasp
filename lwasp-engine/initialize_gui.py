@@ -272,7 +272,6 @@ class MyWindow(Gtk.Window):
 
         time_box = Gtk.Box(spacing=5)
         self.time_check_button = Gtk.CheckButton("Timed Image")
-        self.time_check_button.connect("clicked", self.time_check_button_changed)
         self.time_check_entry = Gtk.Entry(placeholder_text="hh:mm")
         time_box.pack_start(self.time_check_button, False, False, 0)
         time_box.pack_start(self.time_check_entry, False, False, 0)
