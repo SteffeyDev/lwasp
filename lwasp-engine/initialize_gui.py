@@ -38,6 +38,7 @@ class MyWindow(Gtk.Window):
         self.set_default_size(800, 600)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        main_box.set_border_width(10)
 
         label = Gtk.Label("Installation Progress")
         label.props.halign = Gtk.Align.CENTER
@@ -48,6 +49,7 @@ class MyWindow(Gtk.Window):
         main_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
         self.content_area = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        self.content_area.set_border_width(5)
         main_box.pack_start(self.content_area, True, True, 0)
 
         self.get_started_button = Gtk.Button("Get Started")
