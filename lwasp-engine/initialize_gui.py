@@ -53,7 +53,7 @@ class MyWindow(Gtk.Window):
         main_box.pack_start(self.content_area, True, True, 0)
 
         self.welcome_box = Gtk.Box(spacing=5)
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('ScoringEngine/logo.png', width=200, height=200, preserve_aspect_ratio=False)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('icon.png', width=200, height=200, preserve_aspect_ratio=False)
         image = Gtk.Image()
         image.set_from_pixbuf(pixbuf)
         self.welcome_box.pack_start(image, False, False, 0)
