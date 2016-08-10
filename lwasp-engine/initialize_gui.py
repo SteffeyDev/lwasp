@@ -298,7 +298,7 @@ class MyWindow(Gtk.Window):
         note_label_2.set_markup('<span foreground="grey"><small>If this is a timed image, scoring reports will be sent automatically when time is up.</small></span>')
         note_label_2.set_line_wrap(True)
         self.content_area.pack_start(note_label, False, False, 0)
-        self.email_box.pack_start(note_label_2)
+        self.email_box.pack_start(note_label_2, False, False, 0)
         self.email_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
         next_box = Gtk.Box()
