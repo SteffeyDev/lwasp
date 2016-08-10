@@ -1,4 +1,4 @@
 #!/bin/bash
-cd lwasp-gui
+cd lwasp-elements
 echo "Loading..."
 sudo python -B gui.py

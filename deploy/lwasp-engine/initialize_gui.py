@@ -367,11 +367,15 @@ class MyWindow(Gtk.Window):
             if self.time_check_entry.get_text() == "":
                 show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option")
                 return
-            hours = self.time_check_entry.get_text().split(":")[0]
-            minutes = self.time_check_entry.get_text().split(":")[1]
-            seconds = (hours * 3600) + (minutes * 60)
-            settings['limit'] = seconds
-            usersettings['limit'] = seconds
+            try:
+                hours = int(self.time_check_entry.get_text().split(":")[0])
+                minutes = int(self.time_check_entry.get_text().split(":")[1])
+                seconds = (hours * 3600) + (minutes * 60)
+                settings['limit'] = seconds
+                usersettings['limit'] = seconds
+            except:
+                show_error(self, "Invalid Time", "Please enter a time value in the correct format")
+                return
         else:
             settings['limit'] = -1
             usersettings['limit'] = -1
