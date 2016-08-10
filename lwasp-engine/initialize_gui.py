@@ -298,10 +298,10 @@ class MyWindow(Gtk.Window):
         self.email_button.connect("clicked", self.email_button_changed)
         self.content_area.pack_start(self.email_button, False, False, 0)
         self.email_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        hbox1 = Gtk.Box(spacing=3)
-        hbox2 = Gtk.Box(spacing=8)
+        hbox1 = Gtk.Box(spacing=8)
+        hbox2 = Gtk.Box(spacing=15)
         hbox3 = Gtk.Box()
-        hbox4 = Gtk.Box(spacing=1)
+        hbox4 = Gtk.Box(spacing=4)
         self.email_address_entry = Gtk.Entry(placeholder_text="e.g. email@example.com")
         self.email_address_entry.set_width_chars(30)
         hbox1.pack_start(Gtk.Label("Email Address: "), False, False, 0)
@@ -400,6 +400,7 @@ class MyWindow(Gtk.Window):
             self.progress_bar.set_fraction(0.8)
 
             check_dialog = Gtk.Dialog(title="Email Setting Confirmation")
+            check_dialog.set_default_size(150, 100)
             vbox = check_dialog.get_content_area()
             email_label = Gtk.Label("A test email was sent to " + settings['email'] + "using these SMTP server settings, please confirm whether or not you recieved this email.")
             email_label.set_line_wrap(True)
@@ -412,21 +413,28 @@ class MyWindow(Gtk.Window):
             not_recieved_button = Gtk.Button(label="Email NOT Recieved")
             not_recieved_button.connect("clicked", self.email_not_recieved)
             vbox.pack_start(not_recieved_button, False, False, 0)
+            vbox.set_border_width(10)
             vbox.show_all()
 
             check_dialog.set_modal(True)
             check_dialog.run()
-            check_dialog.destroy()
+
+            self.check_dialog = check_dialog
         else:
             settings['email'] = 'n/a'
             if os.path.isfile('emailz.py'):
                 os.remove('emailz.py')
             self.finish_installation()
 
-    def email_not_recieved(self):
+    def email_not_recieved(self, button):
+        self.check_dialog.destroy()
         show_error(self, "Check SMTP Settings", "Check the settings on your SMTP account to ensure it did not block the email.  You may want to specify a different SMTP server, visit https://www.arclab.com/en/kb/email/list-of-smtp-and-pop3-servers-mailserver-list.html for a full list", Gtk.MessageType.INFO)
 
-    def finish_installation(self):
+    def finish_installation(self, button=None):
+        try:
+            self.check_dialog.destroy()
+        except:
+            h = "ignore"
         self.progress_bar.set_fraction(0.9)
 
         saveSettings(settings)
