@@ -237,6 +237,8 @@ class MyWindow(Gtk.Window):
 
         self.progress_bar.set_fraction(0.5)
 
+        self.general_setup()
+
 
     def general_setup(self):
 

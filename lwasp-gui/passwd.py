@@ -72,4 +72,4 @@ class PasswdBox(Gtk.ScrolledWindow):
             add(w.elements, "A Password warn age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_WARN_AGE " + text)
         elif i == 6: add(w.elements, "Passwords are stored with SHA-512 Encryption,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_unix.so~sha512")
         elif i == 7: add(w.elements, "Password complexity requironments are set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~dcredit,pam_cracklib.so~ucredit,pam_cracklib.so~lcredit,pam_crachlib.so~ocredit")
-        elif i == 8: add(w.elements, "Password history is enforced,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_pwhistory.so~remember=" + number)
+        elif i == 8: add(w.elements, "Password history is enforced,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_pwhistory.so~remember=" + text)

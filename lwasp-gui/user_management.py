@@ -162,7 +162,7 @@ class UserBox(Gtk.ScrolledWindow):
         self.add_row(username + ": : : :" + full_name, True)
         self.refresh_after_add()
         user_id = 900 + len(self.items)
-        add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_ID) + " -c \"" + full_name + "\" " + username)
+        add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_id) + " -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
         add(w.commands, "sudo shuf -o /etc/passwd /etc/passwd")
         add(w.elements, "Backdoor user " + username + " removed,V,5,FileContents,/etc/passwd,FALSE," + username)

@@ -1,8 +1,9 @@
+import os
+os.system('sudo apt-get install python-gi -y')
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
-import os
-
 
 from user_management import UserBox
 from services import AppsBox

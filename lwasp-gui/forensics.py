@@ -76,7 +76,7 @@ class ForensicsBox(Gtk.ScrolledWindow):
 
     def finalize(self):
         for i in range(0, len(self.items)):
-            add_element(i)
+            self.add_element(i)
 
     def add_element(self, index):
         item = self.items[index]
