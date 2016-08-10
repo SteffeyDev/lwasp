@@ -264,8 +264,8 @@ var Main = React.createClass({displayName: "Main",
     return (
       React.createElement("div", {style: backDivStyle}, 
         React.createElement("div", {style: containerDivStyle}, 
-          React.createElement("img", {src: "logo.png", style: imageStyle}), 
-          React.createElement("h1", {style: centerStyle}, "USELESS CyberSecurity Training Image: ", settings['name']), 
+          React.createElement("img", {src: "icon.png", style: imageStyle}), 
+          React.createElement("h1", {style: centerStyle}, "LWASP Cyber Security Training Image: ", settings['name']), 
           React.createElement("h2", {style: centerStyle}, "Report Generated at ", Date()), 
           limit == -1 ? null : React.createElement("h3", {style: limitStyle2}, "Image Running Time: ", runningTimeLabel), 
           limit == -1 ? null : React.createElement("h3", {style: limitStyle}, "Image Time Remaining: ", timeLeftLabel), 
@@ -276,7 +276,7 @@ var Main = React.createClass({displayName: "Main",
           React.createElement("h3", {style: leftStyle}, numberOfPenalties, " penalties assessed, for a loss of ", pointsLost, " points:"), 
           React.createElement("li", {style: listStyle}, penaltyList), 
           React.createElement("h3", {style: leftStyle}, numberOfComplete, " out of ", numberTotal, " scored security issues fixed, for a gain of ", pointsGained, " points:"), 
-          React.createElement("li", {style: listStyle}, completeList)
+          completeList.count == 0 ? React.createElement("h3", {style: leftStyle}, "Get out there and score some points!") : React.createElement("li", {style: listStyle}, completeList)
         )
       )
     );

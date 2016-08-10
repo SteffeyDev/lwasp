@@ -264,8 +264,8 @@ var Main = React.createClass({
     return (
       <div style={backDivStyle}>
         <div style={containerDivStyle}>
-          <img src="logo.png" style={imageStyle} />
-          <h1 style={centerStyle}>USELESS CyberSecurity Training Image: {settings['name']}</h1>
+          <img src="icon.png" style={imageStyle} />
+          <h1 style={centerStyle}>LWASP Cyber Security Training Image: {settings['name']}</h1>
           <h2 style={centerStyle}>Report Generated at {Date()}</h2>
           {limit == -1 ? null : <h3 style={limitStyle2}>Image Running Time: {runningTimeLabel}</h3>}
           {limit == -1 ? null : <h3 style={limitStyle}>Image Time Remaining: {timeLeftLabel}</h3>}
@@ -276,7 +276,7 @@ var Main = React.createClass({
           <h3 style={leftStyle}>{numberOfPenalties} penalties assessed, for a loss of {pointsLost} points:</h3>
           <li style={listStyle}>{penaltyList}</li>
           <h3 style={leftStyle}>{numberOfComplete} out of {numberTotal} scored security issues fixed, for a gain of {pointsGained} points:</h3>
-          <li style={listStyle}>{completeList}</li>
+          {completeList.count == 0 ? <h3 style={leftStyle}>Get out there and score some points!</h3> : <li style={listStyle}>{completeList}</li>}
         </div>
       </div>
     );
