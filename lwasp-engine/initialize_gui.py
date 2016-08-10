@@ -34,7 +34,7 @@ locString = "/etc"
 
 class MyWindow(Gtk.Window):
     def __init__(self):
-        Gtk.Window.__init__(self, title="LWASP Setup")
+        Gtk.Window.__init__(self, title="LWASP Installer")
         self.set_default_size(800, 600)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
@@ -52,9 +52,17 @@ class MyWindow(Gtk.Window):
         self.content_area.set_border_width(5)
         main_box.pack_start(self.content_area, True, True, 0)
 
-        self.get_started_button = Gtk.Button("Get Started")
-        self.get_started_button.connect("clicked", self.install_dependencies)
-        self.content_area.pack_start(self.get_started_button, True, True, 0)
+        self.welcome_box = Gtk.Box(spacing=5)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('ScoringEngine/logo.png', width=200, height=200, preserve_aspect_ratio=False)
+		image = Gtk.Image()
+		image.set_from_pixbuf(pixbuf)
+		self.welcome_box.pack_start(image, False, False, 0)
+        self.welcome_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "))
+        get_started_button = Gtk.Button("Install")
+        get_started_button.connect("clicked", self.install_dependencies)
+        self.welcome_box.pack_start(get_started_button, False, False, 0)
+        self.welcome_box.props.valign = Gtk.Align.CENTER
+        self.content_area.pack_start(self.welcome_box, False, False, 0)
 
         self.add(main_box)
         main_box.show_all()
@@ -67,7 +75,7 @@ class MyWindow(Gtk.Window):
 
     def install_dependencies(self, button):
 
-        self.content_area.remove(self.get_started_button)
+        self.content_area.remove(self.welcome_box)
 
         hbox = Gtk.Box()
         spinner = Gtk.Spinner()
@@ -287,14 +295,27 @@ class MyWindow(Gtk.Window):
         self.email_button.connect("clicked", self.email_button_changed)
         self.content_area.pack_start(self.email_button, False, False, 0)
         self.email_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        self.email_address_entry = Gtk.Entry(placeholder_text="Email Address")
-        self.email_box.pack_start(self.email_address_entry, False, False, 0)
-        self.email_smtp_server_entry = Gtk.Entry(placeholder_text="SMTP Server (e.g. smtp.gmail.com)")
-        self.email_box.pack_start(self.email_smtp_server_entry, False, False, 0)
-        self.email_smtp_username_entry = Gtk.Entry(placeholder_text="SMTP Username (e.g. example@gmail.com)")
-        self.email_box.pack_start(self.email_smtp_username_entry, False, False, 0)
-        self.email_smtp_password_entry = Gtk.Entry(placeholder_text="SMTP Password")
-        self.email_box.pack_start(self.email_smtp_password_entry, False, False, 0)
+        hbox1 = Gtk.Box()
+        hbox2 = Gtk.Box()
+        hbox3 = Gtk.Box()
+        hbox4 = Gtk.Box()
+        self.email_address_entry = Gtk.Entry(placeholder_text="e.g. email@example.com")
+        hbox1.pack_start(Gtk.Label("Email Address: "), False, False, 0)
+        hbox1.pack_start(self.email_address_entry, False, False, 0)
+        self.email_smtp_server_entry = Gtk.Entry(placeholder_text="e.g. smtp.gmail.com")
+        hbox2.pack_start(Gtk.Label("SMTP Server: "), False, False, 0)
+        hbox2.pack_start(self.email_smtp_server_entry, False, False, 0)
+        self.email_smtp_username_entry = Gtk.Entry(placeholder_text="e.g. example@gmail.com")
+        hbox3.pack_start(Gtk.Label("SMTP Username: "), False, False, 0)
+        hbox3.pack_start(self.email_smtp_username_entry, False, False, 0)
+        self.email_smtp_password_entry = Gtk.Entry()
+        self.email_smtp_password_entry.set_visibility(False)
+        hbox4.pack_start(Gtk.Label("SMTP Password: "), False, False, 0)
+        hbox4.pack_start(self.email_smtp_password_entry, False, False, 0)
+        self.email_box.pack_start(hbox1, False, False, 0)
+        self.email_box.pack_start(hbox2, False, False, 0)
+        self.email_box.pack_start(hbox3, False, False, 0)
+        self.email_box.pack_start(hbox4, False, False, 0)
         self.email_desktop_button = Gtk.CheckButton("Create Desktop icon to send scoring report")
         self.email_box.pack_start(self.email_desktop_button, False, False, 0)
         note_label_2 = Gtk.Label()
@@ -324,6 +345,10 @@ class MyWindow(Gtk.Window):
 
         self.progress_bar.set_fraction(0.7)
 
+        if self.name_entry.get_text() == "":
+            show_error(self, "Name Needed", "Please enter a Common Name for this image")
+            return
+
         settings['name'] = self.name_entry.get_text()
         usersettings['name'] = self.name_entry.get_text()
 
@@ -332,6 +357,9 @@ class MyWindow(Gtk.Window):
         usersettings['id'] = ""
 
         if self.time_check_button.get_active():
+            if self.time_check_entry.get_text() == "":
+                show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option")
+                return
             hours = self.time_check_entry.get_text().split(":")[0]
             minutes = self.time_check_entry.get_text().split(":")[1]
             seconds = (hours * 3600) + (minutes * 60)
@@ -342,6 +370,9 @@ class MyWindow(Gtk.Window):
             usersettings['limit'] = -1
 
         if self.email_button.get_active():
+            if self.email_address_entry.get_text() == "" or self.email_smtp_server_entry.get_text() == "" or self.email_smtp_username_entry.get_text() == "" or self.email_smtp_password_entry.get_text() == "":
+                show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox")
+                return
             settings['email'] = self.email_address_entry.get_text()
             settings['server'] = self.email_smtp_server_entry.get_text()
             settings['username'] = self.email_smtp_username_entry.get_text()
@@ -371,6 +402,10 @@ class MyWindow(Gtk.Window):
             not_recieved_button = Gtk.Button(label="Email NOT Recieved")
             not_recieved_button.connect("clicked", self.email_not_recieved)
             check_dialog.action_area.pack_start(not_recieved_button, False, False, 0)
+
+            check_dialog.set_modal(True)
+            check_dialog.run()
+            check_dialog.destroy()
         else:
             settings['email'] = 'n/a'
             if os.path.isfile('emailz.py'):
