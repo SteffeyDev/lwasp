@@ -57,7 +57,7 @@ class MyWindow(Gtk.Window):
         image = Gtk.Image()
         image.set_from_pixbuf(pixbuf)
         self.welcome_box.pack_start(image, False, False, 0)
-        self.welcome_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "))
+        self.welcome_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "), False, False, 0)
         get_started_button = Gtk.Button("Install")
         get_started_button.connect("clicked", self.install_dependencies)
         self.welcome_box.pack_start(get_started_button, False, False, 0)
