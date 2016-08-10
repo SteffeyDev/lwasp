@@ -261,6 +261,8 @@ class MyWindow(Gtk.Window):
         name_box = Gtk.Box(spacing=5)
         name_label = Gtk.Label("Image Common Name: ")
         self.name_entry = Gtk.Entry()
+        name_box.pack_start(name_label, False, False, 0)
+        name_box.pack_start(self.name_entry, False, False, 0)
         self.content_area.pack_start(name_box, False, False, 0)
 
         note_label = Gtk.Label()
@@ -291,7 +293,6 @@ class MyWindow(Gtk.Window):
         self.email_box.pack_start(self.email_smtp_username_entry, False, False, 0)
         self.email_smtp_password_entry = Gtk.Entry(placeholder_text="SMTP Password")
         self.email_box.pack_start(self.email_smtp_password_entry, False, False, 0)
-
         self.email_desktop_button = Gtk.CheckButton("Create Desktop icon to send scoring report")
         self.email_box.pack_start(self.email_desktop_button, False, False, 0)
         note_label_2 = Gtk.Label()
@@ -301,7 +302,7 @@ class MyWindow(Gtk.Window):
         self.email_box.pack_start(note_label_2, False, False, 0)
         self.email_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
-        next_box = Gtk.Box()
+        next_box = Gtk.Box(spacing=10)
         next_button = Gtk.Button(label="Continue")
         next_button.props.halign = Gtk.Align.END
         next_button.connect("clicked", self.next_button_pressed)
@@ -313,8 +314,9 @@ class MyWindow(Gtk.Window):
     def email_button_changed(self, button):
         if button.get_active():
             self.content_area.pack_start(self.email_box, False, False, 0)
+            self.content_area.show_all()
         else:
-            self.content_area.remove(self.email_button)
+            self.content_area.remove(self.email_box)
 
     def next_button_pressed(self, button):
 
