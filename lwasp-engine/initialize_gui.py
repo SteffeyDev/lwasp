@@ -399,8 +399,8 @@ class MyWindow(Gtk.Window):
 
             self.progress_bar.set_fraction(0.8)
 
-            check_dialog = Gtk.Dialog("Email Setting Confirmation", self, 0)
-            check_dialog.set_default_size(150, 100)
+            check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
+            check_dialog.set_default_size(200, 100)
             vbox = check_dialog.get_content_area()
             email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
             email_label.set_line_wrap(True)
