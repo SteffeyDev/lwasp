@@ -1,7 +1,7 @@
 # Copyright (C) 2015 Peter Steffey
 
 from hashlib import md5
-import subprocess, os, string, smtplib, json, urllib2, re, commands, pygame, sys
+import subprocess, os, string, smtplib, json, urllib2, re, commands, sys
 from os import path
 
 #Function to run a bash command
@@ -12,12 +12,18 @@ def do(cmd):
 try:
     from Crypto.Cipher import AES
     from Crypto import Random
-
 except:
     print "\nInstalling python-crypto library..."
     do('sudo apt-get install python-crypto -y')
     from Crypto.Cipher import AES
     from Crypto import Random
+
+try:
+    import pygame
+except:
+    print "\nInstalling python-pygame library..."
+    do('sudo apt-get install python-pygame -y')
+    import pygame
 
 def internet_on():
     try:

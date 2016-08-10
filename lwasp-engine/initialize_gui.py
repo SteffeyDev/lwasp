@@ -32,14 +32,15 @@ settings = {}
 usersettings = {}
 
 class MyWindow(Gtk.Window):
-	def __init__(self):
-		Gtk.Window.__init__(self, title="LWASP Setup")
-		self.set_default_size(800, 600)
+    def __init__(self):
+        Gtk.Window.__init__(self, title="LWASP Setup")
+        self.set_default_size(800, 600)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
         label = Gtk.Label("Installation Progress")
         label.props.halign = Gtk.Align.CENTER
+        main_box.pack_end(Gtk.HSeparator(), False, False, 0)
         main_box.pack_end(label, False, False, 0)
         self.progress_bar = Gtk.ProgressBar()
         main_box.pack_end(self.progress_bar, False, False, 0)
@@ -48,16 +49,21 @@ class MyWindow(Gtk.Window):
         self.content_area = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
         main_box.pack_start(self.content_area, True, True, 0)
 
-        print "\nCreating scoring file"
+        self.get_started_button = Gtk.Button("Get Started")
+        self.get_started_button.connect("clicked", self.install_dependencies)
+        self.content_area.pack_start(self.get_started_button, True, True, 0)
+
+        self.add(main_box)
+        main_box.show_all()
 
         if not internet_on:
             print "Fatal Error: No internet connection, please connect to a network to initialize LWASP."
             show_error(self, "Error: No internet connection", "Please connect to a network, then try again.")
             Gtk.main_quit()
 
-        self.install_dependencies()
+    def install_dependencies(self, button):
 
-    def install_dependencies(self):
+        self.content_area.remove(self.get_started_button)
 
         hbox = Gtk.Box()
         spinner = Gtk.Spinner()
@@ -340,7 +346,6 @@ class MyWindow(Gtk.Window):
 
             self.progress_bar.set_fraction(0.8)
 
-                            print '\n ** '
             check_dialog = Gtk.Dialog(title="Email Setting Confirmation")
             check_dialog.vbox.pack_start(Gtk.Label("A test email was sent to " + settings['email'] + "using these SMTP server settings, please confirm whether or not you recieved this email."))
 
