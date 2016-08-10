@@ -61,6 +61,7 @@ class MyWindow(Gtk.Window):
             print "Fatal Error: No internet connection, please connect to a network to initialize LWASP."
             show_error(self, "Error: No internet connection", "Please connect to a network, then try again.")
             Gtk.main_quit()
+            sys.exit()
 
     def install_dependencies(self, button):
 
@@ -95,6 +96,7 @@ class MyWindow(Gtk.Window):
                 print ' ** ScoringEngine folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the ScoringEngine folder in it.'
                 show_error(self, 'ScoringEngine folder not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the ScoringEngine folder in it.')
                 Gtk.main_quit()
+                sys.exit()
 
         print "\nCreating Scoring Report on Desktop"
         #creates a desktop file to launch a firefox page in its own window, uses logo.png file
@@ -127,6 +129,7 @@ class MyWindow(Gtk.Window):
                 print ' ** success.wav file not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the success.wav folder in it.'
                 show_error(self, 'Audio files not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the .wav files in it.')
                 Gtk.main_quit()
+                sys.exit()
 
         self.progress_bar.set_fraction(0.23)
 
@@ -155,6 +158,7 @@ class MyWindow(Gtk.Window):
                     if mode != "v" and mode != "p":
                         print "\n* Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column."
                         Gtk.main_quit()
+                        sys.exit()
                     dict['mode'] = (mode == "v")
 
                     #checks points
@@ -163,12 +167,14 @@ class MyWindow(Gtk.Window):
                     except:
                         print "\n* Syntax error in the points of element " + str(itt) + ". Please make sure that this is an integer value."
                         Gtk.main_quit()
+                        sys.exit()
 
                     #checks type ** If you add a custum type you should add it here
                     type = elements[3].replace(' ', '')
                     if not (type == "FileContents" or type == "FileExistance" or type == "Service" or type == "Forensics" or type == "Updates" or type == "Port" or type == "Permissions" or type == "Command"):
                         print "\n* Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the 8 valid types."
                         Gtk.main_quit()
+                        sys.exit()
                     dict['type'] = elements[3]
 
                     #gets extras, but only valid ones
@@ -189,6 +195,7 @@ class MyWindow(Gtk.Window):
                 else:
                     print "\n* Not enough items in element " + str(itt) + ". Needs 6, only " + str(len(elements))
                     Gtk.main_quit()
+                    sys.exit()
 
             #settings to use on the scoring report
             usersettings['points'] = points
@@ -207,6 +214,7 @@ class MyWindow(Gtk.Window):
                 print "\n* Could not find elements.csv file in this directory.  Please see the readme and excel file.  Exiting..."
                 show_error(self, "Could not find elements.csv file","Please run the lwasp-setup script before this one.")
                 Gtk.main_quit()
+                sys.exit()
 
         self.progress_bar.set_fraction(0.3)
 
