@@ -52,17 +52,20 @@ class MyWindow(Gtk.Window):
         self.content_area.set_border_width(5)
         main_box.pack_start(self.content_area, True, True, 0)
 
-        self.welcome_box = Gtk.Box(spacing=5)
+        self.welcome_box = Gtk.Box(spacing=5, orientation=Gtk.Orientation.VERTICAL)
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('icon.png', width=200, height=200, preserve_aspect_ratio=False)
         image = Gtk.Image()
         image.set_from_pixbuf(pixbuf)
         self.welcome_box.pack_start(image, False, False, 0)
-        self.welcome_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "), False, False, 0)
+        internal_box = Gtk.Box(spacing=5)
+        internal_box.pack_start(Gtk.Label("Thanks for using LWASP! Click here to get started: "), False, False, 0)
         get_started_button = Gtk.Button("Install")
         get_started_button.connect("clicked", self.install_dependencies)
-        self.welcome_box.pack_start(get_started_button, False, False, 0)
+        internal_box.pack_start(get_started_button, False, False, 0)
+        internal_box.props.halign = Gtk.Align.CENTER
+        self.welcome_box.pack_start(internal_box, False, False, 0)
         self.welcome_box.props.valign = Gtk.Align.CENTER
-        self.content_area.pack_start(self.welcome_box, False, False, 0)
+        self.content_area.pack_start(self.welcome_box, True, True, 0)
 
         self.add(main_box)
         main_box.show_all()
