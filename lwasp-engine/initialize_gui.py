@@ -399,12 +399,13 @@ class MyWindow(Gtk.Window):
 
             self.progress_bar.set_fraction(0.8)
 
-            check_dialog = Gtk.Dialog(title="Email Setting Confirmation")
+            check_dialog = Gtk.Dialog("Email Setting Confirmation", self, 0)
             check_dialog.set_default_size(150, 100)
             vbox = check_dialog.get_content_area()
-            email_label = Gtk.Label("A test email was sent to " + settings['email'] + "using these SMTP server settings, please confirm whether or not you recieved this email.")
+            email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
             email_label.set_line_wrap(True)
             vbox.pack_start(email_label, False, False, 0)
+            vbox.pack_start(Gtk.HSeparator(), False, False, 0)
 
             recieved_button = Gtk.Button(label="Email Recieved")
             recieved_button.connect("clicked", self.finish_installation)
@@ -452,6 +453,9 @@ class MyWindow(Gtk.Window):
         self.progress_bar.set_fraction(1)
 
         show_error(self, "Scoring Engine Initialized", "Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.", Gtk.MessageType.INFO)
+        Gtk.main_quit()
+        sys.exit()
+        print "exited"
 
 win = MyWindow()
 win.connect('delete-event', Gtk.main_quit)
