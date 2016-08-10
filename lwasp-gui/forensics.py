@@ -74,6 +74,11 @@ class ForensicsBox(Gtk.ScrolledWindow):
         self.master_box.reorder_child(self.add_box, len(self.items) * 2)
         self.master_box.show_all()
 
+    def finalize(self):
+        for i in range(0, len(self.items)):
+            add_element(i)
+
     def add_element(self, index):
         item = self.items[index]
-        add(w.elements, "Forensics question #" + index + " answered correctly,V,10,ForensicsQuestion," + expanduser("~") + "/Desktop/ForensicsQuestion" + index + ".txt," + item.answer.get_text())
+        add(w.commands, "sudo echo \"" + item.text + "\" > " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index) + ".txt")
+        add(w.elements, "Forensics question #" + str(index) + " answered correctly,V,10,ForensicsQuestion," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index) + ".txt," + item.answer.get_text())

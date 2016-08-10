@@ -1,0 +1,4 @@
+#!/bin/bash
+cd lwasp-gui
+echo "Loading..."
+sudo python -B gui.py

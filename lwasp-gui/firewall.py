@@ -61,5 +61,3 @@ class FirewallBox(Gtk.ScrolledWindow):
         elif i == 2: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
         elif i == 3: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
         elif i == 4: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
-
-        print w.elements

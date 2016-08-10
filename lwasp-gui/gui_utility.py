@@ -12,5 +12,6 @@ def add(array, line):
 def show_error(top, title, message):
     dialog = Gtk.MessageDialog(top, 0, Gtk.MessageType.ERROR, Gtk.ButtonsType.OK, title)
     dialog.format_secondary_text(message)
+    dialog.set_modal(True)
     dialog.run()
     dialog.destroy()

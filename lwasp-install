@@ -1,0 +1,3 @@
+#!/bin/bash
+cd lwasp-engine
+sudo python -B initialize.py

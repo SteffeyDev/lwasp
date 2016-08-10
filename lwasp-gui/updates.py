@@ -35,4 +35,3 @@ class UpdatesBox(Gtk.ScrolledWindow):
         elif i == 2: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,APT::Periodic::Update-Package-Lists \"7\"")
         elif i == 3: add(w.elements, "All Security Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,;0")
         elif i == 4: add(w.elements, "All Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,0;0")
-        print w.elements

@@ -161,7 +161,7 @@ class UserBox(Gtk.ScrolledWindow):
             return
         self.add_row(username + ": : : :" + full_name, True)
         self.refresh_after_add()
-        user_id = 900 + len(self.expanded)
+        user_id = 900 + len(self.items)
         add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_ID) + " -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
         add(w.commands, "sudo shuf -o /etc/passwd /etc/passwd")
@@ -185,8 +185,6 @@ class UserBox(Gtk.ScrolledWindow):
             add(w.elements, 'User ' + item.username + ' was deleted,V,5,FileContents,/etc/passwd,FALSE,' + item.username)
         else:
             add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/lightdm/lightdm.conf,FALSE,autologin-user=' + item.username)
-
-        print w.elements
 
     def expand_button_clicked(self, button):
         item = self.items[button.index]

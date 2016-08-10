@@ -201,8 +201,6 @@ class AppsBox(Gtk.ScrolledWindow):
             print version
             add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + item.name + ',' + version)
 
-        print w.elements
-
     def expand_button_clicked(self, button):
         item = self.items[button.index]
         box = item.box

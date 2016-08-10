@@ -77,8 +77,9 @@ class BackdoorBox(Gtk.ScrolledWindow):
         elif path == "": return
         self.paths[i].set_editable(not button.get_active())
 
-        filepath = "/".join(path.split("/")[0:(len(path)-2)])
-        filename = path.split("/")[len(path)-1]
+        path_list = path.split("/")
+        filepath = "/".join(path_list[0:(len(path)-2)])
+        filename = path_list[len(path_list)-1]
 
         if i in range(3,5):
             title = self.titles[i].get_text()
@@ -103,6 +104,3 @@ class BackdoorBox(Gtk.ScrolledWindow):
             add(w.elements, "Netcat Backdoor removed,V,10,FileExistance," + path + ",FALSE")
         elif i == 3 or i == 4:
             add(w.elements, title + " removed,V,10,FileExistance," + path + ",FALSE")
-
-
-        print w.elements

@@ -12,6 +12,7 @@ from passwd import PasswdBox
 from firewall import FirewallBox
 from backdoor import BackdoorBox
 from misc import MiscBox
+from intro import IntroDialog
 
 import w
 w.init()
@@ -50,6 +51,7 @@ class MyWindow(Gtk.Window):
 				label = "Services"
 			elif i == 2:
 				page = ForensicsBox()
+				self.forensics_box = page
 				label = "Forensics ?s"
 			elif i == 3:
 				page = UpdatesBox()
@@ -71,6 +73,10 @@ class MyWindow(Gtk.Window):
 			page.set_border_width(10)
 			self.notebook.append_page(page, Gtk.Label(label))
 
+		dialog = IntroDialog(self)
+		dialog.run()
+		dialog.destroy()
+
 	def get_resource_path(self, rel_path):
 	    dir_of_py_file = os.path.dirname(__file__)
 	    rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
@@ -78,8 +84,20 @@ class MyWindow(Gtk.Window):
 	    return abs_path_to_resource
 
 	def done_button_pressed(self, button):
-		hh = ""
-		#need to create forensics questions on desktop
+		self.forensics_box.finalize()
+		with open('elements.csv', 'w') as elements:
+			for item in w.elements:
+				elements.write(item + '\n')
+		with open('commands.bash', 'w') as commands:
+			for item in w.commands:
+				commands.write(item + '\n')
+		os.system('sudo mv elements.csv ../lwasp/')
+		os.system('sudo chmod +x commands.bash')
+
+		#Uncomment when deploying
+		#os.system('sudo /bin/bash commands.bash')
+
+		Gtk.main_quit()
 
 win = MyWindow()
 win.connect('delete-event', Gtk.main_quit)

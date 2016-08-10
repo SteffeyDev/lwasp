@@ -147,7 +147,7 @@ class MiscBox(Gtk.ScrolledWindow):
                 button.set_active(False)
                 show_error(self.get_toplevel(), "Value Needed", "Please select a user before enabling this")
                 return
-            elif path == "": return
+            elif user == "": return
 
             add(w.commands, "sudo echo \"" + user + "  ALL=(ALL:ALL) ALL\" >> /etc/sudoers")
             add(w.elements, "Insecure sudo configuration fixed,V,12,FileContents,/etc/sudoers,FALSE," + user + "  ALL=(ALL:ALL) ALL")
@@ -171,5 +171,3 @@ class MiscBox(Gtk.ScrolledWindow):
             add(w.elements, "IP Spoofing is disabled,V,7,FileContents,/etc/host.conf,TRUE,nospoof on")
         elif i == 7:
             add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")
-
-        print w.elements
