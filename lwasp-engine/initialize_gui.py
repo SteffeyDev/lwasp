@@ -30,6 +30,7 @@ def show_error(top, title, message, type=Gtk.MessageType.ERROR):
 #creates dictionary object to hold objects
 settings = {}
 usersettings = {}
+locString = "/etc"
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -72,6 +73,8 @@ class MyWindow(Gtk.Window):
         hbox.add(label)
         self.content_area.add(hbox)
 
+        self.content_area.show_all()
+
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
         do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
@@ -113,7 +116,6 @@ class MyWindow(Gtk.Window):
         self.install_backend()
 
     def install_backend(self):
-        locString = "/etc"
 
         #moves sound to generally accessable system folder
         try:
@@ -298,6 +300,8 @@ class MyWindow(Gtk.Window):
         next_button.connect("clicked", self.next_button_pressed)
         next_box.pack_end(next_button, False, False, 0)
         self.content_area.pack_end(next_box, False, False, 0)
+
+        self.content_area.show_all()
 
     def email_button_changed(self, button):
         if button.get_active():
