@@ -281,7 +281,7 @@ class MyWindow(Gtk.Window):
 
         self.email_button = Gtk.CheckButton("Setup sending scoring reports over email")
         self.email_button.connect("clicked", self.email_button_changed)
-        self.content_area.pack_start(self.email_button)
+        self.content_area.pack_start(self.email_button, False, False, 0)
         self.email_box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.email_address_entry = Gtk.Entry("Email Address")
         self.email_box.pack_start(self.email_address_entry, False, False, 0)
