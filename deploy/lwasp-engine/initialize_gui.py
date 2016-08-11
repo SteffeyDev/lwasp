@@ -27,6 +27,8 @@ def show_error(top, title, message, type=Gtk.MessageType.ERROR):
     dialog.run()
     dialog.destroy()
 
+import threading
+
 #creates dictionary object to hold objects
 settings = {}
 usersettings = {}
@@ -76,24 +78,23 @@ class MyWindow(Gtk.Window):
             Gtk.main_quit()
             sys.exit()
 
+
+
+    def update_progress(self, fraction):
+        self.progress_bar.set_fraction(fraction)
+
     def install_dependencies(self, button):
-
+        threading.Thread(target=self.install_dependencies_backthread, args=()).start()
         self.content_area.remove(self.welcome_box)
+        self.general_setup()
 
-        hbox = Gtk.Box()
-        spinner = Gtk.Spinner()
-        label = Gtk.Label("Installing inotify-tools and needed python libraries. This may take a minute.")
-        hbox.add(spinner)
-        hbox.add(label)
-        self.content_area.add(hbox)
+    def install_dependencies_backthread(self):
 
-        self.content_area.show_all()
+        self.progress_bar.set_fraction(0.02)
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
         do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
-
-        self.content_area.remove(hbox)
 
         self.progress_bar.set_fraction(0.1)
 
@@ -147,7 +148,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        self.progress_bar.set_fraction(0.23)
+        self.progress_bar.set_fraction(0.25)
 
         try:
             #Open input file and new file
@@ -269,10 +270,9 @@ class MyWindow(Gtk.Window):
 
         self.progress_bar.set_fraction(0.5)
 
-        self.general_setup()
-
-
     def general_setup(self):
+
+        print("beginning method")
 
         name_box = Gtk.Box(spacing=5)
         name_label = Gtk.Label("Image Common Name: ")
@@ -343,6 +343,10 @@ class MyWindow(Gtk.Window):
         self.content_area.pack_end(next_box, False, False, 0)
 
         self.content_area.show_all()
+
+        print "got through method"
+
+
 
     def email_button_changed(self, button):
         if button.get_active():
