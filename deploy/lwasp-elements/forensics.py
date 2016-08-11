@@ -9,7 +9,7 @@ import subprocess
 from os.path import isfile
 from os.path import expanduser
 
-Item = namedtuple("Items", "text answer")
+Item = namedtuple("Items", "text answer box")
 
 class ForensicsBox(Gtk.ScrolledWindow):
     def __init__(self):
@@ -27,10 +27,15 @@ class ForensicsBox(Gtk.ScrolledWindow):
         self.add_box.pack_end(add_q, False, False, 0)
         self.master_box.pack_start(self.add_box, False, False, 0)
 
+        note_label = Gtk.Label()
+        note_label.set_markup('<span foreground="grey"><small>Don\'t type the "ANSWER:" part, that will be added for you. Just type out the question and the answer.</small></span>')
+        note_label.set_line_wrap(True)
+        self.master_box.pack_end(note_label, False, False, 0)
+
         self.add(self.master_box)
 
     def add_row(self):
-        user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
         label = Gtk.Label("Forensics Question #" + str(len(self.items) + 1))
         user_box.pack_start(label, False, False, 0)
@@ -55,19 +60,18 @@ class ForensicsBox(Gtk.ScrolledWindow):
         delete_button.props.halign = Gtk.Align.END
         delete_button.connect("clicked", self.delete_q)
         delete_box.pack_end(delete_button, False, False, 0)
-        user_box.pack_end(delete_box, False, False, 0)
+        user_box.pack_start(delete_box, False, False, 0)
+
+        user_box.pack_start(Gtk.HSeparator(), False, False, 0)
 
         self.master_box.pack_start(user_box, False, True, 0)
 
-        separator = Gtk.HSeparator()
-        self.master_box.pack_start(separator, False, True, 0)
-
-        self.items.append(Item(text = textview, answer = answer_entry))
+        self.items.append(Item(text = textview, answer = answer_entry, box=user_box))
 
     def delete_q(self, button):
-        del self.items[button.index]
-        self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
-        self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
+        box = self.items[len(self.items)-1].box
+        self.master_box.remove(box)
+        del self.items[len(self.items)-1]
 
     def add_q(self, button):
         self.add_row()
@@ -80,5 +84,5 @@ class ForensicsBox(Gtk.ScrolledWindow):
 
     def add_element(self, index):
         item = self.items[index]
-        add(w.commands, "sudo echo \"" + item.text + "\" > " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index) + ".txt")
-        add(w.elements, "Forensics question #" + str(index) + " answered correctly,V,10,ForensicsQuestion," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index) + ".txt," + item.answer.get_text())
+        add(w.commands, "sudo printf \"" + item.text.get_buffer().get_text(item.text.get_buffer().get_start_iter(), item.text.get_buffer().get_end_iter(), False) + "\n\nANSWER: \" > " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt")
+        add(w.elements, "Forensics question #" + str(index + 1) + " answered correctly,V,10,ForensicsQuestion," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt," + item.answer.get_text())

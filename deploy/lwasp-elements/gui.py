@@ -1,5 +1,10 @@
 import os
-os.system('sudo apt-get install python-gi -y')
+
+try:
+	import gi
+except:
+	os.system('sudo apt-get install python-gi -y')
+	import gi
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -92,11 +97,8 @@ class MyWindow(Gtk.Window):
 		with open('commands.bash', 'w') as commands:
 			for item in w.commands:
 				commands.write(item + '\n')
-		os.system('sudo mv elements.csv ../lwasp/')
+		os.system('sudo mv elements.csv ../lwasp-engine/')
 		os.system('sudo chmod +x commands.bash')
-
-		#Uncomment when deploying
-		#os.system('sudo /bin/bash commands.bash')
 
 		Gtk.main_quit()
 

@@ -71,7 +71,7 @@ class UserBox(Gtk.ScrolledWindow):
 
         full_name = line.split(":")[4].replace(",", "")
         if backdoor:
-            username += " (backdoor)"
+            username += " - backdoor"
 
         user_wrapper_box = Gtk.Box(spacing=50)
         label = Gtk.Label(full_name + " (" + username + ")" if full_name != "" else username)
@@ -187,6 +187,7 @@ class UserBox(Gtk.ScrolledWindow):
             add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/lightdm/lightdm.conf,FALSE,autologin-user=' + item.username)
 
     def expand_button_clicked(self, button):
+        if button.index >= len(self.items): return
         item = self.items[button.index]
         box = item.box
 
