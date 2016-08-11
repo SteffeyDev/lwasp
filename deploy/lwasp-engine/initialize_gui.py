@@ -250,15 +250,15 @@ class MyWindow(Gtk.Window):
         #makes sure competitor can't modify code to reveal what is scored
         print '\nCompiling python'
         if not os.path.isfile('analyze'):
-            do("sudo python -O -m py_compile analyze.py")
-            os.rename('analyze.pyo', 'analyze')
+            do("sudo python -m py_compile analyze.py")
+            os.rename('analyze.pyc', 'analyze')
             os.remove('analyze.py')
         if not os.path.isfile('restart'):
-            do("sudo python -O -m py_compile restart.py")
-            os.rename('restart.pyo', 'restart')
+            do("sudo python -m py_compile restart.py")
+            os.rename('restart.pyc', 'restart')
             os.remove('restart.py')
-        if not os.path.isfile('utility.pyo'):
-            do("sudo python -O -m py_compile utility.py")
+        if not os.path.isfile('utility.pyc'):
+            do("sudo python -m py_compile utility.py")
             os.remove('utility.py')
 
         print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'

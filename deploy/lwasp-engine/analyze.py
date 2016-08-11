@@ -56,17 +56,17 @@ def checkFileContents(filepath, contents, mode):
                 if "~" in contains:
                     contains_pieces = contains.split("~")
                     for line in text_list:
-                        if contains_pieces[0] in line and contains_pieces[1] in line:
+                        if contains_pieces[0] in line and contains_pieces[1] not in line:
                             file.close()
                             return False
-                elif contains not in line:
+                elif contains not in text:
                     file.close()
                     return False
             else:
                 if "~" in contains:
                     contains_pieces = contains.split("~")
                     for line in text_list:
-                        if contains_pieces[0] in line and contains_pieces[1] not in line:
+                        if contains_pieces[0] in line and contains_pieces[1] in line:
                             file.close()
                             return False
                 elif contains in text:
