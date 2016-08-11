@@ -112,16 +112,16 @@ class MyWindow(Gtk.Window):
                 sys.exit()
 
         print "\nCreating Scoring Report on Desktop"
-        #creates a desktop file to launch a firefox page in its own window, uses logo.png file
+        #creates a desktop file to launch a firefox page in its own window, uses icon.png file
         with open(expanduser("~") + '/Desktop/scoring.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/ScoringEngine/ScoringReport.html\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/ScoringEngine/ScoringReport.html\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/scoring.desktop") # makes executable
             do("chmod +x open.bash") # makes executable
 
         print '\nAdding Set ID script on desktop'
         with open(expanduser("~") + '/Desktop/lwasp.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/lwasp/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/lwasp/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/lwasp.desktop")
             do("chmod +x " + getSafeDirPath() + "/uid.py")
@@ -393,9 +393,9 @@ class MyWindow(Gtk.Window):
                 show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO)
             if self.email_desktop_button.get_active():
                 print "Creating Send Scoring Report button on desktop"
-                #creates a desktop file to launch a firefox page in its own window, uses logo.png file
+                #creates a desktop file to launch a firefox page in its own window, uses icon.png file
                 with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/lwasp/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/logo.png")
+                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/lwasp/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
                     deskFile.close()
                     do("chmod +x ~/Desktop/email.desktop") # makes executable
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
@@ -410,6 +410,7 @@ class MyWindow(Gtk.Window):
             email_label.set_line_wrap(True)
             vbox.pack_start(email_label, False, False, 0)
             vbox.pack_start(Gtk.HSeparator(), False, False, 0)
+            vbox.props.spacing = 6
 
             recieved_button = Gtk.Button(label="Email Recieved")
             recieved_button.connect("clicked", self.finish_installation)
