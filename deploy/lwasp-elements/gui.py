@@ -1,4 +1,5 @@
 import os
+import sys
 
 try:
 	import gi
@@ -106,3 +107,44 @@ win = MyWindow()
 win.connect('delete-event', Gtk.main_quit)
 win.show_all()
 Gtk.main()
+
+print "run after"
+
+win.destroy()
+
+class interWindow(Gtk.Window):
+	def __init__(self):
+		Gtk.Window.__init__(self, title="LWASP Setup")
+		self.set_default_size(200, 200)
+
+		master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+		master_box.set_border_width(10)
+
+		label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
+		label.set_line_wrap(True)
+		button1 = Gtk.Button(label="Continue to Installation")
+		button1.connect("clicked", self.launch_install)
+		button2 = Gtk.Button(label="End & Modify")
+		button2.connect("clicked", self.end)
+		master_box.pack_start(label, False, False, 0)
+		master_box.pack_start(button1, False, False, 0)
+		master_box.pack_start(button2, False, False, 0)
+
+		self.add(master_box)
+
+	def launch_install(self, button):
+		os.system("cd ..; /bin/bash lwasp-install &")
+		Gtk.main_quit()
+
+	def end(self, button):
+		show_error(self, "Modification", "Feel free to modify this image and the elements.csv file in the lwasp-engine folder to score advanced items.  Run ./lwasp-install to continue with the installation")
+		Gtk.main_quit()
+
+win = interWindow()
+win.connect('delete-event', Gtk.main_quit)
+win.show_all()
+Gtk.main()
+
+win.destroy()
+
+sys.exit()

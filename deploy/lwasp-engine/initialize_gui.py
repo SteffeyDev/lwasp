@@ -42,10 +42,10 @@ class MyWindow(Gtk.Window):
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         main_box.set_border_width(10)
 
-        label = Gtk.Label("Installation Progress")
-        label.props.halign = Gtk.Align.CENTER
+        self.progress_label = Gtk.Label("Installation Progress")
+        self.progress_label.props.halign = Gtk.Align.CENTER
         main_box.pack_end(Gtk.HSeparator(), False, False, 0)
-        main_box.pack_end(label, False, False, 0)
+        main_box.pack_end(self.progress_label, False, False, 0)
         self.progress_bar = Gtk.ProgressBar()
         main_box.pack_end(self.progress_bar, False, False, 0)
         main_box.pack_end(Gtk.HSeparator(), False, False, 0)
@@ -69,6 +69,8 @@ class MyWindow(Gtk.Window):
         self.welcome_box.props.valign = Gtk.Align.CENTER
         self.content_area.pack_start(self.welcome_box, True, True, 0)
 
+        self.set_icon_from_file(self.get_resource_path("icon.png"))
+
         self.add(main_box)
         main_box.show_all()
 
@@ -78,7 +80,11 @@ class MyWindow(Gtk.Window):
             Gtk.main_quit()
             sys.exit()
 
-
+    def get_resource_path(self, rel_path):
+        dir_of_py_file = os.path.dirname(__file__)
+        rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
+        abs_path_to_resource = os.path.abspath(rel_path_to_resource)
+        return abs_path_to_resource
 
     def update_progress(self, fraction):
         self.progress_bar.set_fraction(fraction)
@@ -270,6 +276,8 @@ class MyWindow(Gtk.Window):
 
         self.progress_bar.set_fraction(0.5)
 
+        self.progress_label.set_text("Installation Progress: Waiting on User Input")
+
     def general_setup(self):
 
         print("beginning method")
@@ -356,6 +364,8 @@ class MyWindow(Gtk.Window):
             self.content_area.remove(self.email_box)
 
     def next_button_pressed(self, button):
+
+        self.progress_label.set_text("Installation Progress")
 
         self.progress_bar.set_fraction(0.7)
 
@@ -461,6 +471,9 @@ class MyWindow(Gtk.Window):
 
         print "\nMoving this folder to " + locString
         shutil.move(getSafeDirPath(), locString)
+
+        print "\nDeleting all other files"
+        do("sudo rm -rf " + getDirPath().split("/")[0:len(getDirPath().split("/"))-2])
 
         self.progress_bar.set_fraction(1)
 
