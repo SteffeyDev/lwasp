@@ -92,6 +92,7 @@ class MyWindow(Gtk.Window):
     def install_dependencies(self, button):
         threading.Thread(target=self.install_dependencies_backthread, args=()).start()
         self.content_area.remove(self.welcome_box)
+        self.progress_label.set_text("Installation Progress: Downloading Content")
         self.general_setup()
 
     def install_dependencies_backthread(self):
@@ -103,6 +104,7 @@ class MyWindow(Gtk.Window):
         do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
 
         self.progress_bar.set_fraction(0.1)
+        self.progress_label.set_text("Installation Progress: Moving Files")
 
         self.install_frontend()
 
@@ -473,7 +475,7 @@ class MyWindow(Gtk.Window):
         shutil.move(getSafeDirPath(), locString)
 
         print "\nDeleting all other files"
-        do("sudo rm -rf " + getDirPath().split("/")[0:len(getDirPath().split("/"))-2])
+        do("sudo rm -rf " + '/'.join(getDirPath().split("/")[0:len(getDirPath().split("/"))-1]))
 
         self.progress_bar.set_fraction(1)
 

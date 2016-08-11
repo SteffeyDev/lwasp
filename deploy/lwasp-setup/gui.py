@@ -20,6 +20,7 @@ from firewall import FirewallBox
 from backdoor import BackdoorBox
 from misc import MiscBox
 from intro import IntroDialog
+from gui_utility import *
 
 import w
 w.init()
@@ -44,7 +45,7 @@ class MyWindow(Gtk.Window):
 
 		self.add(master_box)
 
-		self.set_icon_from_file(self.get_resource_path("icon.png"))
+		self.set_icon_from_file(get_resource_path("icon.png"))
 
 		for i in range(0, 8):
 			page = Gtk.Box()
@@ -84,12 +85,6 @@ class MyWindow(Gtk.Window):
 		dialog.run()
 		dialog.destroy()
 
-	def get_resource_path(self, rel_path):
-	    dir_of_py_file = os.path.dirname(__file__)
-	    rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
-	    abs_path_to_resource = os.path.abspath(rel_path_to_resource)
-	    return abs_path_to_resource
-
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
 		with open('elements.csv', 'w') as elements:
@@ -98,7 +93,7 @@ class MyWindow(Gtk.Window):
 		with open('commands.bash', 'w') as commands:
 			for item in w.commands:
 				commands.write(item + '\n')
-		os.system('sudo mv elements.csv ../lwasp-engine/')
+		os.system('sudo mv elements.csv ../lwasp-install/')
 		os.system('sudo chmod +x commands.bash')
 
 		Gtk.main_quit()
@@ -108,9 +103,10 @@ win.connect('delete-event', Gtk.main_quit)
 win.show_all()
 Gtk.main()
 
-print "run after"
-
 win.destroy()
+win = None
+
+to_run = ""
 
 class interWindow(Gtk.Window):
 	def __init__(self):
@@ -119,6 +115,8 @@ class interWindow(Gtk.Window):
 
 		master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 		master_box.set_border_width(10)
+
+		self.set_icon_from_file(get_resource_path("icon.png"))
 
 		label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
 		label.set_line_wrap(True)
@@ -133,18 +131,22 @@ class interWindow(Gtk.Window):
 		self.add(master_box)
 
 	def launch_install(self, button):
-		os.system("cd ..; /bin/bash lwasp-install &")
+		global to_run
+		to_run = "cd ..; /bin/bash install"
 		Gtk.main_quit()
+		self.destroy()
 
 	def end(self, button):
-		show_error(self, "Modification", "Feel free to modify this image and the elements.csv file in the lwasp-engine folder to score advanced items.  Run ./lwasp-install to continue with the installation")
+		show_error(self, "Modification", "Feel free to modify this image and the elements.csv file in the lwasp-install folder to change names, point values, and score advanced items.  Run ./install to continue with the installation", Gtk.MessageType.INFO)
 		Gtk.main_quit()
+		self.destroy()
 
-win = interWindow()
-win.connect('delete-event', Gtk.main_quit)
-win.show_all()
+win2 = interWindow()
+win2.connect('delete-event', Gtk.main_quit)
+win2.show_all()
 Gtk.main()
 
-win.destroy()
+win2.destroy()
+win2 = None
 
-sys.exit()
+os.system(to_run)

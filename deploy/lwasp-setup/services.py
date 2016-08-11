@@ -24,12 +24,10 @@ class AppsBox(Gtk.ScrolledWindow):
             self.valid_services.append(service)
 
         # time consuming
-        updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE).communicate()[1]
+        updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[1]
         self.updates = updates_string.rstrip()
 
         self.entries = []
-
-
 
         for i in range(0,3):
             container_box = Gtk.Box(spacing=5)
