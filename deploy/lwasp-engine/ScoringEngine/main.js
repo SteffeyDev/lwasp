@@ -276,7 +276,8 @@ var Main = React.createClass({displayName: "Main",
           React.createElement("h3", {style: leftStyle}, numberOfPenalties, " penalties assessed, for a loss of ", pointsLost, " points:"), 
           React.createElement("li", {style: listStyle}, penaltyList), 
           React.createElement("h3", {style: leftStyle}, numberOfComplete, " out of ", numberTotal, " scored security issues fixed, for a gain of ", pointsGained, " points:"), 
-          completeList.length == 0 ? React.createElement("h3", {style: leftStyle}, "Get out there and score some points!") : React.createElement("li", {style: listStyle}, completeList)
+          React.createElement("li", {style: listStyle}, completeList), 
+          completeList.length == 0 ? React.createElement("h3", {style: leftStyle}, "Get out there and score some points!") : null
         )
       )
     );

@@ -276,7 +276,8 @@ var Main = React.createClass({
           <h3 style={leftStyle}>{numberOfPenalties} penalties assessed, for a loss of {pointsLost} points:</h3>
           <li style={listStyle}>{penaltyList}</li>
           <h3 style={leftStyle}>{numberOfComplete} out of {numberTotal} scored security issues fixed, for a gain of {pointsGained} points:</h3>
-          {completeList.length == 0 ? <h3 style={leftStyle}>Get out there and score some points!</h3> : <li style={listStyle}>{completeList}</li>}
+          <li style={listStyle}>{completeList}</li>
+          {completeList.length == 0 ? <h3 style={leftStyle}>Get out there and score some points!</h3> : null}
         </div>
       </div>
     );

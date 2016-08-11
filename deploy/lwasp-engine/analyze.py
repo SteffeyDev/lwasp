@@ -45,7 +45,6 @@ def checkFileContents(filepath, contents, mode):
             file = codecs.open(string.replace(filepath, '~', expanduser("~")),'r','utf-8') # open(string.replace(filepath, '~', expanduser("~")), 'r') # if ~ exists in string, replace it with the user's home directory absolute path
             text = file.read()
             text = string.replace(text, "\n", "(<^>]")
-            text = ' '.join(file.read().split())
             text = string.replace(text, "\"", "")
             text_list = text.split("(<^>]")
             contains = string.replace(contains, "\"", "")

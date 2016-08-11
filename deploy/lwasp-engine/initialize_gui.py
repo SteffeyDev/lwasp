@@ -30,7 +30,7 @@ def show_error(top, title, message, type=Gtk.MessageType.ERROR):
 #creates dictionary object to hold objects
 settings = {}
 usersettings = {}
-locString = "/etc"
+locString = "/etc/lwasp"
 
 class MyWindow(Gtk.Window):
     def __init__(self):
