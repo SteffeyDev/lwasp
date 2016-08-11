@@ -224,7 +224,7 @@ def notify(title, message):
 
 #Sets up an inotifywait on the file passed in to call analyze.py on file change, delete, etc
 def watch(filepath):
-    do("while true; do sudo inotifywait -e modify,close_write,moved_to,create,delete " + filepath + " && sudo python analyze.py; done &")
+    do("while true; do sudo inotifywait -e modify,close_write,moved_to,create,delete " + filepath + " && sudo python /etc/lwasp/analyze; done &")
 
 def encode(thing):
     textStr = "{"

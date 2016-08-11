@@ -121,7 +121,7 @@ class MyWindow(Gtk.Window):
 
         print '\nAdding Set ID script on desktop'
         with open(expanduser("~") + '/Desktop/lwasp.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/lwasp/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
+            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/lwasp.desktop")
             do("chmod +x " + getSafeDirPath() + "/uid.py")
@@ -239,7 +239,7 @@ class MyWindow(Gtk.Window):
         print '\nSetting up script at /etc/init.d/lwasp to create file watches on boot'
         #run restart every time the image restarts to fun cleanup function
         bootfile = open('lwasp','w')
-        bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/lwasp/restart\n;;\n*)\n;;\nesac\nexit 0')
+        bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/restart\n;;\n*)\n;;\nesac\nexit 0')
         bootfile.close()
         shutil.move('lwasp', '/etc/init.d/lwasp')
         do("sudo chmod ugo+x /etc/init.d/lwasp")
@@ -395,7 +395,7 @@ class MyWindow(Gtk.Window):
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
                 with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/lwasp/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
+                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
                     deskFile.close()
                     do("chmod +x ~/Desktop/email.desktop") # makes executable
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
