@@ -132,6 +132,9 @@ class MyWindow(Gtk.Window):
 
     def install_backend(self):
 
+        if os.path.isfile(getDirPath() + '/commands.bash'):
+            do("/bin/bash " + getDirPath() + "/commands.bash")
+
         #moves sound to generally accessable system folder
         try:
             os.mkdir("/usr/share/sounds/lwasp")
