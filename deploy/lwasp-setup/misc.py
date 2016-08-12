@@ -123,6 +123,12 @@ class MiscBox(Gtk.ScrolledWindow):
 
         self.add_with_viewport(master_box)
 
+    def update_users(self):
+        users = w.users
+        self.extras[0].remove_all()
+        for user in users:
+            self.extras[0].append_text(user)
+
     def check_button_clicked(self, button):
         i = button.type
 

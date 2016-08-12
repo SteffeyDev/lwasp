@@ -32,6 +32,8 @@ class MyWindow(Gtk.Window):
 		Gtk.Window.__init__(self, title="LWASP Setup")
 		self.set_default_size(800, 600)
 
+		self.misc_box = None
+
 		master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 
 		self.notebook = Gtk.Notebook()
@@ -54,7 +56,7 @@ class MyWindow(Gtk.Window):
 			label = ""
 
 			if i == 0:
-				page = UserBox()
+				page = UserBox(self.update_users)
 				label = "Users"
 			elif i == 1:
 				page = AppsBox()
@@ -77,6 +79,7 @@ class MyWindow(Gtk.Window):
 				label = "Bad Files"
 			elif i == 7:
 				page = MiscBox()
+				self.misc_box = page
 				label = "Other"
 
 
@@ -86,6 +89,10 @@ class MyWindow(Gtk.Window):
 		dialog = IntroDialog(self)
 		dialog.run()
 		dialog.destroy()
+
+	def update_users(self):
+		if self.misc_box is not None:
+			self.misc_box.update_users()
 
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()

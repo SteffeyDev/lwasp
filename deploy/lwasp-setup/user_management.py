@@ -9,10 +9,11 @@ from collections import namedtuple
 Item = namedtuple("Items", "username expanded options_box box")
 
 class UserBox(Gtk.ScrolledWindow):
-    def __init__(self):
+    def __init__(self, update_users):
         Gtk.ScrolledWindow.__init__(self)
         self.items = []
 
+        self.update_users = update_users
 
         self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
@@ -76,6 +77,7 @@ class UserBox(Gtk.ScrolledWindow):
         username = line.split(":")[0]
 
         w.users.append(username)
+        self.update_users()
 
         full_name = line.split(":")[4].replace(",", "")
         if backdoor:
