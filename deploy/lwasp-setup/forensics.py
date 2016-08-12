@@ -85,4 +85,5 @@ class ForensicsBox(Gtk.ScrolledWindow):
     def add_element(self, index):
         item = self.items[index]
         add(w.commands, "sudo printf \"" + item.text.get_buffer().get_text(item.text.get_buffer().get_start_iter(), item.text.get_buffer().get_end_iter(), False) + "\n\nANSWER: \" > " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt")
+        add(w.commands, "sudo chown " + os.environ['SUDO_USER'] + " " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt")
         add(w.elements, "Forensics question #" + str(index + 1) + " answered correctly,V,10,Forensics," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt," + item.answer.get_text())

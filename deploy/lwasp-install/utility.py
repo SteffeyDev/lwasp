@@ -261,9 +261,6 @@ def playSound(type):
     except:
         return
 
-    #user = os.environ['SUDO_USER'];
-    #os.setuid(pwd.getpwnam(user)[2])
-
     if type == "new" or type == "both":
         pygame.mixer.music.load("/usr/share/sounds/lwasp/success.wav")
         pygame.mixer.music.play()
