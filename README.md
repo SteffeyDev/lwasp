@@ -1,4 +1,4 @@
-![logo.png](https://bitbucket.org/repo/g4odBK/images/2853706246-logo.png)
+![icon.png](https://bitbucket.org/repo/g4odBK/images/4257456251-icon.png)
 #LWASP
 
 ###### The Linux Watchful Adaptive Security Compliance
@@ -12,7 +12,7 @@
 ## Initialization
 1. Drag the ```deploy``` folder onto the desktop of the image that you want to install LWASP on.
 2. Open a command prompt (terminal) on the image and run the following commands:
-  * ``` cd ~/Desktop/lwasp ```
+  * ``` cd ~/Desktop/deploy ```
   * ``` ./setup ```
 3. Check what you want to score, and then follow the prompts to install LWASP on the image.
 
