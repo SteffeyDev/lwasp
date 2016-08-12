@@ -183,11 +183,13 @@ class UserBox(Gtk.ScrolledWindow):
         if username == "" or full_name == "" or password == "":
             show_error(self.get_toplevel(), "Insufficient Information", "You must fill out all three fields to create a user")
             return
+        self.admins.append(username)
         self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
         self.refresh_after_add()
         add(w.commands, "sudo useradd -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
         add(w.commands, "sudo usermod -aG sudo " + username)
+
 
     def refresh_after_add(self):
         self.master_box.show_all()

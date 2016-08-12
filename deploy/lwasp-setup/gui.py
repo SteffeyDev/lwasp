@@ -89,19 +89,18 @@ class MyWindow(Gtk.Window):
 
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
-		export = "Scoring Item,Points,Penalty"
 		with open('elements.csv', 'w') as elements:
-			for item in w.elements:
-				elements.write(item + '\n')
-				export += item.split(",")[0] + "," + item.split(",")[2] + "," + ("*" if item.split(",")[1] == "P" else "") + "\n"
+			with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/Elements-Coach\'s-Copy.csv', 'w') as export:
+				export.write("Scoring Item,Points,Penalty\n")
+				for item in w.elements:
+					elements.write(item + '\n')
+					export.write(item.split(",")[0] + "," + item.split(",")[2] + "," + ("*" if item.split(",")[1] == "P" else "") + "\n")
+				export.close()
 			elements.close()
 		with open('commands.bash', 'w') as commands:
 			for item in w.commands:
 				commands.write(item + '\n')
 			commands.close()
-		with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/Elements-Coach\'s-Copy.csv', 'w') as export:
-			export.write(export)
-			export.close()
 		os.system('sudo mv elements.csv ../lwasp-install/')
 		os.system('sudo mv commands.bash ../lwasp-install/')
 		os.system('sudo chmod +x commands.bash')
