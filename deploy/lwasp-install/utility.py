@@ -21,9 +21,7 @@ except:
 try:
     import pygame
 except:
-    print "\nInstalling python-pygame library..."
-    do('sudo apt-get install python-pygame -y --force-yes')
-    import pygame
+    print "pygame not installed"
 
 def internet_on():
     try:

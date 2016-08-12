@@ -106,7 +106,7 @@ class UserBox(Gtk.ScrolledWindow):
             if i == 1:
                 if backdoor: continue
                 if username not in self.admins: continue
-                label = "Score for Revoking Admin Acess"
+                label = "Score for Revoking Admin Access"
             if i == 2:
                 label = "Score for Account Deletion"
             if i == 3:
@@ -155,6 +155,7 @@ class UserBox(Gtk.ScrolledWindow):
         if username == "" or full_name == "" or password == "":
             show_error(self.get_toplevel(), "Insufficient Information", "You must fill out all three fields to create a user")
             return
+
         self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
         self.refresh_after_add()
         add(w.commands, "sudo useradd -c \"" + full_name + "\" " + username)
@@ -173,6 +174,7 @@ class UserBox(Gtk.ScrolledWindow):
         add(w.commands, "sudo useradd -M -d / -G sudo -u " + str(user_id) + " -c \"" + full_name + "\" " + username)
         add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
         add(w.commands, "sudo shuf -o /etc/passwd /etc/passwd")
+        add(w.commands, "sudo shuf -o /etc/group /etc/group")
         add(w.elements, "Backdoor user " + username + " removed,V,5,FileContents,/etc/passwd,FALSE," + username)
         # add user to system and elements file
 

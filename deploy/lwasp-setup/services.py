@@ -181,10 +181,9 @@ class AppsBox(Gtk.ScrolledWindow):
                 filename = '/bin/' + services[item.name]
             elif isfile('/sbin/' + services[item.name]):
                 filename = '/sbin/' + services[item.name]
-            # if filename == "":
-            #     button.set_active(False)
-            #     show_error(self.get_toplevel(), "Service reference file not found", "Files that reference the service " + item.name + " could not be found on your system, please pick a different service")
-
+            else:
+                filename = '/usr/bin/' + item.name
+        
         if button.type == 0:
             add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + services[item.name] + ',FALSE')
         elif button.type == 1:

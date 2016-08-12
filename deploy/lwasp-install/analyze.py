@@ -224,21 +224,53 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         print "Checking element " + str(i+1)
         function = False # function is goine to be a boolean value
         if row['type'] == "FileContents":
-            function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
+            if len(row['extras']) == 3:
+                function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "FileExistance":
-            function = checkFileExists(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkFileExists(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Service":
-            function = checkServiceRunning(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkServiceRunning(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Forensics":
-            function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
+            if len(row['extras']) == 2:
+                function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Updates":
-            function = checkUpdates(row['extras'][0], row['extras'][1])
+            if len(row['extras']) == 2:
+                function = checkUpdates(row['extras'][0], row['extras'][1])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Permissions":
-            function = checkPermissions(row['extras'][0], row['extras'][1])
+            if len(row['extras']) == 2:
+                function = checkPermissions(row['extras'][0], row['extras'][1])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Command":
-            function = checkCommand(row['extras'][0], row['extras'][2], parseBool(row['extras'][1]))
+            if len(row['extras']) == 3:
+                function = checkCommand(row['extras'][0], row['extras'][2], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Port":
-            function = checkPort(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkPort(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
 
         #nil case, can't find what is needed for this element
         if function is None:

@@ -4,7 +4,7 @@
 #Needed import statemnts
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, GObject
 import os
 import string
 import json
@@ -28,6 +28,9 @@ def show_error(top, title, message, type=Gtk.MessageType.ERROR):
     dialog.destroy()
 
 import threading
+import time
+
+GObject.threads_init()
 
 #creates dictionary object to hold objects
 settings = {}
@@ -86,25 +89,24 @@ class MyWindow(Gtk.Window):
         abs_path_to_resource = os.path.abspath(rel_path_to_resource)
         return abs_path_to_resource
 
-    def update_progress(self, fraction):
+    def update_progress(self, fraction, title):
         self.progress_bar.set_fraction(fraction)
+        self.progress_label.set_text("Installation Progress: " + title)
 
     def install_dependencies(self, button):
         threading.Thread(target=self.install_dependencies_backthread, args=()).start()
         self.content_area.remove(self.welcome_box)
-        self.progress_label.set_text("Installation Progress: Downloading Content")
         self.general_setup()
 
     def install_dependencies_backthread(self):
 
-        self.progress_bar.set_fraction(0.02)
+        GObject.idle_add(lambda: self.update_progress(0.02, "Downloading Content"))
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
         do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
 
-        self.progress_bar.set_fraction(0.1)
-        self.progress_label.set_text("Installation Progress: Moving Files")
+        GObject.idle_add(lambda: self.update_progress(0.1, "Moving Files"))
 
         self.install_frontend()
 
@@ -135,13 +137,11 @@ class MyWindow(Gtk.Window):
             do("chmod +x ~/Desktop/lwasp.desktop")
             do("chmod +x " + getSafeDirPath() + "/uid.py")
 
-        self.progress_bar.set_fraction(0.2)
+        GObject.idle_add(lambda: self.update_progress(0.2, "Creating Vulnerabilities"))
 
         self.install_backend()
 
     def install_backend(self):
-
-        self.progress_label.set_text("Installation Progress: Creating Vulnerabilities")
 
         if os.path.isfile(getDirPath() + '/commands.bash'):
             os.system("/bin/bash " + getDirPath() + "/commands.bash")
@@ -160,7 +160,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        self.progress_bar.set_fraction(0.25)
+        GObject.idle_add(lambda: self.update_progress(0.25, "Analyzing Scoring Elements"))
 
         try:
             #Open input file and new file
@@ -245,7 +245,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        self.progress_bar.set_fraction(0.3)
+        GObject.idle_add(lambda: self.update_progress(0.3, "Moving Files"))
 
         #creates scores file to only store parts of the recording file to show on the scoring html page
         with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
@@ -261,7 +261,7 @@ class MyWindow(Gtk.Window):
         do("sudo chmod ugo+x /etc/init.d/lwasp")
         do("sudo update-rc.d lwasp defaults")
 
-        self.progress_bar.set_fraction(0.4)
+        GObject.idle_add(lambda: self.update_progress(0.4, "Compiling Python"))
 
         #makes sure competitor can't modify code to reveal what is scored
         print '\nCompiling python'
@@ -280,9 +280,8 @@ class MyWindow(Gtk.Window):
         print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
         do("sudo bash cron.bash")
 
-        self.progress_bar.set_fraction(0.5)
-
-        self.progress_label.set_text("Installation Progress: Waiting on User Input")
+        GObject.idle_add(lambda: self.update_progress(0.5, "Waiting on User Input"))
+        GObject.idle_add(lambda: self.next_button.show())
 
     def general_setup(self):
 
@@ -348,13 +347,15 @@ class MyWindow(Gtk.Window):
         self.email_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
         next_box = Gtk.Box(spacing=10)
-        next_button = Gtk.Button(label="Continue")
-        next_button.props.halign = Gtk.Align.END
-        next_button.connect("clicked", self.next_button_pressed)
-        next_box.pack_end(next_button, False, False, 0)
+        self.next_button = Gtk.Button(label="Continue")
+        self.next_button.props.halign = Gtk.Align.END
+        self.next_button.connect("clicked", self.next_button_pressed)
+        next_box.pack_end(self.next_button, False, False, 0)
         self.content_area.pack_end(next_box, False, False, 0)
 
         self.content_area.show_all()
+
+        self.next_button.hide()
 
 
     def email_button_changed(self, button):
@@ -467,10 +468,13 @@ class MyWindow(Gtk.Window):
 
         user = os.environ['SUDO_USER'];
         print "\nDeleting Bash History"
-        do("sudo -u " + user + " bash -c 'history -c; echo \"\" > ~/.bash_history'")
+        do("sudo -u " + user + " bash -c 'history -c; echo '' > ~/.bash_history'")
+
+        print "\nDeleting Authentication Logs"
+        do("sudo echo '' > /var/log/auth.log")
 
         print "\nRemoving Unused backdoors"
-        os.remove('backdoors')
+        shutil.rmtree('backdoors')
 
         print "\nMoving this folder to " + locString
         shutil.move(getSafeDirPath(), locString)
