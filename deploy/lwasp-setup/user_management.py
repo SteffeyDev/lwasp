@@ -36,6 +36,7 @@ class UserBox(Gtk.ScrolledWindow):
         number_of_lines = 0
         for line in users:
             if int(line.split(":")[2]) < 1000: continue
+            if "nobody" in line: continue
 
             self.add_row(line)
 
@@ -60,8 +61,11 @@ class UserBox(Gtk.ScrolledWindow):
         add_admin.props.halign = Gtk.Align.END
         add_backdoor.connect("clicked", self.add_backdoor_user)
         add_user.connect("clicked", self.add_user)
+        add_admin.connect("clicked", self.add_admin)
         self.add_box.pack_end(add_backdoor, False, False, 0)
+        self.add_box.pack_end(add_admin, False, False, 0)
         self.add_box.pack_end(add_user, False, False, 0)
+        self.add_box.pack_end(add_label, False, False, 0)
         self.master_box.pack_start(self.add_box, False, False, 0)
 
         self.add_with_viewport(self.master_box)
@@ -171,6 +175,19 @@ class UserBox(Gtk.ScrolledWindow):
         add(w.commands, "sudo shuf -o /etc/passwd /etc/passwd")
         add(w.elements, "Backdoor user " + username + " removed,V,5,FileContents,/etc/passwd,FALSE," + username)
         # add user to system and elements file
+
+    def add_admin(self, button):
+        username = self.username_entry.get_text()
+        full_name = self.name_entry.get_text()
+        password = self.password_entry.get_text()
+        if username == "" or full_name == "" or password == "":
+            show_error(self.get_toplevel(), "Insufficient Information", "You must fill out all three fields to create a user")
+            return
+        self.add_row(self.username_entry.get_text() + ": : : :" + full_name)
+        self.refresh_after_add()
+        add(w.commands, "sudo useradd -c \"" + full_name + "\" " + username)
+        add(w.commands, "echo " + username + ":" + password + " | sudo chpasswd ")
+        add(w.commands, "sudo usermod -aG sudo " + username)
 
     def refresh_after_add(self):
         self.master_box.show_all()
