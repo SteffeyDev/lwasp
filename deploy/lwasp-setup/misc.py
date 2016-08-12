@@ -157,7 +157,7 @@ class MiscBox(Gtk.ScrolledWindow):
             add(w.elements, "Insecure sudo configuration file removed,V,12,FileExistance,/etc/sudoers.d/extra,FALSE")
         elif i == 2:
             add(w.commands, "sudo crontab -l > mycron; echo \"*/5 * * * * sudo ufw disable\" >> mycron; sudo crontab mycron; rm mycron")
-            add(w.elements, "Scheduled task that turns off firewall removed,V,8,Command,sudo crontab -l,FALSE,sudo ufw enable")
+            add(w.elements, "Scheduled task that turns off firewall removed,V,8,Command,sudo crontab -l,FALSE,sudo ufw disable")
         elif i == 3:
             add(w.commands, "sudo crontab -l > mycron; echo \"*/2 * * * * nc -l -v 9999\" >> mycron; sudo crontab mycron; rm mycron")
             add(w.elements, "Scheduled task that launches netcat backdoor removed,V,8,Command,sudo crontab -l,FALSE,nc -l")

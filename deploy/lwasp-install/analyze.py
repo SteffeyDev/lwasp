@@ -49,12 +49,16 @@ def checkFileContents(filepath, contents, mode):
             text = string.replace(text, "\"", "")
             text_list = text.split("(<^>]")
             contains = string.replace(contains, "\"", "")
+            contains = ' '.join(contains.split())
             if debug:
                 print "Looking for text:", contains
                 print "File text:", text
             if mode:
                 if "~" in contains:
                     contains_pieces = contains.split("~")
+                    if contains_pieces[0] not in text:
+                        file.close()
+                        return False
                     for line in text_list:
                         if contains_pieces[0] in line and contains_pieces[1] not in line:
                             file.close()

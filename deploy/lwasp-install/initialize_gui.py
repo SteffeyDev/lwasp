@@ -366,10 +366,11 @@ class MyWindow(Gtk.Window):
             self.content_area.remove(self.email_box)
 
     def next_button_pressed(self, button):
+        threading.Thread(target=self.next_button_pressed_backthread, args=()).start()
 
-        self.progress_label.set_text("Installation Progress")
+    def next_button_pressed_backthread(self):
 
-        self.progress_bar.set_fraction(0.7)
+        GObject.idle_add(lambda: self.update_progress(0.7, "Processing Input"))
 
         if self.name_entry.get_text() == "":
             show_error(self, "Name Needed", "Please enter a Common Name for this image")
@@ -420,35 +421,37 @@ class MyWindow(Gtk.Window):
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
             sendEmail(message, settings)
 
-            self.progress_bar.set_fraction(0.8)
-
-            self.check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
-            self.check_dialog.set_default_size(200, 100)
-            vbox = self.check_dialog.get_content_area()
-            email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
-            email_label.set_line_wrap(True)
-            vbox.pack_start(email_label, False, False, 0)
-            vbox.pack_start(Gtk.HSeparator(), False, False, 0)
-            vbox.props.spacing = 6
-
-            recieved_button = Gtk.Button(label="Email Recieved")
-            recieved_button.connect("clicked", self.finish_installation)
-            vbox.pack_start(recieved_button, False, False, 0)
-
-            not_recieved_button = Gtk.Button(label="Email NOT Recieved")
-            not_recieved_button.connect("clicked", self.email_not_recieved)
-            vbox.pack_start(not_recieved_button, False, False, 0)
-            vbox.set_border_width(10)
-            vbox.show_all()
-
-            self.check_dialog.set_modal(True)
-            self.check_dialog.run()
+            GObject.idle_add(lambda: self.update_progress(0.8, "Waiting on User Input"))
+            GObject.idle_add(lambda: self.launch_email_check_dialog)
 
         else:
             settings['email'] = 'n/a'
             if os.path.isfile('emailz.py'):
                 os.remove('emailz.py')
             self.finish_installation()
+
+    def launch_email_check_dialog(self):
+        self.check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
+        self.check_dialog.set_default_size(200, 100)
+        vbox = self.check_dialog.get_content_area()
+        email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
+        email_label.set_line_wrap(True)
+        vbox.pack_start(email_label, False, False, 0)
+        vbox.pack_start(Gtk.HSeparator(), False, False, 0)
+        vbox.props.spacing = 6
+
+        recieved_button = Gtk.Button(label="Email Recieved")
+        recieved_button.connect("clicked", self.finish_installation)
+        vbox.pack_start(recieved_button, False, False, 0)
+
+        not_recieved_button = Gtk.Button(label="Email NOT Recieved")
+        not_recieved_button.connect("clicked", self.email_not_recieved)
+        vbox.pack_start(not_recieved_button, False, False, 0)
+        vbox.set_border_width(10)
+        vbox.show_all()
+
+        self.check_dialog.set_modal(True)
+        self.check_dialog.run()
 
     def email_not_recieved(self, button):
         self.check_dialog.destroy()
@@ -459,7 +462,10 @@ class MyWindow(Gtk.Window):
             self.check_dialog.destroy()
         except:
             h = "ignore"
-        self.progress_bar.set_fraction(0.9)
+        self.update_progress(0.9, "Finishing Up")
+        threading.Thread(target=self.finish_installation_backthread, args=()).start()
+
+    def finish_installation_backthread(self):
 
         saveSettings(settings)
         saveUserSettings(usersettings)
@@ -471,7 +477,7 @@ class MyWindow(Gtk.Window):
         do("sudo -u " + user + " bash -c 'history -c; echo '' > ~/.bash_history'")
 
         print "\nDeleting Authentication Logs"
-        do("sudo echo '' > /var/log/auth.log")
+        do("sudo chmod 664 /var/log/auth.log; sudo echo '' > /var/log/auth.log; sudo chmod 640 /var/log/auth.log")
 
         print "\nRemoving Unused backdoors"
         shutil.rmtree('backdoors')
@@ -482,7 +488,10 @@ class MyWindow(Gtk.Window):
         print "\nDeleting all other files"
         do("sudo rm -rf " + '/'.join(getDirPath().split("/")[0:len(getDirPath().split("/"))-1]))
 
-        self.progress_bar.set_fraction(1)
+        GObject.idle_add(lambda: self.update_progress(1, "Done"))
+        GObject.idle_add(lambda: self.finish())
+
+    def finish(self):
 
         show_error(self, "Scoring Engine Initialized", "Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.", Gtk.MessageType.INFO)
         Gtk.main_quit()
