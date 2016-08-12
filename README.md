@@ -1,4 +1,4 @@
-![logo.png](https://bitbucket.org/repo/g4odBK/images/2853706246-logo.png)
+![icon.png](https://bitbucket.org/repo/g4odBK/images/2580511401-icon.png)
 #LWASP
 
 ###### The Linux Watchful Adaptive Security Compliance
