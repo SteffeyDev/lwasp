@@ -62,7 +62,7 @@ class BackdoorBox(Gtk.ScrolledWindow):
         note_label.set_line_wrap(True)
         master_box.pack_end(note_label, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type

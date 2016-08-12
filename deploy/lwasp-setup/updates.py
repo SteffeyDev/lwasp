@@ -26,7 +26,7 @@ class UpdatesBox(Gtk.ScrolledWindow):
             check_button.type = i
             master_box.pack_start(check_button, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type

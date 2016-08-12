@@ -22,7 +22,7 @@ try:
     import pygame
 except:
     print "\nInstalling python-pygame library..."
-    do('sudo apt-get install python-pygame -y')
+    do('sudo apt-get install python-pygame -y --force-yes')
     import pygame
 
 def internet_on():

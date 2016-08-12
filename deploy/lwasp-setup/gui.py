@@ -94,6 +94,7 @@ class MyWindow(Gtk.Window):
 			for item in w.commands:
 				commands.write(item + '\n')
 		os.system('sudo mv elements.csv ../lwasp-install/')
+		os.system('sudo mv commands.bash ../lwasp-install/')
 		os.system('sudo chmod +x commands.bash')
 
 		Gtk.main_quit()

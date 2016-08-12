@@ -32,7 +32,7 @@ class ForensicsBox(Gtk.ScrolledWindow):
         note_label.set_line_wrap(True)
         self.master_box.pack_end(note_label, False, False, 0)
 
-        self.add(self.master_box)
+        self.add_with_viewport(self.master_box)
 
     def add_row(self):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
@@ -85,4 +85,4 @@ class ForensicsBox(Gtk.ScrolledWindow):
     def add_element(self, index):
         item = self.items[index]
         add(w.commands, "sudo printf \"" + item.text.get_buffer().get_text(item.text.get_buffer().get_start_iter(), item.text.get_buffer().get_end_iter(), False) + "\n\nANSWER: \" > " + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt")
-        add(w.elements, "Forensics question #" + str(index + 1) + " answered correctly,V,10,ForensicsQuestion," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt," + item.answer.get_text())
+        add(w.elements, "Forensics question #" + str(index + 1) + " answered correctly,V,10,Forensics," + expanduser("~") + "/Desktop/ForensicsQuestion" + str(index + 1) + ".txt," + item.answer.get_text())

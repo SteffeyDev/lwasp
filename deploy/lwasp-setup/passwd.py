@@ -45,7 +45,7 @@ class PasswdBox(Gtk.ScrolledWindow):
 
             master_box.pack_start(container_box, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type

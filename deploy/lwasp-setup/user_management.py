@@ -60,7 +60,7 @@ class UserBox(Gtk.ScrolledWindow):
         self.add_box.pack_end(add_user, False, False, 0)
         self.master_box.pack_start(self.add_box, False, False, 0)
 
-        self.add(self.master_box)
+        self.add_with_viewport(self.master_box)
 
     def add_row(self, line, backdoor=False):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)

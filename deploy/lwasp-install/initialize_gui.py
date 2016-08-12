@@ -141,8 +141,12 @@ class MyWindow(Gtk.Window):
 
     def install_backend(self):
 
+        self.progress_label.set_text("Installation Progress: Creating Vulnerabilities")
+
         if os.path.isfile(getDirPath() + '/commands.bash'):
-            do("/bin/bash " + getDirPath() + "/commands.bash")
+            os.system("/bin/bash " + getDirPath() + "/commands.bash")
+            os.remove(getDirPath() + "/commands.bash")
+            print "\n vulnerabilities installed"
 
         #moves sound to generally accessable system folder
         try:
@@ -282,8 +286,6 @@ class MyWindow(Gtk.Window):
 
     def general_setup(self):
 
-        print("beginning method")
-
         name_box = Gtk.Box(spacing=5)
         name_label = Gtk.Label("Image Common Name: ")
         self.name_entry = Gtk.Entry()
@@ -311,10 +313,10 @@ class MyWindow(Gtk.Window):
         self.email_button.connect("clicked", self.email_button_changed)
         self.content_area.pack_start(self.email_button, False, False, 0)
         self.email_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        hbox1 = Gtk.Box(spacing=8)
-        hbox2 = Gtk.Box(spacing=15)
+        hbox1 = Gtk.Box(spacing=10)
+        hbox2 = Gtk.Box(spacing=20)
         hbox3 = Gtk.Box()
-        hbox4 = Gtk.Box(spacing=4)
+        hbox4 = Gtk.Box(spacing=3)
         self.email_address_entry = Gtk.Entry(placeholder_text="e.g. email@example.com")
         self.email_address_entry.set_width_chars(30)
         hbox1.pack_start(Gtk.Label("Email Address: "), False, False, 0)
@@ -353,9 +355,6 @@ class MyWindow(Gtk.Window):
         self.content_area.pack_end(next_box, False, False, 0)
 
         self.content_area.show_all()
-
-        print "got through method"
-
 
 
     def email_button_changed(self, button):
@@ -422,9 +421,9 @@ class MyWindow(Gtk.Window):
 
             self.progress_bar.set_fraction(0.8)
 
-            check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
-            check_dialog.set_default_size(200, 100)
-            vbox = check_dialog.get_content_area()
+            self.check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
+            self.check_dialog.set_default_size(200, 100)
+            vbox = self.check_dialog.get_content_area()
             email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
             email_label.set_line_wrap(True)
             vbox.pack_start(email_label, False, False, 0)
@@ -441,10 +440,9 @@ class MyWindow(Gtk.Window):
             vbox.set_border_width(10)
             vbox.show_all()
 
-            check_dialog.set_modal(True)
-            check_dialog.run()
+            self.check_dialog.set_modal(True)
+            self.check_dialog.run()
 
-            self.check_dialog = check_dialog
         else:
             settings['email'] = 'n/a'
             if os.path.isfile('emailz.py'):
@@ -470,6 +468,9 @@ class MyWindow(Gtk.Window):
         user = os.environ['SUDO_USER'];
         print "\nDeleting Bash History"
         do("sudo -u " + user + " bash -c 'history -c; echo \"\" > ~/.bash_history'")
+
+        print "\nRemoving Unused backdoors"
+        os.remove('backdoors')
 
         print "\nMoving this folder to " + locString
         shutil.move(getSafeDirPath(), locString)
