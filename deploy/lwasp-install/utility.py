@@ -259,7 +259,7 @@ def playSound(type):
         pygame.init()
         pygame.mixer.init()
     except:
-        exit()
+        return
 
     #user = os.environ['SUDO_USER'];
     #os.setuid(pwd.getpwnam(user)[2])

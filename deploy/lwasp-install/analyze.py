@@ -228,7 +228,7 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         print "Checking element " + str(i+1)
         function = False # function is goine to be a boolean value
         if row['type'] == "FileContents":
-            if len(row['extras']) == 3:
+            if len(row['extras']) >= 3:
                 function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
             else:
                 if debug:
@@ -246,7 +246,7 @@ with open(getDirPath() + '/recording', 'r') as readFile:
                 if debug:
                     print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Forensics":
-            if len(row['extras']) == 2:
+            if len(row['extras']) >= 2:
                 function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
             else:
                 if debug:

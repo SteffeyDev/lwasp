@@ -104,7 +104,7 @@ class MyWindow(Gtk.Window):
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
-        do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
+        do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y --force-yes")
 
         GObject.idle_add(lambda: self.update_progress(0.1, "Moving Files"))
 
@@ -281,7 +281,7 @@ class MyWindow(Gtk.Window):
         do("sudo bash cron.bash")
 
         GObject.idle_add(lambda: self.update_progress(0.5, "Waiting on User Input"))
-        GObject.idle_add(lambda: self.next_button.show())
+        GObject.idle_add(lambda: self.add_next_button())
 
     def general_setup(self):
 
@@ -346,6 +346,9 @@ class MyWindow(Gtk.Window):
         self.email_box.pack_start(note_label_2, False, False, 0)
         self.email_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
+        self.content_area.show_all()
+
+    def add_next_button(self):
         next_box = Gtk.Box(spacing=10)
         self.next_button = Gtk.Button(label="Continue")
         self.next_button.props.halign = Gtk.Align.END
@@ -354,8 +357,6 @@ class MyWindow(Gtk.Window):
         self.content_area.pack_end(next_box, False, False, 0)
 
         self.content_area.show_all()
-
-        self.next_button.hide()
 
 
     def email_button_changed(self, button):
@@ -373,7 +374,7 @@ class MyWindow(Gtk.Window):
         GObject.idle_add(lambda: self.update_progress(0.7, "Processing Input"))
 
         if self.name_entry.get_text() == "":
-            show_error(self, "Name Needed", "Please enter a Common Name for this image")
+            GObject.idle_add(lambda: show_error(self, "Name Needed", "Please enter a Common Name for this image"))
             return
 
         settings['name'] = self.name_entry.get_text()
@@ -385,7 +386,7 @@ class MyWindow(Gtk.Window):
 
         if self.time_check_button.get_active():
             if self.time_check_entry.get_text() == "":
-                show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option")
+                GObject.idle_add(lambda: show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option"))
                 return
             try:
                 hours = int(self.time_check_entry.get_text().split(":")[0])
@@ -394,7 +395,7 @@ class MyWindow(Gtk.Window):
                 settings['limit'] = seconds
                 usersettings['limit'] = seconds
             except:
-                show_error(self, "Invalid Time", "Please enter a time value in the correct format")
+                GObject.idle_add(lambda: show_error(self, "Invalid Time", "Please enter a time value in the correct format"))
                 return
         else:
             settings['limit'] = -1
@@ -402,7 +403,7 @@ class MyWindow(Gtk.Window):
 
         if self.email_button.get_active():
             if self.email_address_entry.get_text() == "" or self.email_smtp_server_entry.get_text() == "" or self.email_smtp_username_entry.get_text() == "" or self.email_smtp_password_entry.get_text() == "":
-                show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox")
+                GObject.idle_add(lambda: show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox"))
                 return
             settings['email'] = self.email_address_entry.get_text()
             settings['server'] = self.email_smtp_server_entry.get_text()
@@ -410,7 +411,7 @@ class MyWindow(Gtk.Window):
             settings['password'] = self.email_smtp_password_entry.get_text()
 
             if settings['server'] == "smtp.gmail.com":
-                show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO)
+                GObject.idle_add(lambda: show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO))
             if self.email_desktop_button.get_active():
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
@@ -422,7 +423,7 @@ class MyWindow(Gtk.Window):
             sendEmail(message, settings)
 
             GObject.idle_add(lambda: self.update_progress(0.8, "Waiting on User Input"))
-            GObject.idle_add(lambda: self.launch_email_check_dialog)
+            GObject.idle_add(lambda: self.launch_email_check_dialog())
 
         else:
             settings['email'] = 'n/a'

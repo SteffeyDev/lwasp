@@ -207,7 +207,7 @@ class UserBox(Gtk.ScrolledWindow):
         if button.type == 0:
             add(w.elements, 'Password changed for user ' + item.username + ',V,5,FileContents,/var/log/auth.log,TRUE,password changed for ' + item.username)
         elif button.type == 1:
-            add(w.elements, 'User ' + item.username + ' is no longer an administrator,V,5,FileContents,/var/log/auth.log,FALSE,delete \'' + item.username + '\' from group \'sudo\'')
+            add(w.elements, 'User ' + item.username + ' is no longer an administrator,V,5,FileContents,/var/log/auth.log,TRUE,delete \'' + item.username + '\' from group \'sudo\'')
         elif button.type == 2:
             add(w.elements, 'User ' + item.username + ' was deleted,V,5,FileContents,/etc/passwd,FALSE,' + item.username)
         else:
