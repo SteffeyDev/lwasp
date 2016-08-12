@@ -50,10 +50,14 @@ class UserBox(Gtk.ScrolledWindow):
         self.add_box.pack_start(self.username_entry, False, False, 0)
         self.add_box.pack_start(self.name_entry, False, False, 0)
         self.add_box.pack_start(self.password_entry, False, False, 0)
-        add_backdoor = Gtk.Button(label="Add as Backdoor User")
-        add_user = Gtk.Button(label="Add as Normal User")
+        add_label = Gtk.Label("Add as: ")
+        add_admin = Gtk.Button(label="Admin")
+        add_backdoor = Gtk.Button(label="Backdoor")
+        add_user = Gtk.Button(label="User")
         add_backdoor.props.halign = Gtk.Align.END
         add_user.props.halign = Gtk.Align.END
+        add_label.props.halign = Gtk.Align.END
+        add_admin.props.halign = Gtk.Align.END
         add_backdoor.connect("clicked", self.add_backdoor_user)
         add_user.connect("clicked", self.add_user)
         self.add_box.pack_end(add_backdoor, False, False, 0)
