@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -15,7 +17,12 @@ class UserBox(Gtk.ScrolledWindow):
 
         self.update_users = update_users
 
-        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+
+        guest_user_button = Gtk.CheckButton("Score for disabling the guest user account")
+        guest_user_button.connect("clicked", self.guest_user_button_changed)
+        self.master_box.pack_start(guest_user_button, False, False, 0)
+        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
 
         self.autologin_user = "n/a"
 
@@ -70,6 +77,13 @@ class UserBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(self.add_box, False, False, 0)
 
         self.add_with_viewport(self.master_box)
+
+    def guest_user_button_changed(self, button):
+        if get_version() > 14.0:
+            add(w.elements, "Guest account is disabled,V,6,Command,cat /usr/share/lightdm/lightdm.conf.d/*.conf,TRUE,allow-guest=false")
+        else:
+            add(w.commands, "sudo printf 'allow-guest=true' >> /etc/lightdm/lightdm.conf")
+            add(w.elements, "Guest account is disabled,V,6,FileContents,/etc/lightdm/lightdm.conf,FALSE,allow-guest=true")
 
     def add_row(self, line, backdoor=False):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -200,7 +214,7 @@ class UserBox(Gtk.ScrolledWindow):
         self.username_entry.set_text("")
         self.name_entry.set_text("")
         self.password_entry.set_text("")
-        self.master_box.reorder_child(self.add_box, len(self.items) * 2)
+        self.master_box.reorder_child(self.add_box, (len(self.items) * 2) + 2)
 
     def check_button_clicked(self, button):
         item = self.items[button.index]

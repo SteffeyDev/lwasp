@@ -33,14 +33,16 @@ def internet_on():
 def saveSettings(settings):
     with open(getDirPath() + '/settings.json', 'w') as setFile:
         text = json.dumps(settings)
-        encrypt(text, setFile)#, "f8R843nF9d1nXEoIz7D01mE")
-        #encrypt(text, setFile, "password")
+        encrypt(text, setFile)
+        setFile.close()
+    do('sudo chown ' + os.environ['SUDO_USER'] + ' /etc/lwasp/settings.json')
 
 def saveUserSettings(settings):
     text = json.dumps(settings)
     with open('/usr/ScoringEngine/settings.json', 'w') as userWriteFile:
         userWriteFile.write(text)
         userWriteFile.close()
+    do('sudo chown ' + os.environ['SUDO_USER'] + ' /usr/ScoringEngine/settings.json')
 
 def getSettings():
     setFile = open(getDirPath() + '/settings.json', 'r')
@@ -72,39 +74,10 @@ def derive_key_and_iv(password, salt, key_length, iv_length):
     return d[:key_length], d[key_length:key_length+iv_length]
 
 def decrypt(in_file):#, password, key_length=32):
-    # bs = AES.block_size
-    # salt = in_file.read(bs)[len('Salted__'):]
-    # key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
-    # cipher = AES.new(key, AES.MODE_CBC, iv)
-    # next_chunk = ''
-    # finished = False
-    # returnStr = ''
-    # while not finished:
-    #     chunk, next_chunk = next_chunk, cipher.decrypt(in_file.read(1024 * bs))
-    #     if len(next_chunk) == 0:
-    #         padding_length = ord(chunk[-1])
-    #         chunk = chunk[:-padding_length]
-    #         finished = True
-    #     returnStr += chunk
-    # return returnStr
     obj = AES.new("2Ad8fj3HdF83jD8f", AES.MODE_CFB, 'nC8eiOsx10J8dshI')
     return obj.decrypt(in_file.read())
 
 def encrypt(in_text, out_file):#, password, key_length=32):
-    # bs = AES.block_size
-    # salt = Random.new().read(bs - len('Salted__'))
-    # key, iv = derive_key_and_iv(password[3:-1], salt, key_length, bs)
-    # cipher = AES.new(key, AES.MODE_CBC, iv)
-    # out_file.write('Salted__' + salt)
-    # finished = False
-    # n = 1024 * bs
-    # array = [in_text[i:i+n] for i in range(0, len(in_text), n)]
-    # for chunk in array:
-    #     if len(chunk) == 0 or len(chunk) % bs != 0:
-    #         padding_length = (bs - len(chunk) % bs) or bs
-    #         chunk += padding_length * chr(padding_length)
-    #         finished = True
-    #     out_file.write(cipher.encrypt(chunk))
     obj = AES.new("2Ad8fj3HdF83jD8f", AES.MODE_CFB, 'nC8eiOsx10J8dshI')
     out_file.write(obj.encrypt(in_text))
     out_file.close()

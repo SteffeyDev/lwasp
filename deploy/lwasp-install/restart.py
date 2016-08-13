@@ -27,10 +27,7 @@ bashFile.close()
 shutil.move('refresh', '/usr/bin/refresh')
 do('sudo chmod +x /usr/bin/refresh')
 
-try:
-    os.system('sudo rm /home/*/Desktop/Elements-Coach\'s-Copy.csv')
-except:
-    print "coach's copy removed"
+do('sudo rm /home/*/Desktop/LWASP-Elements-Export.csv')
 
 #array to hold directory names to watch
 toWatch = []

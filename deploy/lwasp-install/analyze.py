@@ -24,7 +24,7 @@ debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 fileError = False
 saveError = False
 
-if os.path.isfile(getSafeDirPath() + '/holder'):
+if os.path.isfile('/etc/lwasp/holder'):
     print "\n * analyze already running, exiting...\n"
     sys.exit()
 
@@ -154,11 +154,12 @@ def checkPermissions(filepath, permission):
 #generic command analysis for output, allowing greater flexibility
 def checkCommand(command, content, should):
     try:
-        output = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0]
+        output, err = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()
         shortOutput = ' '.join(output.split()).decode('utf-8')
+        shortErr = ' '.join(err.split()).decode('utf-8')
         if debug:
             print "Command Output:", shortOutput
-        if content in shortOutput:
+        if content in shortOutput or content in shortErr:
             return should
         return not should
     except:

@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import os
 import sys
 
@@ -31,6 +33,7 @@ class MyWindow(Gtk.Window):
 	def __init__(self):
 		Gtk.Window.__init__(self, title="LWASP Setup")
 		self.set_default_size(800, 600)
+		self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
 		self.misc_box = None
 
@@ -97,7 +100,7 @@ class MyWindow(Gtk.Window):
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
 		with open('elements.csv', 'w') as elements:
-			with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/Elements-Coach\'s-Copy.csv', 'w') as export:
+			with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
 				export.write("Scoring Item,Points,Penalty\n")
 				for item in w.elements:
 					elements.write(item + '\n')
@@ -112,7 +115,7 @@ class MyWindow(Gtk.Window):
 		os.system('sudo mv commands.bash ../lwasp-install/')
 		os.system('sudo chmod +x commands.bash')
 
-		show_error(self, "Coach's Copy of Elements", "A copy of what scores has been created on the Desktop for your reference.  If you do not remove this, it will be deleted automatically at next reboot.", Gtk.MessageType.INFO)
+		show_error(self, "Elements Export", "A copy of what scores has been created on the Desktop for your reference.  If you do not remove this, it will be deleted automatically at next reboot.", Gtk.MessageType.INFO)
 
 		global continue_on
 		continue_on = True
@@ -136,6 +139,7 @@ if continue_on:
 		def __init__(self):
 			Gtk.Window.__init__(self, title="LWASP Setup")
 			self.set_default_size(200, 200)
+			self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
 			master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 			master_box.set_border_width(10)

@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 import os
@@ -177,4 +179,7 @@ class MiscBox(Gtk.ScrolledWindow):
         elif i == 6:
             add(w.elements, "IP Spoofing is disabled,V,7,FileContents,/etc/host.conf,TRUE,nospoof on")
         elif i == 7:
-            add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")
+            if get_version() > 14.0:
+                add(w.elements, "Usernames are hidden from the login screen,V,8,Command,cat /usr/share/lightdm/lightdm.conf.d/*.conf,TRUE,greeter-hide-users=true")
+            else:
+                add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")

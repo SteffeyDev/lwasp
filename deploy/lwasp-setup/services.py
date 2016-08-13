@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -183,7 +185,7 @@ class AppsBox(Gtk.ScrolledWindow):
                 filename = '/sbin/' + services[item.name]
             else:
                 filename = '/usr/bin/' + item.name
-        
+
         if button.type == 0:
             add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + services[item.name] + ',FALSE')
         elif button.type == 1:
@@ -199,7 +201,7 @@ class AppsBox(Gtk.ScrolledWindow):
             version = ""
             for line in dpkg_update_list:
                 if "Candidate:" in line:
-                    version = line.split(" ")[3]
+                    version = line.rstrip().split(" ")[3]
 
             print version
             add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + item.name + ',' + version)

@@ -41,6 +41,7 @@ class MyWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="LWASP Installer")
         self.set_default_size(800, 600)
+        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         main_box.set_border_width(10)
