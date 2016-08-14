@@ -27,6 +27,8 @@ bashFile.close()
 shutil.move('refresh', '/usr/bin/refresh')
 do('sudo chmod +x /usr/bin/refresh')
 
+do('sudo rm /home/*/Desktop/LWASP-Elements-Export.csv')
+
 #array to hold directory names to watch
 toWatch = []
 

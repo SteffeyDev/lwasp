@@ -1,4 +1,6 @@
-import gi, os
+# Copyright (C) 2015 Peter Steffey
+
+import gi, os, subprocess
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -21,3 +23,7 @@ def get_resource_path(rel_path):
     rel_path_to_resource = os.path.join(dir_of_py_file, rel_path)
     abs_path_to_resource = os.path.abspath(rel_path_to_resource)
     return abs_path_to_resource
+
+def get_version():
+        version = subprocess.Popen(["lsb_release", "-r"], stdout=subprocess.PIPE).communicate()[0]
+        return float(version.rstrip().split("\t")[1])

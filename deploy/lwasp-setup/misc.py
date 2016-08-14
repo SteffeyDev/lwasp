@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 import os
@@ -121,7 +123,13 @@ class MiscBox(Gtk.ScrolledWindow):
         note_label_2.set_line_wrap(True)
         master_box.pack_end(note_label_2, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
+
+    def update_users(self):
+        users = w.users
+        self.extras[0].remove_all()
+        for user in users:
+            self.extras[0].append_text(user)
 
     def check_button_clicked(self, button):
         i = button.type
@@ -153,15 +161,16 @@ class MiscBox(Gtk.ScrolledWindow):
             add(w.elements, "Insecure sudo configuration fixed,V,12,FileContents,/etc/sudoers,FALSE," + user + "  ALL=(ALL:ALL) ALL")
         elif i == 1:
             add(w.commands, "sudo echo \"" + os.environ['SUDO_USER'] + "  ALL=(ALL) NOPASSWD:ALL\" > /etc/sudoers.d/extra")
+            add(w.commands, "sudo chmod 440 /etc/sudoers.d/extra")
             add(w.elements, "Insecure sudo configuration file removed,V,12,FileExistance,/etc/sudoers.d/extra,FALSE")
         elif i == 2:
             add(w.commands, "sudo crontab -l > mycron; echo \"*/5 * * * * sudo ufw disable\" >> mycron; sudo crontab mycron; rm mycron")
-            add(w.elements, "Scheduled task that turns off firewall removed,V,8,Command,sudo crontab -l,FALSE,sudo ufw enable")
+            add(w.elements, "Scheduled task that turns off firewall removed,V,8,Command,sudo crontab -l,FALSE,sudo ufw disable")
         elif i == 3:
-            add(w.commands, "sudo crontab -l > mycron; echo \"*/2 * * * * nc -l -p 4837 -e /bin/bash\" >> mycron; sudo crontab mycron; rm mycron")
+            add(w.commands, "sudo crontab -l > mycron; echo \"*/2 * * * * nc -l -v 9999\" >> mycron; sudo crontab mycron; rm mycron")
             add(w.elements, "Scheduled task that launches netcat backdoor removed,V,8,Command,sudo crontab -l,FALSE,nc -l")
         elif i == 4:
-            add(w.commands, "sudo crontab -l > mycron; echo \'*/3 * * * * notify-send -u critical \"Taunt\" \"" + text + "\"\' >> mycron; sudo crontab mycron; rm mycron")
+            add(w.commands, "sudo crontab -l > mycron; echo \'*/3 * * * * notify-send \"Taunt\" \"" + text + "\"\' >> mycron; sudo crontab mycron; rm mycron")
             add(w.elements, "Scheduled task that launches taunt removed,V,8,Command,sudo crontab -l,FALSE,notify-send")
         elif i == 5:
             text = text.replace("\"", "")
@@ -170,4 +179,7 @@ class MiscBox(Gtk.ScrolledWindow):
         elif i == 6:
             add(w.elements, "IP Spoofing is disabled,V,7,FileContents,/etc/host.conf,TRUE,nospoof on")
         elif i == 7:
-            add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")
+            if get_version() > 14.0:
+                add(w.elements, "Usernames are hidden from the login screen,V,8,Command,cat /usr/share/lightdm/lightdm.conf.d/*.conf,TRUE,greeter-hide-users=true")
+            else:
+                add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")

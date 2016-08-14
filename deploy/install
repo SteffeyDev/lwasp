@@ -1,3 +1,5 @@
 #!/bin/bash
+# Copyright (C) 2015 Peter Steffey
+
 cd lwasp-install
 sudo python -B initialize_gui.py

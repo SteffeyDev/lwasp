@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -45,7 +47,7 @@ class PasswdBox(Gtk.ScrolledWindow):
 
             master_box.pack_start(container_box, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type
@@ -60,7 +62,9 @@ class PasswdBox(Gtk.ScrolledWindow):
             elif text == "": return
             self.entries[i].set_editable(not button.get_active())
 
-        if i == 0: add(w.elements, "Created a password history file,V,6,FileExistance,/etc/security/opasswd,TRUE")
+        if i == 0:
+            add(w.commands, "sudo rm /etc/security/opasswd")
+            add(w.elements, "Created a password history file,V,6,FileExistance,/etc/security/opasswd,TRUE")
         elif i == 1: add(w.elements, "Null passwords are no longer allowed,V,7,FileContents,/etc/pam.d/common-auth,FALSE,nullok_secure")
         #need to fix this next one
         elif i == 2: add(w.elements, "Auditing for failed password attempts is enabled,V,7,FileContents,/etc/pam.d/common-auth,TRUE,pam_tally.so~audit")
@@ -70,6 +74,9 @@ class PasswdBox(Gtk.ScrolledWindow):
             add(w.elements, "A Maximum password age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MAX_AGE " + text)
         elif i == 5:
             add(w.elements, "A Password warn age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_WARN_AGE " + text)
-        elif i == 6: add(w.elements, "Passwords are stored with SHA-512 Encryption,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_unix.so~sha512")
+        elif i == 6:
+            add(w.commands, "sudo sed -i.bak s/sha512/''/g /etc/pam.d/common-password")
+            add(w.commands, "sudo rm /etc/pam.d/common-password.bak")
+            add(w.elements, "Passwords are stored with SHA-512 Encryption,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_unix.so~sha512")
         elif i == 7: add(w.elements, "Password complexity requironments are set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~dcredit,pam_cracklib.so~ucredit,pam_cracklib.so~lcredit,pam_crachlib.so~ocredit")
         elif i == 8: add(w.elements, "Password history is enforced,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_pwhistory.so~remember=" + text)

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2015 Peter Steffey
+
 cd lwasp-setup
 echo "Loading..."
 sudo python -B gui.py

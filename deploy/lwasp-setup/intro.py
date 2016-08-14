@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
@@ -14,7 +16,7 @@ class IntroDialog(Gtk.Dialog):
 
 		box = self.get_content_area()
 		box.set_spacing(20)
-		box.set_border_width(10)
+		box.set_border_width(20)
 
 		pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale('icon.png', width=200, height=200,
                                                  preserve_aspect_ratio=False)

@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import os
 import sys
 
@@ -25,10 +27,15 @@ from gui_utility import *
 import w
 w.init()
 
+continue_on = False
+
 class MyWindow(Gtk.Window):
 	def __init__(self):
 		Gtk.Window.__init__(self, title="LWASP Setup")
 		self.set_default_size(800, 600)
+		self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+
+		self.misc_box = None
 
 		master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 
@@ -52,7 +59,7 @@ class MyWindow(Gtk.Window):
 			label = ""
 
 			if i == 0:
-				page = UserBox()
+				page = UserBox(self.update_users)
 				label = "Users"
 			elif i == 1:
 				page = AppsBox()
@@ -75,6 +82,7 @@ class MyWindow(Gtk.Window):
 				label = "Bad Files"
 			elif i == 7:
 				page = MiscBox()
+				self.misc_box = page
 				label = "Other"
 
 
@@ -85,18 +93,35 @@ class MyWindow(Gtk.Window):
 		dialog.run()
 		dialog.destroy()
 
+	def update_users(self):
+		if self.misc_box is not None:
+			self.misc_box.update_users()
+
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
 		with open('elements.csv', 'w') as elements:
-			for item in w.elements:
-				elements.write(item + '\n')
+			with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
+				export.write("Scoring Item,Points,Penalty\n")
+				for item in w.elements:
+					elements.write(item + '\n')
+					export.write(item.split(",")[0] + "," + item.split(",")[2] + "," + ("*" if item.split(",")[1] == "P" else "") + "\n")
+				export.close()
+			elements.close()
 		with open('commands.bash', 'w') as commands:
 			for item in w.commands:
 				commands.write(item + '\n')
+			commands.close()
 		os.system('sudo mv elements.csv ../lwasp-install/')
+		os.system('sudo mv commands.bash ../lwasp-install/')
 		os.system('sudo chmod +x commands.bash')
 
+		show_error(self, "Elements Export", "A copy of what scores has been created on the Desktop for your reference.  If you do not remove this, it will be deleted automatically at next reboot.", Gtk.MessageType.INFO)
+
+		global continue_on
+		continue_on = True
+
 		Gtk.main_quit()
+		self.destroy()
 
 win = MyWindow()
 win.connect('delete-event', Gtk.main_quit)
@@ -106,47 +131,50 @@ Gtk.main()
 win.destroy()
 win = None
 
-to_run = ""
+if continue_on:
 
-class interWindow(Gtk.Window):
-	def __init__(self):
-		Gtk.Window.__init__(self, title="LWASP Setup")
-		self.set_default_size(200, 200)
+	to_run = ""
 
-		master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-		master_box.set_border_width(10)
+	class interWindow(Gtk.Window):
+		def __init__(self):
+			Gtk.Window.__init__(self, title="LWASP Setup")
+			self.set_default_size(200, 200)
+			self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
-		self.set_icon_from_file(get_resource_path("icon.png"))
+			master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+			master_box.set_border_width(10)
 
-		label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
-		label.set_line_wrap(True)
-		button1 = Gtk.Button(label="Continue to Installation")
-		button1.connect("clicked", self.launch_install)
-		button2 = Gtk.Button(label="End & Modify")
-		button2.connect("clicked", self.end)
-		master_box.pack_start(label, False, False, 0)
-		master_box.pack_start(button1, False, False, 0)
-		master_box.pack_start(button2, False, False, 0)
+			self.set_icon_from_file(get_resource_path("icon.png"))
 
-		self.add(master_box)
+			label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
+			label.set_line_wrap(True)
+			button1 = Gtk.Button(label="Continue to Installation")
+			button1.connect("clicked", self.launch_install)
+			button2 = Gtk.Button(label="End & Modify")
+			button2.connect("clicked", self.end)
+			master_box.pack_start(label, False, False, 0)
+			master_box.pack_start(button1, False, False, 0)
+			master_box.pack_start(button2, False, False, 0)
 
-	def launch_install(self, button):
-		global to_run
-		to_run = "cd ..; /bin/bash install"
-		Gtk.main_quit()
-		self.destroy()
+			self.add(master_box)
 
-	def end(self, button):
-		show_error(self, "Modification", "Feel free to modify this image and the elements.csv file in the lwasp-install folder to change names, point values, and score advanced items.  Run ./install to continue with the installation", Gtk.MessageType.INFO)
-		Gtk.main_quit()
-		self.destroy()
+		def launch_install(self, button):
+			global to_run
+			to_run = "cd ..; /bin/bash install"
+			Gtk.main_quit()
+			self.destroy()
 
-win2 = interWindow()
-win2.connect('delete-event', Gtk.main_quit)
-win2.show_all()
-Gtk.main()
+		def end(self, button):
+			show_error(self, "Modification", "Feel free to modify this image and the elements.csv file in the lwasp-install folder to change names, point values, and score advanced items.  Run ./install to continue with the installation", Gtk.MessageType.INFO)
+			Gtk.main_quit()
+			self.destroy()
 
-win2.destroy()
-win2 = None
+	win2 = interWindow()
+	win2.connect('delete-event', Gtk.main_quit)
+	win2.show_all()
+	Gtk.main()
 
-os.system(to_run)
+	win2.destroy()
+	win2 = None
+
+	os.system(to_run)

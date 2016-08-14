@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -26,12 +28,12 @@ class UpdatesBox(Gtk.ScrolledWindow):
             check_button.type = i
             master_box.pack_start(check_button, False, False, 0)
 
-        self.add(master_box)
+        self.add_with_viewport(master_box)
 
     def check_button_clicked(self, button):
         i = button.type
-        if i == 0: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,APT::Periodic::Unattended-Upgrade \"1\"")
-        elif i == 1: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,APT::Periodic::Download-Upgradeable-Packages \"1\"")
-        elif i == 2: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,APT::Periodic::Update-Package-Lists \"7\"")
-        elif i == 3: add(w.elements, "All Security Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,;0")
-        elif i == 4: add(w.elements, "All Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,0;0")
+        if i == 0: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Unattended-Upgrade \"1\"")
+        elif i == 1: add(w.elements, "Auto-download Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Download-Upgradeable-Packages \"1\"")
+        elif i == 2: add(w.elements, "Check for Updates Daily Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Update-Package-Lists \"1\"")
+        elif i == 3: add(w.elements, "All Security Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,TRUE,;0")
+        elif i == 4: add(w.elements, "All Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,TRUE,0;0")

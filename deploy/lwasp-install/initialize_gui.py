@@ -4,7 +4,7 @@
 #Needed import statemnts
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+from gi.repository import Gtk, GdkPixbuf, GObject
 import os
 import string
 import json
@@ -28,6 +28,9 @@ def show_error(top, title, message, type=Gtk.MessageType.ERROR):
     dialog.destroy()
 
 import threading
+import time
+
+GObject.threads_init()
 
 #creates dictionary object to hold objects
 settings = {}
@@ -38,6 +41,7 @@ class MyWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="LWASP Installer")
         self.set_default_size(800, 600)
+        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
 
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         main_box.set_border_width(10)
@@ -86,25 +90,24 @@ class MyWindow(Gtk.Window):
         abs_path_to_resource = os.path.abspath(rel_path_to_resource)
         return abs_path_to_resource
 
-    def update_progress(self, fraction):
+    def update_progress(self, fraction, title):
         self.progress_bar.set_fraction(fraction)
+        self.progress_label.set_text("Installation Progress: " + title)
 
     def install_dependencies(self, button):
         threading.Thread(target=self.install_dependencies_backthread, args=()).start()
         self.content_area.remove(self.welcome_box)
-        self.progress_label.set_text("Installation Progress: Downloading Content")
         self.general_setup()
 
     def install_dependencies_backthread(self):
 
-        self.progress_bar.set_fraction(0.02)
+        GObject.idle_add(lambda: self.update_progress(0.02, "Downloading Content"))
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
-        do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y")
+        do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y --force-yes")
 
-        self.progress_bar.set_fraction(0.1)
-        self.progress_label.set_text("Installation Progress: Moving Files")
+        GObject.idle_add(lambda: self.update_progress(0.1, "Moving Files"))
 
         self.install_frontend()
 
@@ -135,14 +138,16 @@ class MyWindow(Gtk.Window):
             do("chmod +x ~/Desktop/lwasp.desktop")
             do("chmod +x " + getSafeDirPath() + "/uid.py")
 
-        self.progress_bar.set_fraction(0.2)
+        GObject.idle_add(lambda: self.update_progress(0.2, "Creating Vulnerabilities"))
 
         self.install_backend()
 
     def install_backend(self):
 
         if os.path.isfile(getDirPath() + '/commands.bash'):
-            do("/bin/bash " + getDirPath() + "/commands.bash")
+            os.system("/bin/bash " + getDirPath() + "/commands.bash")
+            os.remove(getDirPath() + "/commands.bash")
+            print "\n vulnerabilities installed"
 
         #moves sound to generally accessable system folder
         try:
@@ -156,7 +161,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        self.progress_bar.set_fraction(0.25)
+        GObject.idle_add(lambda: self.update_progress(0.25, "Analyzing Scoring Elements"))
 
         try:
             #Open input file and new file
@@ -241,7 +246,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        self.progress_bar.set_fraction(0.3)
+        GObject.idle_add(lambda: self.update_progress(0.3, "Moving Files"))
 
         #creates scores file to only store parts of the recording file to show on the scoring html page
         with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
@@ -257,7 +262,7 @@ class MyWindow(Gtk.Window):
         do("sudo chmod ugo+x /etc/init.d/lwasp")
         do("sudo update-rc.d lwasp defaults")
 
-        self.progress_bar.set_fraction(0.4)
+        GObject.idle_add(lambda: self.update_progress(0.4, "Compiling Python"))
 
         #makes sure competitor can't modify code to reveal what is scored
         print '\nCompiling python'
@@ -276,13 +281,10 @@ class MyWindow(Gtk.Window):
         print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
         do("sudo bash cron.bash")
 
-        self.progress_bar.set_fraction(0.5)
-
-        self.progress_label.set_text("Installation Progress: Waiting on User Input")
+        GObject.idle_add(lambda: self.update_progress(0.5, "Waiting on User Input"))
+        GObject.idle_add(lambda: self.add_next_button())
 
     def general_setup(self):
-
-        print("beginning method")
 
         name_box = Gtk.Box(spacing=5)
         name_label = Gtk.Label("Image Common Name: ")
@@ -311,10 +313,10 @@ class MyWindow(Gtk.Window):
         self.email_button.connect("clicked", self.email_button_changed)
         self.content_area.pack_start(self.email_button, False, False, 0)
         self.email_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
-        hbox1 = Gtk.Box(spacing=8)
-        hbox2 = Gtk.Box(spacing=15)
+        hbox1 = Gtk.Box(spacing=10)
+        hbox2 = Gtk.Box(spacing=20)
         hbox3 = Gtk.Box()
-        hbox4 = Gtk.Box(spacing=4)
+        hbox4 = Gtk.Box(spacing=3)
         self.email_address_entry = Gtk.Entry(placeholder_text="e.g. email@example.com")
         self.email_address_entry.set_width_chars(30)
         hbox1.pack_start(Gtk.Label("Email Address: "), False, False, 0)
@@ -345,17 +347,17 @@ class MyWindow(Gtk.Window):
         self.email_box.pack_start(note_label_2, False, False, 0)
         self.email_box.pack_end(Gtk.HSeparator(), False, False, 0)
 
+        self.content_area.show_all()
+
+    def add_next_button(self):
         next_box = Gtk.Box(spacing=10)
-        next_button = Gtk.Button(label="Continue")
-        next_button.props.halign = Gtk.Align.END
-        next_button.connect("clicked", self.next_button_pressed)
-        next_box.pack_end(next_button, False, False, 0)
+        self.next_button = Gtk.Button(label="Continue")
+        self.next_button.props.halign = Gtk.Align.END
+        self.next_button.connect("clicked", self.next_button_pressed)
+        next_box.pack_end(self.next_button, False, False, 0)
         self.content_area.pack_end(next_box, False, False, 0)
 
         self.content_area.show_all()
-
-        print "got through method"
-
 
 
     def email_button_changed(self, button):
@@ -366,13 +368,14 @@ class MyWindow(Gtk.Window):
             self.content_area.remove(self.email_box)
 
     def next_button_pressed(self, button):
+        threading.Thread(target=self.next_button_pressed_backthread, args=()).start()
 
-        self.progress_label.set_text("Installation Progress")
+    def next_button_pressed_backthread(self):
 
-        self.progress_bar.set_fraction(0.7)
+        GObject.idle_add(lambda: self.update_progress(0.7, "Processing Input"))
 
         if self.name_entry.get_text() == "":
-            show_error(self, "Name Needed", "Please enter a Common Name for this image")
+            GObject.idle_add(lambda: show_error(self, "Name Needed", "Please enter a Common Name for this image"))
             return
 
         settings['name'] = self.name_entry.get_text()
@@ -384,7 +387,7 @@ class MyWindow(Gtk.Window):
 
         if self.time_check_button.get_active():
             if self.time_check_entry.get_text() == "":
-                show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option")
+                GObject.idle_add(lambda: show_error(self, "Time Needed", "Please enter a time or deselect the Timed Image option"))
                 return
             try:
                 hours = int(self.time_check_entry.get_text().split(":")[0])
@@ -393,7 +396,7 @@ class MyWindow(Gtk.Window):
                 settings['limit'] = seconds
                 usersettings['limit'] = seconds
             except:
-                show_error(self, "Invalid Time", "Please enter a time value in the correct format")
+                GObject.idle_add(lambda: show_error(self, "Invalid Time", "Please enter a time value in the correct format"))
                 return
         else:
             settings['limit'] = -1
@@ -401,7 +404,7 @@ class MyWindow(Gtk.Window):
 
         if self.email_button.get_active():
             if self.email_address_entry.get_text() == "" or self.email_smtp_server_entry.get_text() == "" or self.email_smtp_username_entry.get_text() == "" or self.email_smtp_password_entry.get_text() == "":
-                show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox")
+                GObject.idle_add(lambda: show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox"))
                 return
             settings['email'] = self.email_address_entry.get_text()
             settings['server'] = self.email_smtp_server_entry.get_text()
@@ -409,7 +412,7 @@ class MyWindow(Gtk.Window):
             settings['password'] = self.email_smtp_password_entry.get_text()
 
             if settings['server'] == "smtp.gmail.com":
-                show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO)
+                GObject.idle_add(lambda: show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO))
             if self.email_desktop_button.get_active():
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
@@ -420,36 +423,37 @@ class MyWindow(Gtk.Window):
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
             sendEmail(message, settings)
 
-            self.progress_bar.set_fraction(0.8)
+            GObject.idle_add(lambda: self.update_progress(0.8, "Waiting on User Input"))
+            GObject.idle_add(lambda: self.launch_email_check_dialog())
 
-            check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
-            check_dialog.set_default_size(200, 100)
-            vbox = check_dialog.get_content_area()
-            email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
-            email_label.set_line_wrap(True)
-            vbox.pack_start(email_label, False, False, 0)
-            vbox.pack_start(Gtk.HSeparator(), False, False, 0)
-            vbox.props.spacing = 6
-
-            recieved_button = Gtk.Button(label="Email Recieved")
-            recieved_button.connect("clicked", self.finish_installation)
-            vbox.pack_start(recieved_button, False, False, 0)
-
-            not_recieved_button = Gtk.Button(label="Email NOT Recieved")
-            not_recieved_button.connect("clicked", self.email_not_recieved)
-            vbox.pack_start(not_recieved_button, False, False, 0)
-            vbox.set_border_width(10)
-            vbox.show_all()
-
-            check_dialog.set_modal(True)
-            check_dialog.run()
-
-            self.check_dialog = check_dialog
         else:
             settings['email'] = 'n/a'
             if os.path.isfile('emailz.py'):
                 os.remove('emailz.py')
             self.finish_installation()
+
+    def launch_email_check_dialog(self):
+        self.check_dialog = Gtk.Dialog("Email Confirmation", self, 0)
+        self.check_dialog.set_default_size(200, 100)
+        vbox = self.check_dialog.get_content_area()
+        email_label = Gtk.Label("A test email was sent to " + settings['email'] + " using these SMTP server settings, please confirm whether or not you recieved this email.")
+        email_label.set_line_wrap(True)
+        vbox.pack_start(email_label, False, False, 0)
+        vbox.pack_start(Gtk.HSeparator(), False, False, 0)
+        vbox.props.spacing = 6
+
+        recieved_button = Gtk.Button(label="Email Recieved")
+        recieved_button.connect("clicked", self.finish_installation)
+        vbox.pack_start(recieved_button, False, False, 0)
+
+        not_recieved_button = Gtk.Button(label="Email NOT Recieved")
+        not_recieved_button.connect("clicked", self.email_not_recieved)
+        vbox.pack_start(not_recieved_button, False, False, 0)
+        vbox.set_border_width(10)
+        vbox.show_all()
+
+        self.check_dialog.set_modal(True)
+        self.check_dialog.run()
 
     def email_not_recieved(self, button):
         self.check_dialog.destroy()
@@ -460,7 +464,10 @@ class MyWindow(Gtk.Window):
             self.check_dialog.destroy()
         except:
             h = "ignore"
-        self.progress_bar.set_fraction(0.9)
+        self.update_progress(0.9, "Finishing Up")
+        threading.Thread(target=self.finish_installation_backthread, args=()).start()
+
+    def finish_installation_backthread(self):
 
         saveSettings(settings)
         saveUserSettings(usersettings)
@@ -469,7 +476,13 @@ class MyWindow(Gtk.Window):
 
         user = os.environ['SUDO_USER'];
         print "\nDeleting Bash History"
-        do("sudo -u " + user + " bash -c 'history -c; echo \"\" > ~/.bash_history'")
+        do("sudo -u " + user + " bash -c 'history -c; echo '' > ~/.bash_history'")
+
+        print "\nDeleting Authentication Logs"
+        do("sudo chmod 664 /var/log/auth.log; sudo echo '' > /var/log/auth.log; sudo chmod 640 /var/log/auth.log")
+
+        print "\nRemoving Unused backdoors"
+        shutil.rmtree('backdoors')
 
         print "\nMoving this folder to " + locString
         shutil.move(getSafeDirPath(), locString)
@@ -477,7 +490,10 @@ class MyWindow(Gtk.Window):
         print "\nDeleting all other files"
         do("sudo rm -rf " + '/'.join(getDirPath().split("/")[0:len(getDirPath().split("/"))-1]))
 
-        self.progress_bar.set_fraction(1)
+        GObject.idle_add(lambda: self.update_progress(1, "Done"))
+        GObject.idle_add(lambda: self.finish())
+
+    def finish(self):
 
         show_error(self, "Scoring Engine Initialized", "Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.", Gtk.MessageType.INFO)
         Gtk.main_quit()

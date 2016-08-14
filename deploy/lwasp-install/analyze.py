@@ -24,7 +24,7 @@ debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 fileError = False
 saveError = False
 
-if os.path.isfile(getSafeDirPath() + '/holder'):
+if os.path.isfile('/etc/lwasp/holder'):
     print "\n * analyze already running, exiting...\n"
     sys.exit()
 
@@ -49,12 +49,16 @@ def checkFileContents(filepath, contents, mode):
             text = string.replace(text, "\"", "")
             text_list = text.split("(<^>]")
             contains = string.replace(contains, "\"", "")
+            contains = ' '.join(contains.split())
             if debug:
                 print "Looking for text:", contains
                 print "File text:", text
             if mode:
                 if "~" in contains:
                     contains_pieces = contains.split("~")
+                    if contains_pieces[0] not in text:
+                        file.close()
+                        return False
                     for line in text_list:
                         if contains_pieces[0] in line and contains_pieces[1] not in line:
                             file.close()
@@ -150,11 +154,12 @@ def checkPermissions(filepath, permission):
 #generic command analysis for output, allowing greater flexibility
 def checkCommand(command, content, should):
     try:
-        output = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()[0]
+        output, err = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()
         shortOutput = ' '.join(output.split()).decode('utf-8')
+        shortErr = ' '.join(err.split()).decode('utf-8')
         if debug:
             print "Command Output:", shortOutput
-        if content in shortOutput:
+        if content in shortOutput or content in shortErr:
             return should
         return not should
     except:
@@ -224,21 +229,53 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         print "Checking element " + str(i+1)
         function = False # function is goine to be a boolean value
         if row['type'] == "FileContents":
-            function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
+            if len(row['extras']) >= 3:
+                function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "FileExistance":
-            function = checkFileExists(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkFileExists(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Service":
-            function = checkServiceRunning(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkServiceRunning(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Forensics":
-            function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
+            if len(row['extras']) >= 2:
+                function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Updates":
-            function = checkUpdates(row['extras'][0], row['extras'][1])
+            if len(row['extras']) == 2:
+                function = checkUpdates(row['extras'][0], row['extras'][1])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Permissions":
-            function = checkPermissions(row['extras'][0], row['extras'][1])
+            if len(row['extras']) == 2:
+                function = checkPermissions(row['extras'][0], row['extras'][1])
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Command":
-            function = checkCommand(row['extras'][0], row['extras'][2], parseBool(row['extras'][1]))
+            if len(row['extras']) == 3:
+                function = checkCommand(row['extras'][0], row['extras'][2], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
         elif row['type'] == "Port":
-            function = checkPort(row['extras'][0], parseBool(row['extras'][1]))
+            if len(row['extras']) == 2:
+                function = checkPort(row['extras'][0], parseBool(row['extras'][1]))
+            else:
+                if debug:
+                    print "Not enough extras in row ", str(i+1)
 
         #nil case, can't find what is needed for this element
         if function is None:

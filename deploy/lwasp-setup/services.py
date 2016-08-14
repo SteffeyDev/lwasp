@@ -1,3 +1,5 @@
+# Copyright (C) 2015 Peter Steffey
+
 import gi
 from os.path import isfile
 gi.require_version('Gtk', '3.0')
@@ -10,7 +12,7 @@ from os.path import isfile
 
 Item = namedtuple("Items", "name expanded options_box box")
 
-services = {'tightvncserver': 'Xtightvnc', 'telnet':'telnetd', 'wireshark': 'wireshark', 'wordpress': 'wordpress', 'apparmor': 'apparmor', 'apache2': 'apache2', 'atom': 'atom', 'couchbase-server': 'sync_gateway', 'dovecot-core': 'dovecot', 'vsftpd': 'vsftpd', 'fail2ban': 'fail2ban', 'openssh-server':'sshd', 'php5': 'php5-fpm', 'postfix': 'postfix', 'mysql-server': 'mysqld', 'postgresql': 'postgres', 'nginx': 'nginx', 'thunderbird': 'thunderbird', 'ruby': 'ruby', 'firefox': 'firefox', 'cups': 'cupsd', 'remmina': 'remmina', 'python': 'python', 'nmap': 'nmap', 'wireshark': 'wireshark', 'vsftpd': 'vsftpd', 'netcat-openbsd': 'nc', 'nodejs': 'node', 'oodo': 'oodo', 'openssh-server': 'sshd', 'perl': 'perl', 'xrdp': 'xrdp', 'ufw': 'ufw', 'chkrootkit': 'chkrootkit', 'logwatch': 'logwatch', 'bum': 'bum', 'denyhosts': 'denyhosts', 'psad': 'psad', 'rkhunter': 'rkhunter', 'snort': 'snort', 'openssl': 'openssl'}
+services = {'tightvncserver': 'Xtightvnc', 'telnet':'telnet', 'wireshark': 'wireshark', 'wordpress': 'wordpress', 'apparmor': 'apparmor', 'apache2': 'apache2', 'atom': 'atom', 'couchbase-server': 'sync_gateway', 'dovecot-core': 'dovecot', 'vsftpd': 'vsftpd', 'fail2ban': 'fail2ban', 'openssh-server':'sshd', 'php5': 'php5-fpm', 'postfix': 'postfix', 'mysql-server': 'mysqld', 'postgresql': 'postgres', 'nginx': 'nginx', 'thunderbird': 'thunderbird', 'ruby': 'ruby', 'firefox': 'firefox', 'cups': 'cupsd', 'remmina': 'remmina', 'python': 'python', 'nmap': 'nmap', 'wireshark': 'wireshark', 'vsftpd': 'vsftpd', 'netcat-openbsd': 'nc', 'nodejs': 'node', 'oodo': 'oodo', 'openssh-server': 'sshd', 'perl': 'perl', 'xrdp': 'xrdp', 'ufw': 'ufw', 'chkrootkit': 'chkrootkit', 'logwatch': 'logwatch', 'bum': 'bum', 'denyhosts': 'denyhosts', 'psad': 'psad', 'rkhunter': 'rkhunter', 'snort': 'snort', 'openssl': 'openssl'}
 
 class AppsBox(Gtk.ScrolledWindow):
     def __init__(self):
@@ -65,7 +67,7 @@ class AppsBox(Gtk.ScrolledWindow):
 
 
 
-        self.add(self.master_box)
+        self.add_with_viewport(self.master_box)
 
     def add_row(self, app, removeable = False):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -156,7 +158,10 @@ class AppsBox(Gtk.ScrolledWindow):
             return
         self.add_row(app, True)
         self.refresh_after_add()
-        add(w.commands, "sudo apt-get install " + app + " -y")
+        if app not in self.valid_services:
+            services[app] = app
+            self.valid_services.append(app)
+        add(w.commands, "sudo apt-get install " + app + " -y --force-yes")
 
     def refresh_after_add(self):
         self.master_box.show_all()
@@ -178,6 +183,8 @@ class AppsBox(Gtk.ScrolledWindow):
                 filename = '/bin/' + services[item.name]
             elif isfile('/sbin/' + services[item.name]):
                 filename = '/sbin/' + services[item.name]
+            else:
+                filename = '/usr/bin/' + item.name
 
         if button.type == 0:
             add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + services[item.name] + ',FALSE')
@@ -194,7 +201,7 @@ class AppsBox(Gtk.ScrolledWindow):
             version = ""
             for line in dpkg_update_list:
                 if "Candidate:" in line:
-                    version = line.split(" ")[3]
+                    version = line.rstrip().split(" ")[3]
 
             print version
             add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + item.name + ',' + version)

@@ -1,32 +1,27 @@
-![logo.png](https://bitbucket.org/repo/g4odBK/images/2853706246-logo.png)
-#USELESS
+![icon.png](https://bitbucket.org/repo/g4odBK/images/4257456251-icon.png)
+#LWASP
 
-###### The Universal Security-Enhancing Linux Engine for Synchronous Scoring
+###### The Linux Watchful Adaptive Security Compliance
 
 ## About
-* USELESS is a service to scoring practice linux images in preparation for cyber security competitions
+* LWASP is a service to scoring practice linux images in preparation for cyber security competitions
 * Very versatile and open to modification, so that coaches can customize it specifically for their teams if they choose to do so
-* Tested on Ubuntu 12.04 & 14.04, but should work for all linux distributions
-* Uses Bash and Python for the backend, Javascript with ReactJS and JQuery for the front end
+* Tested on Ubuntu 12.04, 14.04, & 16.04, but should work for all Debian-based linux distributions
+* Uses Bash and Python for the backend, GTK+3 & Javascript with ReactJS and JQuery for the front end
 
 ## Initialization
-1. Follow the instructions in the USELESS Elements Generator Excel file to create the elements.csv file in the useless directory (make sure to allow macros if using excel).
-2. If you have your own logo, please replace the default with it in useless/ScoringEngine/, and make sure it is named logo.png. This logo is used for the desktop shortcuts and on the scoring report, and is an easy way to personalize this service.
-3. Move the useless directory onto the Purposefully Vulnerable Linux Image (PVLI) that needs to be scored (recommended in /etc/)
-4. Open a command prompt (terminal) on the PVLI and run the following commands:
-  * ``` cd /path/to/scoring/engine/useless ``` (e.g. cd /etc/useless)
-  * ``` sudo python initialize.py ```
-  * Answer the prompts:
-    * Timed Image: If yes, will count down timer on scoring report and prevent the score from being updated once time is up
-    * Email: If a timed image, will email the scoring report once the time is elapsed on the image. If not a timed image, will create a desktop shortcut to send scoring report.
-    * Image Name: The general name for the image, will be at the top of the scoring report and in the email Shut down the image, and distribute it to competitors. The scoring engine will start on next boot.
-  
+1. Drag the ```deploy``` folder onto the desktop of the image that you want to install LWASP on.
+2. Open a command prompt (terminal) on the image and run the following commands:
+  * ``` cd ~/Desktop/deploy ```
+  * ``` ./setup ```
+3. Check what you want to score, and then follow the prompts to install LWASP on the image.
+
 ## Steps for Competitor to Take
 1. Once the image is started and they log in, they double click the "Set ID" shortcut on the desktop to set their unique ID. You will receive this ID and the image ID you set during initialization in the email. This is so that if you have several duplicate images, you can tell them apart.
 2. They try to secure the image, gaining points by what was set in the elements file.
 3. The scoring report will refresh every time a file is changed and once every minute. If this is not often enough or this does not seem to be working, they can type ``` sudo refresh ``` into a terminal to reload the score manually.
 
-# Modifying USELESS
+# Modifying LWASP
 ## Add Scoring Categories
 1. Add a function in analyze.py that can take in the extras as parameters and return True or False as to whether that item should be marked complete according to those parameters
 2. Near the bottom of the analyze.py file, where the recording file is read, add your category beneath all of the others, with the same syntax, but use ``` function = myNewFunction(extras...) ```
@@ -64,7 +59,7 @@ with any questions.
 
 
 ## Notes
-* You can reach me for contact at contact@nsccmanager.com with any questions, concerns, etc.
-* Forensics questions are in the CyberPatriot model; only checks the text after “ANSWER: “ (can support multiple answers.They try to secure the image, gaining points by what was set in the elements file.
+* You can reach me for contact at steffeydev@icloud.com with any questions, concerns, etc.
+* Forensics questions are in the CyberPatriot model; only checks the text after “ANSWER: “ (can support multiple answers.)
 * Feel free to read through all of my code, I have tried to comment it as much as needed. If you know any amount of python it should be fairly easy to understand and modify to fit your needs.
 * **main.js** is written in javascript using a framework called React, which was created by Facebook in 2013. Feel free to research and learn it, but I have to warn you that just messing with it as plain javascript may not work that well.
