@@ -66,14 +66,10 @@ class PasswdBox(Gtk.ScrolledWindow):
             add(w.commands, "sudo rm /etc/security/opasswd")
             add(w.elements, "Created a password history file,V,6,FileExistance,/etc/security/opasswd,TRUE")
         elif i == 1: add(w.elements, "Null passwords are no longer allowed,V,7,FileContents,/etc/pam.d/common-auth,FALSE,nullok_secure")
-        #need to fix this next one
         elif i == 2: add(w.elements, "Auditing for failed password attempts is enabled,V,7,FileContents,/etc/pam.d/common-auth,TRUE,pam_tally.so~audit")
-        elif i == 3:
-            add(w.elements, "A Minimum password length is set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~minlen=" + text)
-        elif i == 4:
-            add(w.elements, "A Maximum password age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MAX_DAYS " + text)
-        elif i == 5:
-            add(w.elements, "A Password warn age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_WARN_AGE " + text)
+        elif i == 3: add(w.elements, "A Minimum password length is set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~minlen=" + text)
+        elif i == 4: add(w.elements, "A Maximum password age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MAX_DAYS " + text)
+        elif i == 5: add(w.elements, "A Password warn age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_WARN_AGE " + text)
         elif i == 6:
             add(w.commands, "sudo sed -i.bak s/sha512/''/g /etc/pam.d/common-password")
             add(w.commands, "sudo rm /etc/pam.d/common-password.bak")
