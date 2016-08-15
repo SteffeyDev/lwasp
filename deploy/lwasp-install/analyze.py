@@ -302,16 +302,22 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         try:
             #updates and re-encrypts recording file
             with open(getDirPath() + '/recording', 'w') as recFile:
-                encrypt(json.dumps(rows), recFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
+                encrypt(json.dumps(rows), recFile)
 
             #save again to be accessed by scoring report html page
-            with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
+            with open('/usr/lwasp/score.json', 'w') as scoreFile:
                 newArray = []
                 for row in rows:
                     if row['complete'] == True:
-                        newArray.append(row)
-                scoreFile.write(json.dumps(newArray))
+                        newObj = {'title': row['title'], 'points': row['points'], 'mode': row['mode']}
+                        newArray.append(newObj)
+                masterObj = {'score': newArray}
+                scoreFile.write(json.dumps(masterObj))
                 scoreFile.close()
+            try:
+                do("sudo chown " + settings['user'] + "/usr/lwasp/score.json")
+            except:
+                print "* Could not own score.json"
         except:
             saveError = True
             print "\n * Could not save to file"
@@ -334,7 +340,6 @@ if fileError:
 if saveError:
     print "ERROR: Could not save properly, please try 'sudo refresh'"
 
-user = os.environ['SUDO_USER'];
 if new and penalty:
     playSound('both')
 elif new: #play sound

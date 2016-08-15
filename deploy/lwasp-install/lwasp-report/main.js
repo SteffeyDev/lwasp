@@ -89,7 +89,7 @@ var Main = React.createClass({displayName: "Main",
     setInterval(function() {
       parent.readTextFile();
       parent.forceUpdate();
-    }, 1000); // 1000 ms = 1 second
+    }, 5000); // 1000 ms = 1 second
   },
   updateDims: function() {
       this.forceUpdate(); // reload page if the user expands the window
@@ -98,7 +98,7 @@ var Main = React.createClass({displayName: "Main",
       var parent = this;
 
       $.getJSON("score.json", function(json) {
-        parent.setState({"vulnerabilities": json});
+        parent.setState({"vulnerabilities": json.score});
       });
   },
   readSettingsFile: function() {
@@ -218,18 +218,14 @@ var Main = React.createClass({displayName: "Main",
     var penaltyList = [];
     vulnerabilities.forEach( function(item, i) {
       if (item['mode'] == true) {
-        if (item['complete'] == true) {                               // if analyze.py has marked this item as complete
-          numberOfComplete++;                                         // iterate number of complete items
-          pointsGained += item['points'];                             // append to number of points gained
-          completeList.push(React.createElement(ListItem, {item: item, key: i}))         // returns the custum html element for this item
-        }
+        numberOfComplete++;                                         // iterate number of complete items
+        pointsGained += item['points'];                             // append to number of points gained
+        completeList.push(React.createElement(ListItem, {item: item, key: i}))         // returns the custum html element for this item
       }
       else {
-        if (item['complete'] == true) {
-          numberOfPenalties++;                                      // if analyze.py has marked this item as complete
-          pointsLost += item['points'];                             // append to number of points gained
-          penaltyList.push(React.createElement(ListItem, {item: item, key: i}))        // returns the custum html element for this item
-        }
+        numberOfPenalties++;                                      // if analyze.py has marked this item as complete
+        pointsLost += item['points'];                             // append to number of points gained
+        penaltyList.push(React.createElement(ListItem, {item: item, key: i}))        // returns the custum html element for this item
       }
     });
 

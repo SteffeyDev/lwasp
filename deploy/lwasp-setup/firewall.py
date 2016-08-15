@@ -58,8 +58,10 @@ class FirewallBox(Gtk.ScrolledWindow):
             elif port == "": return
             self.entries[i].set_editable(not button.get_active())
 
+        location = "/lib/ufw/user.rules" if get_version() < 16 else "/etc/ufw/user.rules"
+
         if i == 0: add(w.elements, "Firewall is active,V,6,Command,sudo ufw status,FALSE,inactive")
         elif i == 1: add(w.elements, "Firewall logging is on High,V,7,FileContents,/etc/ufw/ufw.conf,TRUE,LOGLEVEL=high")
-        elif i == 2: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
-        elif i == 3: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
-        elif i == 4: add(w.elements, "Firewall in configured to block port " + port + ",V,7,FileContents,/lib/ufw/user.rules,TRUE," + port + " -j DROP")
+        elif i == 2: add(w.elements, "Firewall is configured to block port " + port + ",V,7,FileContents," + location + ",TRUE," + port + " -j DROP")
+        elif i == 3: add(w.elements, "Firewall is configured to block port " + port + ",V,7,FileContents," + location + ",TRUE," + port + " -j DROP")
+        elif i == 4: add(w.elements, "Firewall is configured to block port " + port + ",V,7,FileContents," + location + ",TRUE," + port + " -j DROP")

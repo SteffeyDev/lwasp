@@ -35,14 +35,16 @@ def saveSettings(settings):
         text = json.dumps(settings)
         encrypt(text, setFile)
         setFile.close()
-    do('sudo chown ' + os.environ['SUDO_USER'] + ' /etc/lwasp/settings.json')
+    do('sudo chown ' + settings['user'] + ' /etc/lwasp/settings.json')
+
 
 def saveUserSettings(settings):
     text = json.dumps(settings)
-    with open('/usr/ScoringEngine/settings.json', 'w') as userWriteFile:
+    with open('/usr/lwasp/settings.json', 'w') as userWriteFile:
         userWriteFile.write(text)
         userWriteFile.close()
-    do('sudo chown ' + os.environ['SUDO_USER'] + ' /usr/ScoringEngine/settings.json')
+    settings = getSettings()
+    do('sudo chown ' + settings['user'] + ' /usr/lwasp/settings.json')
 
 def getSettings():
     setFile = open(getDirPath() + '/settings.json', 'r')
@@ -51,7 +53,7 @@ def getSettings():
     return text
 
 def getUserSettings():
-    setFile = open('/usr/ScoringEngine/settings.json', 'r')
+    setFile = open('/usr/lwasp/settings.json', 'r')
     text = json.loads(setFile.read())
     setFile.close()
     return text
@@ -191,7 +193,9 @@ def sendEmail(message, settings={}):
 
 #Sends notification on screen to show user
 def notify(title, message):
-    do('notify-send -u critical "' + title + '" "' + message + '"')
+    settings = getSettings()
+    do('sudo -u ' + settings['user'] + ' /etc/lwasp/notify.bash "' + title + '" "' + message + '"')
+    #do('notify-send -u critical "' + title + '" "' + message + '"')
 
 #Sets up an inotifywait on the file passed in to call analyze.py on file change, delete, etc
 def watch(filepath):

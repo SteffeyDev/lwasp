@@ -79,8 +79,8 @@ class UserBox(Gtk.ScrolledWindow):
         self.add_with_viewport(self.master_box)
 
     def guest_user_button_changed(self, button):
-        if get_version() > 14.0:
-            add(w.elements, "Guest account is disabled,V,6,Command,cat /usr/share/lightdm/lightdm.conf.d/*.conf,TRUE,allow-guest=false")
+        if get_version() > 13.0:
+            add(w.elements, "Guest account is disabled,V,6,Command,/usr/sbin/lightdm --show-config,TRUE,allow-guest=false")
         else:
             add(w.commands, "sudo printf 'allow-guest=true' >> /etc/lightdm/lightdm.conf")
             add(w.elements, "Guest account is disabled,V,6,FileContents,/etc/lightdm/lightdm.conf,FALSE,allow-guest=true")
@@ -219,9 +219,9 @@ class UserBox(Gtk.ScrolledWindow):
     def check_button_clicked(self, button):
         item = self.items[button.index]
         if button.type == 0:
-            add(w.elements, 'Password changed for user ' + item.username + ',V,5,FileContents,/var/log/auth.log,TRUE,password changed for ' + item.username)
+            add(w.elements, 'Password changed for user ' + item.username + ',V,5,Command,grep password /var/log/auth.log,TRUE,password changed for ' + item.username)
         elif button.type == 1:
-            add(w.elements, 'User ' + item.username + ' is no longer an administrator,V,5,FileContents,/var/log/auth.log,TRUE,delete \'' + item.username + '\' from group \'sudo\'')
+            add(w.elements, 'User ' + item.username + ' is no longer an administrator,V,5,FileContents,/etc/group,FALSE,sudo~' + item.username)
         elif button.type == 2:
             add(w.elements, 'User ' + item.username + ' was deleted,V,5,FileContents,/etc/passwd,FALSE,' + item.username)
         else:

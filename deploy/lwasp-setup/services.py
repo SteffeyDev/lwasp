@@ -27,7 +27,8 @@ class AppsBox(Gtk.ScrolledWindow):
 
         # time consuming
         updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[1]
-        self.updates = updates_string.rstrip()
+        self.updates = updates_string.split('\n')
+        self.updates_map = {}
 
         self.entries = []
 
@@ -81,12 +82,17 @@ class AppsBox(Gtk.ScrolledWindow):
         button.index = len(self.items)
         button.connect("clicked", self.expand_button_clicked)
         user_wrapper_box.pack_end(button, False, True, 0)
-        if app in self.updates:
-            note_label = Gtk.Label()
-            note_label.set_markup('<span foreground="grey"><small>Updates Available</small></span>')
-            note_label.set_line_wrap(True)
-            note_label.props.halign = Gtk.Align.END
-            user_wrapper_box.pack_end(note_label, False, False, 0)
+        updates_available = False
+        for update in self.updates:
+            if app in update:
+                self.updates_map[app] = update
+                note_label = Gtk.Label()
+                updates_available = True
+                note_label.set_markup('<span foreground="grey"><small>Updates Available</small></span>')
+                note_label.set_line_wrap(True)
+                note_label.props.halign = Gtk.Align.END
+                user_wrapper_box.pack_end(note_label, False, False, 0)
+                break
         user_box.pack_start(user_wrapper_box, False, False, 0)
         self.master_box.pack_start(user_box, False, True, 0)
 
@@ -108,7 +114,7 @@ class AppsBox(Gtk.ScrolledWindow):
                 label = "Penalize for Uninstalling (Critical Service)"
             elif i == 4:
                 print app
-                if app not in self.updates: break
+                if not updates_available: break
                 label = "Score for Updating"
 
             check_button = Gtk.CheckButton(label)
@@ -196,7 +202,7 @@ class AppsBox(Gtk.ScrolledWindow):
             add(w.elements, 'Service ' + item.name + ' is no longer installed,P,10,FileExistance,' + filename + ',FALSE')
         elif button.type == 4:
 
-            dpkg_update = subprocess.Popen(["apt-cache", "policy", item.name], stdout=subprocess.PIPE).communicate()[0]
+            dpkg_update = subprocess.Popen(["apt-cache", "policy", self.updates_map[item.name]], stdout=subprocess.PIPE).communicate()[0]
             dpkg_update_list = dpkg_update.split('\n')
             version = ""
             for line in dpkg_update_list:
@@ -204,7 +210,7 @@ class AppsBox(Gtk.ScrolledWindow):
                     version = line.rstrip().split(" ")[3]
 
             print version
-            add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + item.name + ',' + version)
+            add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + self.updates_map[item.name] + ',' + version)
 
     def expand_button_clicked(self, button):
         item = self.items[button.index]

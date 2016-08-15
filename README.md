@@ -45,8 +45,8 @@ with any questions.
 * ** **elements.csv** - The user-generated comma-separated-value file that contains what should be scored and what should be penalized.
 
 
-###### These elements in the ScoringEngine folder make up the UI
-* **main.js** - The heart of what powers the UI. It is loaded from ScoringReport.html, which is opened when the user double clicks on it from their desktop.
+###### These elements in the lwasp folder make up the UI
+* **main.js** - The heart of what powers the UI. It is loaded from report.html, which is opened when the user double clicks on it from their desktop.
 * **jquery.js** - Used in **main.js** to power the ajax calls that retrieves **recording.json** and **settings.json** in javascript to do some calculations on and display to the user.
 * **transform.js** - What powers the use of JSX in main.js. See https://facebook.github.io/react/docs/tooling- integration.html for more information.
 * ** **logo.png** - The image that is used on the scoring report and on the desktop images.

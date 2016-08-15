@@ -34,6 +34,7 @@ GObject.threads_init()
 
 #creates dictionary object to hold objects
 settings = {}
+settings['user'] = os.environ['SUDO_USER']
 usersettings = {}
 locString = "/etc/lwasp"
 
@@ -113,27 +114,27 @@ class MyWindow(Gtk.Window):
 
     def install_frontend(self):
 
-        print "\nGenerating front end in /usr/ScoringEngine"
+        print "\nGenerating front end in /usr/lwasp"
         try:
-            shutil.move("ScoringEngine", "/usr/ScoringEngine")
+            shutil.move("lwasp-report", "/usr/lwasp")
         except:
-            if not os.path.isdir('/usr/ScoringEngine'):
-                print ' ** ScoringEngine folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the ScoringEngine folder in it.'
-                show_error(self, 'ScoringEngine folder not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the ScoringEngine folder in it.')
+            if not os.path.isdir('/usr/lwasp'):
+                print ' ** lwasp-report folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.'
+                show_error(self, 'lwasp-report folder not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.')
                 Gtk.main_quit()
                 sys.exit()
 
         print "\nCreating Scoring Report on Desktop"
         #creates a desktop file to launch a firefox page in its own window, uses icon.png file
         with open(expanduser("~") + '/Desktop/scoring.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/ScoringEngine/ScoringReport.html\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
+            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/scoring.desktop") # makes executable
             do("chmod +x open.bash") # makes executable
 
         print '\nAdding Set ID script on desktop'
         with open(expanduser("~") + '/Desktop/lwasp.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
+            deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/lwasp.desktop")
             do("chmod +x " + getSafeDirPath() + "/uid.py")
@@ -149,11 +150,13 @@ class MyWindow(Gtk.Window):
             os.remove(getDirPath() + "/commands.bash")
             print "\n vulnerabilities installed"
 
+        #sets up system to use notify-send from root crontab
+        do("sudo printf 'env | grep DBUS_SESSION_BUS_ADDRESS > $HOME/.lwasp_dbus\n' >> /home/" + settings['user'] + "/.profile && printf 'export DBUS_SESSION_BUS_ADDRESS >> $HOME/.lwasp_dbus' >> /home/" + settings['user'] + "/.profile")
+        do("sudo sed -i.bak s/template/" + settings['user'] + "/g notify.bash && sudo rm notify.bash.bak")
+
         #moves sound to generally accessable system folder
         try:
-            os.mkdir("/usr/share/sounds/lwasp")
-            shutil.move(getSafeDirPath() + "/success.wav", "/usr/share/sounds/lwasp/success.wav")
-            shutil.move(getSafeDirPath() + "/error.mp3", "/usr/share/sounds/lwasp/error.mp3")
+            shutil.move(getSafeDirPath() + "/lwasp-sounds", "/usr/share/sounds/lwasp")
         except:
             if not os.path.isfile('/usr/share/sounds/lwasp/success.wav'):
                 print ' ** success.wav file not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the success.wav folder in it.'
@@ -249,9 +252,10 @@ class MyWindow(Gtk.Window):
         GObject.idle_add(lambda: self.update_progress(0.3, "Moving Files"))
 
         #creates scores file to only store parts of the recording file to show on the scoring html page
-        with open('/usr/ScoringEngine/score.json', 'w') as scoreFile:
+        with open('/usr/lwasp/score.json', 'w') as scoreFile:
             scoreFile.write("")
             scoreFile.close()
+        do("sudo chmod 664 /usr/lwasp/score.json")
 
         print '\nSetting up script at /etc/init.d/lwasp to create file watches on boot'
         #run restart every time the image restarts to fun cleanup function
@@ -417,7 +421,7 @@ class MyWindow(Gtk.Window):
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
                 with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
-                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/ScoringEngine/icon.png")
+                    deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
                     deskFile.close()
                     do("chmod +x ~/Desktop/email.desktop") # makes executable
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
@@ -469,12 +473,13 @@ class MyWindow(Gtk.Window):
 
     def finish_installation_backthread(self):
 
+        user = os.environ['SUDO_USER'];
+
         saveSettings(settings)
         saveUserSettings(usersettings)
-        do("sudo chown " + os.environ['SUDO_USER'] + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
-        do("sudo chown " + os.environ['SUDO_USER'] + " /usr/ScoringEngine/settings.json")
+        do("sudo chown " + user + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
+        do("sudo chown " + user + " /usr/lwasp/settings.json")
 
-        user = os.environ['SUDO_USER'];
         print "\nDeleting Bash History"
         do("sudo -u " + user + " bash -c 'history -c; echo '' > ~/.bash_history'")
 

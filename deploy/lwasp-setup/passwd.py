@@ -69,9 +69,9 @@ class PasswdBox(Gtk.ScrolledWindow):
         #need to fix this next one
         elif i == 2: add(w.elements, "Auditing for failed password attempts is enabled,V,7,FileContents,/etc/pam.d/common-auth,TRUE,pam_tally.so~audit")
         elif i == 3:
-            add(w.elements, "A Minimum password length is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MIN_LEN " + text)
+            add(w.elements, "A Minimum password length is set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~minlen=" + text)
         elif i == 4:
-            add(w.elements, "A Maximum password age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MAX_AGE " + text)
+            add(w.elements, "A Maximum password age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_MAX_DAYS " + text)
         elif i == 5:
             add(w.elements, "A Password warn age is set,V,7,FileContents,/etc/login.defs,TRUE,PASS_WARN_AGE " + text)
         elif i == 6:

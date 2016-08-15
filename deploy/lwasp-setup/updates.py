@@ -33,7 +33,11 @@ class UpdatesBox(Gtk.ScrolledWindow):
     def check_button_clicked(self, button):
         i = button.type
         if i == 0: add(w.elements, "Auto-Install Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Unattended-Upgrade \"1\"")
-        elif i == 1: add(w.elements, "Auto-download Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Download-Upgradeable-Packages \"1\"")
+        elif i == 1:
+            if get_version() > 15:
+                add(w.elements, "Auto-download Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/20auto-upgrades,TRUE,APT::Periodic::Download-Upgradeable-Packages \"1\"")
+            else:
+                add(w.elements, "Auto-download Security Updates Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Download-Upgradeable-Packages \"1\"")
         elif i == 2: add(w.elements, "Check for Updates Daily Enabled,V,7,FileContents,/etc/apt/apt.conf.d/10periodic,TRUE,APT::Periodic::Update-Package-Lists \"1\"")
         elif i == 3: add(w.elements, "All Security Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,TRUE,;0")
         elif i == 4: add(w.elements, "All Updates Complete,V,4,Command,/usr/lib/update-notifier/apt-check,TRUE,0;0")
