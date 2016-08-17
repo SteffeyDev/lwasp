@@ -38,6 +38,9 @@ toWatch.append('/etc/init.d')
 #starts watching ufw for up/down events
 toWatch.append('/etc/ufw')
 
+#starts watching lightdm on 16.04 systems
+toWatch.append('/usr/share/lightdm/lightdm.conf.d')
+
 #deletes initialization function
 do('sudo rm ' + getSafeDirPath() + '/initialize.py')
 

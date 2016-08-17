@@ -80,7 +80,7 @@ class BackdoorBox(Gtk.ScrolledWindow):
         self.paths[i].set_editable(not button.get_active())
 
         path_list = path.split("/")
-        filepath = "/".join(path_list[0:(len(path)-2)])
+        filepath = "/".join(path_list[0:(len(path_list)-1)])
         filename = path_list[len(path_list)-1]
 
         if i in range(3,5):

@@ -298,7 +298,7 @@ class MyWindow(Gtk.Window):
         self.content_area.pack_start(name_box, False, False, 0)
 
         note_label = Gtk.Label()
-        note_label.set_markup('<span foreground="grey"><small>The common name will be the same accross all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports.</small></span>')
+        note_label.set_markup('<span foreground="grey"><small>The common name will be the same across all instances of this image.  If this image is duplicated, each user can input their own unique identifier on each image for differentiation on the scoring reports.</small></span>')
         note_label.set_line_wrap(True)
         self.content_area.pack_start(note_label, False, False, 0)
 

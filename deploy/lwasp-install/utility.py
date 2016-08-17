@@ -194,8 +194,8 @@ def sendEmail(message, settings={}):
 #Sends notification on screen to show user
 def notify(title, message):
     settings = getSettings()
-    do('sudo -u ' + settings['user'] + ' /etc/lwasp/notify.bash "' + title + '" "' + message + '"')
-    #do('notify-send -u critical "' + title + '" "' + message + '"')
+    #do('sudo -u ' + settings['user'] + ' /etc/lwasp/notify.bash "' + title + '" "' + message + '"')
+    do('notify-send -u critical "' + title + '" "' + message + '"')
 
 #Sets up an inotifywait on the file passed in to call analyze.py on file change, delete, etc
 def watch(filepath):

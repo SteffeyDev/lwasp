@@ -67,13 +67,13 @@ class MyWindow(Gtk.Window):
 			elif i == 2:
 				page = ForensicsBox()
 				self.forensics_box = page
-				label = "Forensics ?s"
+				label = "Forensics"
 			elif i == 3:
 				page = UpdatesBox()
 				label = "Updates"
 			elif i == 4:
 				page = PasswdBox()
-				label = "Passwd Policy"
+				label = "Password Policy"
 			elif i == 5:
 				page = FirewallBox()
 				label = "Firewall"

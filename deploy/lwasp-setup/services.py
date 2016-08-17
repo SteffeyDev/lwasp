@@ -200,8 +200,8 @@ class AppsBox(Gtk.ScrolledWindow):
         elif button.type == 1:
             add(w.elements, 'Service ' + item.name + ' is no longer installed,V,10,FileExistance,' + filename + ',FALSE')
         elif button.type == 2:
-            if item[name] == "ufw":
-                add(w.elements, 'Service ' + item.name + ' stopped,P,8,Command,sudo ufw status,TRUE,Status: active')
+            if item.name == "ufw":
+                add(w.elements, 'Service ' + item.name + ' stopped,P,8,Command,sudo ufw status,TRUE,Status: inactive')
             else:
                 add(w.elements, 'Service ' + item.name + ' stopped,P,8,Service,' + services[item.name] + ',FALSE')
         elif button.type == 3:
