@@ -21,7 +21,7 @@ class PasswdBox(Gtk.ScrolledWindow):
             extra = None
             if i == 0: label = "Score for Creating Password History File"
             elif i == 1: label = "Score for Disallowing Null Passwords"
-            elif i == 2: label = "Score for Aditing failed password attempts"
+            elif i == 2: label = "Score for Aduiting failed password attempts"
             elif i == 3:
                 extra = Gtk.Entry(placeholder_text="Min Length")
                 label = "Score for Setting a Minimum Password Length"
