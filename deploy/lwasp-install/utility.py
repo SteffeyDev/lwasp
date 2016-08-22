@@ -171,7 +171,7 @@ def sendEmail(message, settings={}):
     password = settings['password']
     email = settings['email']
 
-    headers = ["From: " + username, "To: " + email, "MIME-Version: 1.0", "Subject: LWASP Scoring Report", "Content-Type: text/html"]
+    headers = ["From: " + username + "@sendgrid.net", "To: " + email, "MIME-Version: 1.0", "Subject: LWASP Scoring Report", "Content-Type: text/html"]
     headers = "\r\n".join(headers)
 
     try:
