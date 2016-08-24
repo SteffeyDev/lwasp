@@ -407,7 +407,7 @@ class MyWindow(Gtk.Window):
             usersettings['limit'] = -1
 
         if self.email_button.get_active():
-            if self.email_address_entry.get_text() == "" or self.email_smtp_server_entry.get_text() == "" or self.email_smtp_username_entry.get_text() == "" or self.email_smtp_password_entry.get_text() == "":
+            if self.email_address_entry.get_text() == "": # or self.email_smtp_server_entry.get_text() == "" or self.email_smtp_username_entry.get_text() == "" or self.email_smtp_password_entry.get_text() == "":
                 GObject.idle_add(lambda: show_error(self, "Email Information Needed", "Please fill out all of the email information fields or deselect the Sending Scoring Reports Over Email checkbox"))
                 return
             settings['email'] = self.email_address_entry.get_text()

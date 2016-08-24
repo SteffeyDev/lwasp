@@ -28,7 +28,7 @@ import w
 w.init()
 
 continue_on = False
-sudo_user = os.environ["SUDO_USER"]
+sudo_user = os.environ['SUDO_USER']
 
 class MyWindow(Gtk.Window):
 	def __init__(self):
