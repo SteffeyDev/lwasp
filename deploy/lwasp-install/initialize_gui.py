@@ -461,7 +461,7 @@ class MyWindow(Gtk.Window):
 
     def email_not_recieved(self, button):
         self.check_dialog.destroy()
-        show_error(self, "Check SMTP Settings", "Check the settings on your SMTP account to ensure it did not block the email.  You may want to specify a different SMTP server, visit https://www.arclab.com/en/kb/email/list-of-smtp-and-pop3-servers-mailserver-list.html for a full list", Gtk.MessageType.INFO)
+        show_error(self, "Check Email Address", "Make Sure you put in the correct email address", Gtk.MessageType.INFO)
 
     def finish_installation(self, button=None):
         try:
