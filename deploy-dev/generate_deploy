@@ -1,0 +1,13 @@
+cd lwasp-setup-source
+zip -r ../lwasp-setup.zip *
+cd ..
+echo '#!/usr/bin/env python' | cat - lwasp-setup.zip > lwasp-setup
+chmod +x lwasp-setup
+rm lwasp-setup.zip
+cp -Rf lwasp-install ../deploy/
+mv -f lwasp-setup ../deploy/
+cp install ../deploy/
+cp setup ../deploy/
+cd ../deploy/lwasp-install
+python -m py_compile initialize_gui.py
+rm initialize_gui.py

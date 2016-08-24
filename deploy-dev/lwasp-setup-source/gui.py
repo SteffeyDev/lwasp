@@ -52,8 +52,8 @@ class MyWindow(Gtk.Window):
 		master_box.add(bottom_box)
 
 		self.add(master_box)
-
-		self.set_icon_from_file(get_resource_path("icon.png"))
+		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
+		self.set_icon_from_file(path[:-5] + 'install/icon.png')
 
 		for i in range(0, 8):
 			page = Gtk.Box()
@@ -112,9 +112,10 @@ class MyWindow(Gtk.Window):
 			for item in w.commands:
 				commands.write(item + '\n')
 			commands.close()
-		os.system('sudo mv elements.csv ../lwasp-install/')
-		os.system('sudo mv commands.bash ../lwasp-install/')
-		os.system('sudo chmod +x commands.bash')
+		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
+		os.system('sudo mv elements.csv ' + path[:-5] + 'install/')
+		os.system('sudo mv commands.bash ' + path[:-5] + 'install/')
+		os.system('sudo chmod +x ' + path[:-5] + 'install/commands.bash')
 
 		show_error(self, "Elements Export", "A copy of what scores has been created on the Desktop for your reference.  If you do not remove this, it will be deleted automatically at next reboot.", Gtk.MessageType.INFO)
 
@@ -145,7 +146,8 @@ if continue_on:
 			master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 			master_box.set_border_width(10)
 
-			self.set_icon_from_file(get_resource_path("icon.png"))
+			path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
+			self.set_icon_from_file(path[:-5] + 'install/icon.png')
 
 			label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
 			label.set_line_wrap(True)
@@ -161,7 +163,8 @@ if continue_on:
 
 		def launch_install(self, button):
 			global to_run
-			to_run = "cd ..; /bin/bash install"
+			path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
+			to_run = "/bin/bash " + path[:-11] + 'install'
 			Gtk.main_quit()
 			self.destroy()
 
