@@ -473,7 +473,7 @@ class MyWindow(Gtk.Window):
 
     def finish_installation_backthread(self):
 
-        user = os.environ['SUDO_USER'];
+        user = settings['user'];
 
         saveSettings(settings)
         saveUserSettings(usersettings)

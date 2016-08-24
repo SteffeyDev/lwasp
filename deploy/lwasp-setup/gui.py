@@ -28,6 +28,7 @@ import w
 w.init()
 
 continue_on = False
+sudo_user = os.environ["SUDO_USER"]
 
 class MyWindow(Gtk.Window):
 	def __init__(self):
@@ -100,7 +101,7 @@ class MyWindow(Gtk.Window):
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
 		with open('elements.csv', 'w') as elements:
-			with open('/home/' + os.environ['SUDO_USER'] + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
+			with open('/home/' + sudo_user + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
 				export.write("Scoring Item,Points,Penalty\n")
 				for item in w.elements:
 					elements.write(item + '\n')
