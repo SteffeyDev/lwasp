@@ -206,7 +206,7 @@ class MyWindow(Gtk.Window):
                     #checks mode
                     if mode != "v" and mode != "p":
                         print "\n* Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column."
-                        GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column.))
+                        GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column."))
 
                     dict['mode'] = (mode == "v")
 
