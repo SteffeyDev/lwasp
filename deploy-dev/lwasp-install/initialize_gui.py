@@ -40,6 +40,8 @@ else:
 usersettings = {}
 locString = "/etc/lwasp"
 
+print 'using sudo user: ', settings['user']
+
 class MyWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="LWASP Installer")
