@@ -127,19 +127,22 @@ class MyWindow(Gtk.Window):
                 sys.exit()
 
         print "\nCreating Scoring Report on Desktop"
+        desktop_path = '/home/' + settings['user'] + '/Desktop/'
         #creates a desktop file to launch a firefox page in its own window, uses icon.png file
-        with open('/home/' + settings['user'] + '/Desktop/scoring.desktop', 'w') as deskFile:
+        with open(desktop_path + 'scoring.desktop', 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            do("chmod +x ~/Desktop/scoring.desktop") # makes executable
-            do("chmod +x open.bash") # makes executable
+            do("sudo chmod +x " + desktop_path + "scoring.desktop") # makes executable
+            do("sudo chown " + settings['user'] + ":" + settings['user'] + " " + desktop_path + "scoring.desktop")
+            do("sudo chmod +x open.bash") # makes executable
 
         print '\nAdding Set ID script on desktop'
-        with open('/home/' + settings['user'] + '/Desktop/lwasp.desktop', 'w') as deskFile:
+        with open(desktop_path + "lwasp.desktop", 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            do("chmod +x ~/Desktop/lwasp.desktop")
-            do("chmod +x " + getSafeDirPath() + "/uid.py")
+            do("sudo chmod +x " + desktop_path + "lwasp.desktop")
+            do("sudo chown " + settings['user'] + ":" + settings['user'] + " " + desktop_path + "lwasp.desktop")
+            do("sudo chmod +x " + getSafeDirPath() + "/uid.py")
 
         GObject.idle_add(lambda: self.update_progress(0.2, "Creating Vulnerabilities"))
 

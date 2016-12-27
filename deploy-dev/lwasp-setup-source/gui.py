@@ -104,10 +104,10 @@ class MyWindow(Gtk.Window):
 		self.forensics_box.finalize()
 		with open('elements.csv', 'w') as elements:
 			with open('/home/' + sudo_user + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
-				export.write("Scoring Item,Points,Penalty\n")
+				export.write("Scoring Item,Points,Type\n")
 				for item in w.elements:
 					elements.write(item + '\n')
-					export.write(item.split(",")[0] + "," + item.split(",")[2] + "," + ("*" if item.split(",")[1] == "P" else "") + "\n")
+					export.write(item.split(",")[0] + "," + item.split(",")[2] + "," + ("*" if item.split(",")[1] == "Penalty" else "Vulnerability") + "\n")
 				export.close()
 			elements.close()
 		with open('commands.bash', 'w') as commands:
