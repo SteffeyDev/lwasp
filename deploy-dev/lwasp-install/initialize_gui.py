@@ -33,7 +33,10 @@ GObject.threads_init()
 
 #creates dictionary object to hold objects
 settings = {}
-settings['user'] = os.environ['SUDO_USER']
+if len(sys.argv) > 1:
+    settings['user'] = sys.argv[1]
+else:
+    settings['user'] = os.environ['SUDO_USER']
 usersettings = {}
 locString = "/etc/lwasp"
 

@@ -166,7 +166,7 @@ if continue_on:
 		def launch_install(self, button):
 			global to_run
 			path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
-			to_run = "/bin/bash " + path[:-11] + 'install'
+			to_run = "/bin/bash " + path[:-11] + 'install ' + sudo_user
 			Gtk.main_quit()
 			self.destroy()
 
