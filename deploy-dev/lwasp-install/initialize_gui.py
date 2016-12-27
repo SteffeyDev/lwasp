@@ -20,6 +20,11 @@ from utility import *
 
 os.chdir(getDirPath())
 
+def show_fatal(top, title, message, type=Gtk.MessageType.ERROR):
+    show_error(top, title, message, type=Gtk.MessageType.ERROR)
+    Gtk.main_quit()
+    sys.exit()
+
 def show_error(top, title, message, type=Gtk.MessageType.ERROR):
     dialog = Gtk.MessageDialog(top, 0, type, Gtk.ButtonsType.OK, title)
     dialog.format_secondary_text(message)
@@ -262,9 +267,7 @@ class MyWindow(Gtk.Window):
         except:
             if not os.path.isfile('recording'):
                 print "\n* Could not find elements.csv file in this directory.  Please see the readme and excel file.  Exiting..."
-                show_error(self, "Could not find elements.csv file","Please run the lwasp-setup script before this one.")
-                Gtk.main_quit()
-                sys.exit()
+                GObject.idle_add(lambda: show_fatal(self, "Could not find elements.csv file","Please run the lwasp-setup script before this one."))
 
         GObject.idle_add(lambda: self.update_progress(0.4, "Moving Files"))
 
