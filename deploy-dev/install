@@ -3,4 +3,4 @@
 
 cd lwasp-install
 echo "Loading Installer ..."
-sudo python -B initialize_gui.pyc
+sudo python -B initialize_gui.pyc "$@"
