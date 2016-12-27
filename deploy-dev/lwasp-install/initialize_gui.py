@@ -21,7 +21,7 @@ from utility import *
 os.chdir(getDirPath())
 
 def show_fatal(top, title, message, type=Gtk.MessageType.ERROR):
-    show_error(top, title, message, type=Gtk.MessageType.ERROR)
+    show_error(top, title, message, type)
     Gtk.main_quit()
     sys.exit()
 
@@ -89,9 +89,7 @@ class MyWindow(Gtk.Window):
 
         if not internet_on:
             print "Fatal Error: No internet connection, please connect to a network to initialize LWASP."
-            show_error(self, "Error: No internet connection", "Please connect to a network, then try again.")
-            Gtk.main_quit()
-            sys.exit()
+            show_fatal(self, "Error: No internet connection", "Please connect to a network, then try again.")
 
     def get_resource_path(self, rel_path):
         dir_of_py_file = os.path.dirname(__file__)
@@ -139,9 +137,7 @@ class MyWindow(Gtk.Window):
         except:
             if not os.path.isdir('/usr/lwasp'):
                 print ' ** lwasp-report folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.'
-                show_error(self, 'lwasp-report folder not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.')
-                Gtk.main_quit()
-                sys.exit()
+                GObject.idle_add(lambda: show_fatal(self, 'lwasp-report folder not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.'))
 
         print "\nCreating Scoring Report on Desktop"
         desktop_path = '/home/' + settings['user'] + '/Desktop/'
@@ -182,9 +178,7 @@ class MyWindow(Gtk.Window):
         except:
             if not os.path.isfile('/usr/share/sounds/lwasp/success.wav'):
                 print ' ** success.wav file not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the success.wav folder in it.'
-                show_error(self, 'Audio files not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the .wav files in it.')
-                Gtk.main_quit()
-                sys.exit()
+                GObject.idle_add(lambda: show_fatal(self, 'Audio files not found', 'lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the .wav files in it.'))
 
         GObject.idle_add(lambda: self.update_progress(0.35, "Analyzing Scoring Elements"))
 
@@ -212,8 +206,8 @@ class MyWindow(Gtk.Window):
                     #checks mode
                     if mode != "v" and mode != "p":
                         print "\n* Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column."
-                        Gtk.main_quit()
-                        sys.exit()
+                        GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the mode of element " + str(itt + 1) + ". Please only use V and P in this column.))
+
                     dict['mode'] = (mode == "v")
 
                     #checks points
@@ -221,15 +215,13 @@ class MyWindow(Gtk.Window):
                         dict['points'] = int(elements[2].replace(' ',''))
                     except:
                         print "\n* Syntax error in the points of element " + str(itt) + ". Please make sure that this is an integer value."
-                        Gtk.main_quit()
-                        sys.exit()
+                        GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the points of element " + str(itt) + ". Please make sure that this is an integer value."))
 
                     #checks type ** If you add a custum type you should add it here
                     type = elements[3].replace(' ', '')
                     if not (type == "FileContents" or type == "FileExistance" or type == "Service" or type == "Forensics" or type == "Updates" or type == "Port" or type == "Permissions" or type == "Command"):
                         print "\n* Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the 8 valid types."
-                        Gtk.main_quit()
-                        sys.exit()
+                        GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the 8 valid types."))
                     dict['type'] = elements[3]
 
                     #gets extras, but only valid ones
@@ -249,8 +241,7 @@ class MyWindow(Gtk.Window):
                     itt += 1
                 else:
                     print "\n* Not enough items in element " + str(itt) + ". Needs 6, only " + str(len(elements))
-                    Gtk.main_quit()
-                    sys.exit()
+                    GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Not enough items in element " + str(itt) + ". Needs 6, only " + str(len(elements))))
 
             #settings to use on the scoring report
             usersettings['points'] = points
@@ -519,10 +510,7 @@ class MyWindow(Gtk.Window):
         GObject.idle_add(lambda: self.finish())
 
     def finish(self):
-
-        show_error(self, "Scoring Engine Initialized", "Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.", Gtk.MessageType.INFO)
-        Gtk.main_quit()
-        sys.exit()
+        show_fatal(self, "Scoring Engine Initialized", "Please shut down the image now by running \'sudo poweroff\'. The next time this computer boots up, the timer will start (if used) and the scoring engine will be running.", Gtk.MessageType.INFO)
         print "exited"
 
 win = MyWindow()
