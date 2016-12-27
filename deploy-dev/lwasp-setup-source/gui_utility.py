@@ -27,3 +27,13 @@ def get_resource_path(rel_path):
 def get_version():
         version = subprocess.Popen(["lsb_release", "-r"], stdout=subprocess.PIPE).communicate()[0]
         return float(version.rstrip().split("\t")[1])
+
+def get_display_manager():
+    with open('/etc/X11/default-display-manager') as display:
+        for line in display:
+            if "lightdm" in line:
+                return "lightdm"
+            elif "gdm3" in line:
+                return "gdm3"
+            else:
+                return "N/S"

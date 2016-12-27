@@ -167,7 +167,6 @@ if continue_on:
 			global to_run
 			path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 			to_run = "/bin/bash " + path[:-11] + 'install ' + sudo_user
-			print "running command: ", to_run
 			Gtk.main_quit()
 			self.destroy()
 

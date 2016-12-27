@@ -179,7 +179,10 @@ class MiscBox(Gtk.ScrolledWindow):
         elif i == 6:
             add(w.elements, "IP Spoofing is disabled,V,7,FileContents,/etc/host.conf,TRUE,nospoof on")
         elif i == 7:
-            if get_version() > 14.0:
-                add(w.elements, "Usernames are hidden from the login screen,V,8,Command,/usr/sbin/lightdm --show-config,TRUE,greeter-hide-users=true")
-            else:
-                add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")
+            if get_display_manager() == "lightdm":
+                if get_version() > 14.0:
+                    add(w.elements, "Usernames are hidden from the login screen,V,8,Command,/usr/sbin/lightdm --show-config,TRUE,greeter-hide-users=true")
+                else:
+                    add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/lightdm/lightdm.conf,TRUE,greeter-hide-users=true")
+            elif get_display_manager() == "gdm3":
+                add(w.elements, "Usernames are hidden from the login screen,V,8,FileContents,/etc/gdm3/greeter.gsettings,TRUE,disable-user-list=true")

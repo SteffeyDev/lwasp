@@ -19,17 +19,25 @@ class UserBox(Gtk.ScrolledWindow):
 
         self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
-        guest_user_button = Gtk.CheckButton("Score for disabling the guest user account")
-        guest_user_button.connect("clicked", self.guest_user_button_changed)
-        self.master_box.pack_start(guest_user_button, False, False, 0)
-        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
+        if get_display_manager() == "lightdm":
+            guest_user_button = Gtk.CheckButton("Score for disabling the guest user account")
+            guest_user_button.connect("clicked", self.guest_user_button_changed)
+            self.master_box.pack_start(guest_user_button, False, False, 0)
+            self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
 
         self.autologin_user = "n/a"
 
-        if isfile('/etc/lightdm/lightdm.conf'):
+        if get_display_manager() == "lightdm" and isfile('/etc/lightdm/lightdm.conf'):
             with open('/etc/lightdm/lightdm.conf', 'r') as lightdm:
                 for line in lightdm:
                     if "autologin-user" in line:
+                        self.autologin_user = line.rstrip().split("=")[1]
+                        break
+
+        elif get_display_manager() == "gdm3" and isfile('/etc/gdm3/daemon.conf'):
+            with open('/etc/gdm3/daemon.conf', 'r') as daemon:
+                for line in daemon:
+                    if "AutomaticLogin =" in line and "#" not in line:
                         self.autologin_user = line.rstrip().split("=")[1]
                         break
 
@@ -79,7 +87,7 @@ class UserBox(Gtk.ScrolledWindow):
         self.add_with_viewport(self.master_box)
 
     def guest_user_button_changed(self, button):
-        if get_version() > 13.0:
+        if get_version() > 13.0: # for ubuntu only
             add(w.elements, "Guest account is disabled,V,6,Command,/usr/sbin/lightdm --show-config,TRUE,allow-guest=false")
         else:
             add(w.commands, "sudo printf 'allow-guest=true' >> /etc/lightdm/lightdm.conf")
@@ -225,7 +233,10 @@ class UserBox(Gtk.ScrolledWindow):
         elif button.type == 2:
             add(w.elements, 'User ' + item.username + ' was deleted,V,5,FileContents,/etc/passwd,FALSE,' + item.username)
         else:
-            add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/lightdm/lightdm.conf,FALSE,autologin-user=' + item.username)
+            if get_display_manager() == "lightdm":
+                add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/lightdm/lightdm.conf,FALSE,autologin-user=' + item.username)
+            elif get_display_manager() == "gdm3":
+                add(w.elements, 'Auto-Login turned off for user ' + item.username + ',V,7,FileContents,/etc/gdm3/daemon.conf,FALSE,AutomaticLogin = ' + item.username)
 
     def expand_button_clicked(self, button):
         if button.index >= len(self.items): return
