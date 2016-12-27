@@ -14,6 +14,7 @@ import socket
 import getpass
 import shutil
 import smtplib
+import apt
 
 from utility import *
 
@@ -108,7 +109,12 @@ class MyWindow(Gtk.Window):
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
-        do("sudo apt-get install inotify-tools python-pygame python-tk python-gtk2 firefox -y --force-yes")
+        cache = apt.cache.Cache()
+        cache.update()
+        for pkg in ['inotify-tools', 'python-pygame', 'python-tk', 'python-gtk2', 'firefox']:
+            print " \n - Installing ", pkg
+            cache[pkg].mark_install()
+            cache.commit()
 
         GObject.idle_add(lambda: self.update_progress(0.1, "Moving Files"))
 

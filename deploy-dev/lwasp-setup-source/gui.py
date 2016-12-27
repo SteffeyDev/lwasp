@@ -2,14 +2,21 @@
 
 import os
 import sys
+import apt
+
+cache = apt.cache.Cache()
+cache.update()
 
 try:
 	import gi
 except:
-	os.system('sudo apt-get install python-gi -y')
+	cache['python-gi'].mark_install()
+	cache.commit()
+
 	import gi
 
-os.system('sudo apt-get install update-notifier -y')
+cache['update-notifier'].mark_install()
+cache.commit()
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -31,6 +38,10 @@ w.init()
 
 continue_on = False
 sudo_user = os.environ['SUDO_USER']
+
+if sudo_user == "root":
+	print " * This application cannot be run as root, please run as the main user account on the VM."
+	sys.exit()
 
 class MyWindow(Gtk.Window):
 	def __init__(self):
