@@ -9,6 +9,8 @@ except:
 	os.system('sudo apt-get install python-gi -y')
 	import gi
 
+os.system('sudo apt-get install update-notifier -y')
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk

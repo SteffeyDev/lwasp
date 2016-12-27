@@ -11,7 +11,6 @@ import json
 import time
 import sys
 import socket
-from os.path import expanduser
 import getpass
 import shutil
 import smtplib
@@ -126,14 +125,14 @@ class MyWindow(Gtk.Window):
 
         print "\nCreating Scoring Report on Desktop"
         #creates a desktop file to launch a firefox page in its own window, uses icon.png file
-        with open(expanduser("~") + '/Desktop/scoring.desktop', 'w') as deskFile:
+        with open('/home/' + settings['user'] + '/Desktop/scoring.desktop', 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/scoring.desktop") # makes executable
             do("chmod +x open.bash") # makes executable
 
         print '\nAdding Set ID script on desktop'
-        with open(expanduser("~") + '/Desktop/lwasp.desktop', 'w') as deskFile:
+        with open('/home/' + settings['user'] + '/Desktop/lwasp.desktop', 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
             do("chmod +x ~/Desktop/lwasp.desktop")
@@ -420,7 +419,7 @@ class MyWindow(Gtk.Window):
             if self.email_desktop_button.get_active():
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
-                with open(expanduser("~") + '/Desktop/email.desktop', 'w') as deskFile:
+                with open('/home/' + settings['user'] + '/Desktop/email.desktop', 'w') as deskFile:
                     deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
                     deskFile.close()
                     do("chmod +x ~/Desktop/email.desktop") # makes executable

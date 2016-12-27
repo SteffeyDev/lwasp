@@ -32,7 +32,7 @@ class PasswdBox(Gtk.ScrolledWindow):
                 extra = Gtk.Entry(placeholder_text="Warn Age")
                 label = "Score for Setting a Password Warn Age"
             elif i == 6: label = "Score for Storing Passwords with SHA-512 Encryption"
-            elif i == 7: label = "Score for Setting Password Complexity Requirements"
+            elif i == 7: label = "Score for Setting Password Complexity Requirements with Cracklib"
             elif i == 8: label = "Score for Enforcing Password History"
 
             container_box = Gtk.Box(spacing=20)
@@ -74,5 +74,5 @@ class PasswdBox(Gtk.ScrolledWindow):
             add(w.commands, "sudo sed -i.bak s/sha512/''/g /etc/pam.d/common-password")
             add(w.commands, "sudo rm /etc/pam.d/common-password.bak")
             add(w.elements, "Passwords are stored with SHA-512 Encryption,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_unix.so~sha512")
-        elif i == 7: add(w.elements, "Password complexity requirement are set,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~dcredit,pam_cracklib.so~ucredit,pam_cracklib.so~lcredit,pam_crachlib.so~ocredit")
+        elif i == 7: add(w.elements, "Password complexity requirement are set with cracklib,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_cracklib.so~dcredit,pam_cracklib.so~ucredit,pam_cracklib.so~lcredit,pam_crachlib.so~ocredit")
         elif i == 8: add(w.elements, "Password history is enforced,V,7,FileContents,/etc/pam.d/common-password,TRUE,pam_pwhistory.so~remember=" + text)

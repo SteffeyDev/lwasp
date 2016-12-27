@@ -19,14 +19,14 @@ class IntroDialog(Gtk.Dialog):
 		box.set_spacing(20)
 		box.set_border_width(20)
 
-		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))		
+		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 		pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(path[:-5] + 'install/icon.png', width=200, height=200,
                                                  preserve_aspect_ratio=False)
 		image = Gtk.Image()
 		image.set_from_pixbuf(pixbuf)
 		box.pack_start(image, False, False, 0)
 
-		label = Gtk.Label("This Linux Watchful Adaptive Security Profiler is designed to create vulnerabilities on a Linux image and then score cyber security students on how well they fix those vulnerabilites.  LWASP is designed to work on an unconfigured image, but advanced users can pre-configure their images and allow scoring for more difficult vulnerabilites.")
+		label = Gtk.Label("The Linux Watchful Adaptive Security Profiler is designed to create vulnerabilities on a Linux image and then score cyber security students on finding and fixing those vulnerabilites.  LWASP is designed to work on an unconfigured image, but advanced users can pre-configure their images and allow scoring for more difficult vulnerabilites. (Press Enter to continue)")
 		label.set_line_wrap(True)
 		box.pack_start(label, False, False, 0)
 
