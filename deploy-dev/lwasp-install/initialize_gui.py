@@ -105,18 +105,24 @@ class MyWindow(Gtk.Window):
 
     def install_dependencies_backthread(self):
 
-        GObject.idle_add(lambda: self.update_progress(0.02, "Downloading Content"))
+        GObject.idle_add(lambda: self.update_progress(0.01, "Downloading Content"))
 
         print "\nInstalling inotify-tools and needed python libraries. This may take a minute."
         #installs inotifywait to watch files for changes
         cache = apt.cache.Cache()
         cache.update()
+        progress = 0.02
         for pkg in ['inotify-tools', 'python-pygame', 'python-tk', 'python-gtk2', 'firefox']:
             print " \n - Installing ", pkg
-            cache[pkg].mark_install()
-            cache.commit()
+            try:
+                cache[pkg].mark_install()
+                cache.commit()
+            except:
+                print "\n * ", pkg, " not found, ignoring"
+            GObject.idle_add(lambda: self.update_progress(progress, "Downloading Content"))
+            progress += 0.05
 
-        GObject.idle_add(lambda: self.update_progress(0.1, "Moving Files"))
+        GObject.idle_add(lambda: self.update_progress(0.26, "Moving Files"))
 
         self.install_frontend()
 
@@ -150,7 +156,7 @@ class MyWindow(Gtk.Window):
             do("sudo chown " + settings['user'] + ":" + settings['user'] + " " + desktop_path + "lwasp.desktop")
             do("sudo chmod +x " + getSafeDirPath() + "/uid.py")
 
-        GObject.idle_add(lambda: self.update_progress(0.2, "Creating Vulnerabilities"))
+        GObject.idle_add(lambda: self.update_progress(0.3, "Creating Vulnerabilities"))
 
         self.install_backend()
 
@@ -175,7 +181,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        GObject.idle_add(lambda: self.update_progress(0.25, "Analyzing Scoring Elements"))
+        GObject.idle_add(lambda: self.update_progress(0.35, "Analyzing Scoring Elements"))
 
         try:
             #Open input file and new file
@@ -260,7 +266,7 @@ class MyWindow(Gtk.Window):
                 Gtk.main_quit()
                 sys.exit()
 
-        GObject.idle_add(lambda: self.update_progress(0.3, "Moving Files"))
+        GObject.idle_add(lambda: self.update_progress(0.4, "Moving Files"))
 
         #creates scores file to only store parts of the recording file to show on the scoring html page
         with open('/usr/lwasp/score.json', 'w') as scoreFile:
@@ -277,7 +283,7 @@ class MyWindow(Gtk.Window):
         do("sudo chmod ugo+x /etc/init.d/lwasp")
         do("sudo update-rc.d lwasp defaults")
 
-        GObject.idle_add(lambda: self.update_progress(0.4, "Compiling Python"))
+        GObject.idle_add(lambda: self.update_progress(0.45, "Compiling Python"))
 
         #makes sure competitor can't modify code to reveal what is scored
         print '\nCompiling python'
