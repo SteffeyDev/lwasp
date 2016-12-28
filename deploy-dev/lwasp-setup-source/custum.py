@@ -26,8 +26,9 @@ class CustumBox(Gtk.ScrolledWindow):
 
         title_label_1 = Gtk.Label()
         title_label_1.set_markup('<big>Custum Scoring Elements</big>')
-        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
         self.master_box.pack_start(title_label_1, False, False, 0)
+        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
+
 
         note_label = Gtk.Label()
         note_label.set_markup('<span foreground="grey"><small>These items are not checked for errors, please refer to the Advanced Users Guide PDF for reference</small></span>')
@@ -35,20 +36,20 @@ class CustumBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(note_label, False, False, 0)
 
         self.add_box = Gtk.Box()
-        add_q = Gtk.Button(label="Add")
-        add_q.props.halign = Gtk.Align.END
+        add_q = Gtk.Button(label="Add Custum Element")
+        add_q.props.halign = Gtk.Align.START
         add_q.connect("clicked", self.add_q)
-        self.add_box.pack_end(add_q, False, False, 0)
+        self.add_box.pack_start(add_q, False, False, 0)
         self.master_box.pack_start(self.add_box, False, False, 0)
 
         self.add_with_viewport(self.master_box)
 
     def add_row(self):
-        new_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        new_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         new_row = Gtk.Box(spacing=10)
 
         title_entry = Gtk.Entry(placeholder_text="Title")
-        title_entry.set_width_chars(11)
+        title_entry.set_width_chars(30)
 
         mode_store = Gtk.ListStore(str, str)
         mode_store.append(["V", "Vulnerability"])
@@ -56,10 +57,12 @@ class CustumBox(Gtk.ScrolledWindow):
 
         mode_combo = Gtk.ComboBox.new_with_model(mode_store)
         mode_combo.set_active(0)
-        
+        renderer_text = Gtk.CellRendererText()
+        mode_combo.pack_start(renderer_text, True)
+        mode_combo.add_attribute(renderer_text, "text", 0)
 
         points_entry = Gtk.Entry(placeholder_text="Points")
-        points_entry.set_width_chars(2)
+        points_entry.set_width_chars(7)
 
         type_store = Gtk.ListStore(str)
         for item in type_list:
@@ -85,8 +88,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.master_box.pack_start(new_box, False, True, 0)
 
-        separator = Gtk.HSeparator()
-        self.master_box.pack_start(separator, False, True, 0)
+        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
         self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
@@ -110,7 +112,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
     def add_q(self, button):
         self.add_row()
-        self.master_box.reorder_child(self.add_box, len(self.items) * 2)
+        self.master_box.reorder_child(self.add_box, (len(self.items) * 2) + 3)
         self.master_box.show_all()
 
     def finalize(self):
