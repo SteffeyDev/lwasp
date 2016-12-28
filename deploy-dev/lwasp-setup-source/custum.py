@@ -15,7 +15,7 @@ from os.path import isfile
 Item = namedtuple("Items", "box title mode points type parameters")
 
 type_list = ['File Contents', 'File Existance', 'Permissions', 'Command']
-type_map = {'File Contents': ['Absolute File Path', '(T/F) File should contain search string', 'Search String'], 'File Existance': ['Absolute File Path', '(T/F) File/directory should exist'], 'Permissions': ['Absolute File Path', 'Permissions needed (e.g. 745)'], 'Command': ['BASH command to run', '(T/F) Output should contain text', 'Text']}
+type_map = {'File Contents': ['Absolute File Path', 'File should contain search string ~ File should NOT contain search string', 'Search String'], 'File Existance': ['Absolute File Path', 'File/directory should exist ~ File/directory should NOT exist'], 'Permissions': ['Absolute File Path', 'Permissions needed (e.g. 745)'], 'Command': ['BASH command to run', 'Output should contain text ~ Output should NOT contain text', 'Text']}
 
 class CustumBox(Gtk.ScrolledWindow):
     def __init__(self):
@@ -51,29 +51,17 @@ class CustumBox(Gtk.ScrolledWindow):
         title_entry = Gtk.Entry(placeholder_text="Title")
         title_entry.set_width_chars(30)
 
-        mode_store = Gtk.ListStore(str, str)
-        mode_store.append(["V", "Vulnerability"])
-        mode_store.append(["P", "Penalty"])
-
-        mode_combo = Gtk.ComboBox.new_with_model(mode_store)
-        mode_combo.set_active(0)
-        mode_renderer_text = Gtk.CellRendererText()
-        mode_combo.pack_start(mode_renderer_text, True)
-        mode_combo.add_attribute(mode_renderer_text, "text", 1)
+        mode_combo = generateComboBox([["V", "Vulnerability"], ["P", "Penalty"]])
 
         points_entry = Gtk.Entry(placeholder_text="Points")
         points_entry.set_width_chars(7)
 
-        type_store = Gtk.ListStore(str)
+        type_store = []
         for item in type_list:
             type_store.append([item])
 
-        type_combo = Gtk.ComboBox.new_with_model(type_store)
-        type_combo.connect("changed", self.changed_cb, len(self.items))
-        type_combo.set_active(0)
-        type_renderer_text = Gtk.CellRendererText()
-        type_combo.pack_start(type_renderer_text, True)
-        type_combo.add_attribute(type_renderer_text, "text", 0)
+        type_combo = generateComboBox(type_store)
+        type_combo.connect('changed', self.changed_cb, len(self.items))
 
         new_row.pack_start(title_entry, False, False, 0)
         new_row.pack_start(mode_combo, False, False, 0)
@@ -83,9 +71,7 @@ class CustumBox(Gtk.ScrolledWindow):
         new_box.pack_start(new_row, False, False, 0)
 
         parameters_box = Gtk.Box(spacing=10)
-        parameters_box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
-        for item in type_map['File Contents']:
-            parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+        packParameters(type_map['File Contents'], parameters_box)
         new_box.pack_start(parameters_box, False, False, 0)
 
         self.master_box.pack_start(new_box, False, True, 0)
@@ -94,6 +80,27 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
+    def packParameters(items, box):
+        box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
+        for item in items:
+            if "~" in item:
+                box.pack_start(generateComboBox([["True", item.split(" ~ ")[0]], ["False", item.split(" ~ ")[1]]]), True, True, 0)
+            else:
+                box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+
+    def generateComboBox(items):
+        new_store = Gtk.ListStore(str, str)
+        if len(items[0]) == 1:
+            new_store = Gtk.ListStore(str)
+        for item in items:
+            new_store.append(item)
+
+        new_combo = Gtk.ComboBox.new_with_model(new_store)
+        new_combo.set_active(0)
+        renderer_text = Gtk.CellRendererText()
+        new_combo.pack_start(renderer_text, True)
+        new_combo.add_attribute(mode_renderer_text, "text", len(items[0]) - 1)
+        return new_combo
 
     def changed_cb(self, type_combo, index):
         tree_iter = type_combo.get_active_iter()
@@ -103,8 +110,7 @@ class CustumBox(Gtk.ScrolledWindow):
             parameters_box = self.items[index].parameters
             for child in parameters_box.get_children():
                 parameters_box.remove(child)
-            for item in type_map[new_type]:
-                parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+            packParameters(type_map[new_type], parameters_box)
             parameters_box.show_all()
 
     def delete_q(self, button):
