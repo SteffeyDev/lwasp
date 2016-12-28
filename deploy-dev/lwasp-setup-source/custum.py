@@ -15,25 +15,25 @@ from os.path import isfile
 Item = namedtuple("Items", "box title mode points type parameters")
 
 type_list = ['File Contents', 'File Existance', 'Permissions', 'Command']
-type_map = {'File Contents': ['Absolute File Path', '(T/F) Whether the file should contain the search string(s)', 'Search String 1'], 'File Existance': ['Absolute File Path', '(T/F) Whether the file/directory should exist'], 'Permissions': ['Absolute File Path', 'Permissions Needed in numerical form (e.g. 745)'], 'Command': ['BASH command to run', '(T/F) Whether the output should contain the text', 'Text to look for in output of command']}
+type_map = {'File Contents': ['Absolute File Path', '(T/F) File should contain search string', 'Search String'], 'File Existance': ['Absolute File Path', '(T/F) File/directory should exist'], 'Permissions': ['Absolute File Path', 'Permissions needed (e.g. 745)'], 'Command': ['BASH command to run', '(T/F) Output should contain text', 'Text']}
 
 class CustumBox(Gtk.ScrolledWindow):
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
         self.items = []
 
-        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
+        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
 
         title_label_1 = Gtk.Label()
         title_label_1.set_markup('<big>Custum Scoring Elements</big>')
         self.master_box.pack_start(title_label_1, False, False, 0)
-        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
-
 
         note_label = Gtk.Label()
         note_label.set_markup('<span foreground="grey"><small>These items are not checked for errors, please refer to the Advanced Users Guide PDF for reference</small></span>')
         note_label.set_line_wrap(True)
         self.master_box.pack_start(note_label, False, False, 0)
+
+        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
         self.add_box = Gtk.Box()
         add_q = Gtk.Button(label="Add Custum Element")
@@ -57,9 +57,9 @@ class CustumBox(Gtk.ScrolledWindow):
 
         mode_combo = Gtk.ComboBox.new_with_model(mode_store)
         mode_combo.set_active(0)
-        renderer_text = Gtk.CellRendererText()
-        mode_combo.pack_start(renderer_text, True)
-        mode_combo.add_attribute(renderer_text, "text", 0)
+        mode_renderer_text = Gtk.CellRendererText()
+        mode_combo.pack_start(mode_renderer_text, True)
+        mode_combo.add_attribute(mode_renderer_text, "text", 1)
 
         points_entry = Gtk.Entry(placeholder_text="Points")
         points_entry.set_width_chars(7)
@@ -71,6 +71,9 @@ class CustumBox(Gtk.ScrolledWindow):
         type_combo = Gtk.ComboBox.new_with_model(type_store)
         type_combo.connect("changed", self.changed_cb, len(self.items))
         type_combo.set_active(0)
+        type_renderer_text = Gtk.CellRendererText()
+        type_combo.pack_start(type_renderer_text, True)
+        type_combo.add_attribute(type_renderer_text, "text", 0)
 
         new_row.pack_start(title_entry, False, False, 0)
         new_row.pack_start(mode_combo, False, False, 0)
