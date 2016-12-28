@@ -50,18 +50,22 @@ class CustumBox(Gtk.ScrolledWindow):
         title_entry = Gtk.Entry(placeholder_text="Title")
         title_entry.set_width_chars(11)
 
-        mode_combo = Gtk.combo_box_new_text()
-        mode_combo.append_text("Vulnerability")
-        mode_combo.append_text("Penalty")
+        mode_store = Gtk.ListStore(str, str)
+        mode_store.append(["V", "Vulnerability"])
+        mode_store.append(["P", "Penalty"])
+
+        mode_combo = Gtk.ComboBox.new_with_model_and_entry(mode_store)
         mode_combo.set_active(0)
 
         points_entry = Gtk.Entry(placeholder_text="Points")
         points_entry.set_width_chars(2)
 
-        type_combo = Gtk.combo_box_new_text()
-        type_combo.connect("changed", self.changed_cb)
+        type_store = Gtk.ListStore(str)
         for item in type_list:
-            mode_combo.append_text(item)
+            type_store.append_text([item])
+
+        type_combo = Gtk.ComboBox.new_with_model_and_entry(type_store)
+        type_combo.connect("changed", self.changed_cb)
         type_combo.set_active(0)
         type_combo.index = len(self.items)
 
@@ -87,12 +91,16 @@ class CustumBox(Gtk.ScrolledWindow):
 
 
     def changed_cb(self, type_combo):
-        parameters_box = self.items[type_combo.index].parameters
-        for child in parameters_box.get_children():
-            parameters_box.remove(child)
-        for item in type_map[type_combo.get_active_text()]:
-            parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
-        parameters_box.show_all()
+        tree_iter = type_combo.get_active_iter()
+        if tree_iter != None:
+            model = type_combo.get_model()
+            new_type = model[tree_iter][0]
+            parameters_box = self.items[type_combo.index].parameters
+            for child in parameters_box.get_children():
+                parameters_box.remove(child)
+            for item in type_map[new_type]:
+                parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+            parameters_box.show_all()
 
     def delete_q(self, button):
         box = self.items[len(self.items)-1].box
@@ -113,4 +121,10 @@ class CustumBox(Gtk.ScrolledWindow):
         parameters = ""
         for parameter in item.parameters.get_children():
             parameters += "," + parameter.get_text()
-        add(w.elements, item.title.get_text() + "," + ("V" if (item.mode.get_active() == 0) else "P") + "," + item.points.get_text() + "," + item.type.get_active_text().replace(" ", "") + parameters)
+        mode_model = item.mode.get_model()
+        mode_tree_iter = item.mode.get_active_itera()
+        mode = mode_model[mode_tree_iter][0]
+        type_model = item.mode.get_model()
+        type_tree_iter = item.type.get_active_itera()
+        type_text = type_model[type_tree_iter][0].replace(" ", "")
+        add(w.elements, item.title.get_text() + "," + mode + "," + item.points.get_text() + "," + type_text + parameters)
