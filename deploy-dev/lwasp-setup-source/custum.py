@@ -36,7 +36,7 @@ class CustumBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
         self.add_box = Gtk.Box()
-        add_q = Gtk.Button(label="Add Custum Element")
+        add_q = Gtk.Button(label="Add Custom Element")
         add_q.props.halign = Gtk.Align.START
         add_q.connect("clicked", self.add_q)
         self.add_box.pack_start(add_q, False, False, 0)
@@ -60,7 +60,7 @@ class CustumBox(Gtk.ScrolledWindow):
         for item in type_list:
             type_store.append([item])
 
-        type_combo = generateComboBox(type_store)
+        type_combo = self.generateComboBox(type_store)
         type_combo.connect('changed', self.changed_cb, len(self.items))
 
         new_row.pack_start(title_entry, False, False, 0)
@@ -71,7 +71,7 @@ class CustumBox(Gtk.ScrolledWindow):
         new_box.pack_start(new_row, False, False, 0)
 
         parameters_box = Gtk.Box(spacing=10)
-        packParameters(type_map['File Contents'], parameters_box)
+        self.packParameters(type_map['File Contents'], parameters_box)
         new_box.pack_start(parameters_box, False, False, 0)
 
         self.master_box.pack_start(new_box, False, True, 0)
@@ -84,7 +84,7 @@ class CustumBox(Gtk.ScrolledWindow):
         box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
         for item in items:
             if "~" in item:
-                box.pack_start(generateComboBox([["True", item.split(" ~ ")[0]], ["False", item.split(" ~ ")[1]]]), True, True, 0)
+                box.pack_start(self.generateComboBox([["True", item.split(" ~ ")[0]], ["False", item.split(" ~ ")[1]]]), True, True, 0)
             else:
                 box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
 
@@ -110,7 +110,7 @@ class CustumBox(Gtk.ScrolledWindow):
             parameters_box = self.items[index].parameters
             for child in parameters_box.get_children():
                 parameters_box.remove(child)
-            packParameters(type_map[new_type], parameters_box)
+            self.packParameters(type_map[new_type], parameters_box)
             parameters_box.show_all()
 
     def delete_q(self, button):
