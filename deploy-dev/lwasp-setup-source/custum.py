@@ -62,7 +62,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
         type_store = Gtk.ListStore(str)
         for item in type_list:
-            type_store.append_text([item])
+            type_store.append([item])
 
         type_combo = Gtk.ComboBox.new_with_model_and_entry(type_store)
         type_combo.connect("changed", self.changed_cb)
