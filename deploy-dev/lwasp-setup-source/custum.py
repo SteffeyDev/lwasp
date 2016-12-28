@@ -11,6 +11,7 @@ import w
 from collections import namedtuple
 import subprocess
 from os.path import isfile
+import string
 
 Item = namedtuple("Items", "box title mode points type parameters")
 
@@ -143,8 +144,8 @@ class CustumBox(Gtk.ScrolledWindow):
         mode_tree_iter = item.mode.get_active_iter()
         mode = mode_model[mode_tree_iter][0]
 
-        type_model = item.mode.get_model()
+        type_model = item.type.get_model()
         type_tree_iter = item.type.get_active_iter()
-        type_text = type_model[type_tree_iter][0].replace(" ", "")
+        type_text = string.replace(type_model[type_tree_iter][0], " ", "")
 
         add(w.elements, item.title.get_text() + "," + mode + "," + item.points.get_text() + "," + type_text + parameters)
