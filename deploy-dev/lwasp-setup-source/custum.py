@@ -99,7 +99,7 @@ class CustumBox(Gtk.ScrolledWindow):
         new_combo.set_active(0)
         renderer_text = Gtk.CellRendererText()
         new_combo.pack_start(renderer_text, True)
-        new_combo.add_attribute(mode_renderer_text, "text", len(items[0]) - 1)
+        new_combo.add_attribute(renderer_text, "text", len(items[0]) - 1)
         return new_combo
 
     def changed_cb(self, type_combo, index):
