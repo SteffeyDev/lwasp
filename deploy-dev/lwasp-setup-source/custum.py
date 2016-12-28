@@ -43,7 +43,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.add_with_viewport(self.master_box)
 
-    def add_row(self, item):
+    def add_row(self):
         new_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         new_row = Gtk.Box(spacing=10)
 
