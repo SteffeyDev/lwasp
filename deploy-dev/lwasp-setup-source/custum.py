@@ -129,13 +129,22 @@ class CustumBox(Gtk.ScrolledWindow):
 
     def add_element(self, index):
         item = self.items[index]
+
         parameters = ""
         for parameter in item.parameters.get_children():
-            parameters += "," + parameter.get_text()
+            try:
+                parameters += "," + parameter.get_text()
+            except:
+                model = parameter.get_model()
+                tree_iter = parameter.get_active_iter()
+                parameters += model[tree_iter][0]
+
         mode_model = item.mode.get_model()
-        mode_tree_iter = item.mode.get_active_itera()
+        mode_tree_iter = item.mode.get_active_iter()
         mode = mode_model[mode_tree_iter][0]
+
         type_model = item.mode.get_model()
-        type_tree_iter = item.type.get_active_itera()
+        type_tree_iter = item.type.get_active_iter()
         type_text = type_model[type_tree_iter][0].replace(" ", "")
+
         add(w.elements, item.title.get_text() + "," + mode + "," + item.points.get_text() + "," + type_text + parameters)
