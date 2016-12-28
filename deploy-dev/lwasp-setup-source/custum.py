@@ -51,7 +51,7 @@ class CustumBox(Gtk.ScrolledWindow):
         title_entry = Gtk.Entry(placeholder_text="Title")
         title_entry.set_width_chars(30)
 
-        mode_combo = generateComboBox([["V", "Vulnerability"], ["P", "Penalty"]])
+        mode_combo = self.generateComboBox([["V", "Vulnerability"], ["P", "Penalty"]])
 
         points_entry = Gtk.Entry(placeholder_text="Points")
         points_entry.set_width_chars(7)
