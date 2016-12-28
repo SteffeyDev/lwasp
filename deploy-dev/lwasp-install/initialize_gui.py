@@ -18,6 +18,10 @@ import apt
 
 from utility import *
 
+import pwd
+import grp
+import os
+
 os.chdir(getDirPath())
 
 def show_fatal(top, title, message, type=Gtk.MessageType.ERROR):
@@ -45,6 +49,9 @@ else:
     settings['user'] = os.environ['SUDO_USER']
 usersettings = {}
 locString = "/etc/lwasp"
+
+uid = pwd.getpwnam(settings['user']).pw_uid
+gid = grp.getgrnam(settings['user']).gr_gid
 
 class MyWindow(Gtk.Window):
     def __init__(self):
@@ -145,17 +152,17 @@ class MyWindow(Gtk.Window):
         with open(desktop_path + 'scoring.desktop', 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            do("sudo chmod +x " + desktop_path + "scoring.desktop") # makes executable
-            do("sudo chown " + settings['user'] + ":" + settings['user'] + " " + desktop_path + "scoring.desktop")
-            do("sudo chmod +x open.bash") # makes executable
+            os.chmod(desktop_path + "scoring.desktop", 555)
+            os.chown(desktop_path + "scoring.desktop", uid, gid)
+            os.chmod(getDirPath() + "/open.bash", 555)
 
         print '\nAdding Set ID script on desktop'
         with open(desktop_path + "lwasp.desktop", 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            do("sudo chmod +x " + desktop_path + "lwasp.desktop")
-            do("sudo chown " + settings['user'] + ":" + settings['user'] + " " + desktop_path + "lwasp.desktop")
-            do("sudo chmod +x " + getSafeDirPath() + "/uid.py")
+            os.chmod(desktop_path + "lwasp.desktop", 555)
+            os.chown(desktop_path + "lwasp.desktop", uid, gid)
+            os.chmod(getDirPath() + "/uid.py", 555)
 
         GObject.idle_add(lambda: self.update_progress(0.3, "Creating Vulnerabilities"))
 
@@ -165,7 +172,7 @@ class MyWindow(Gtk.Window):
 
         if os.path.isfile(getDirPath() + '/commands.bash'):
             os.system("/bin/bash " + getDirPath() + "/commands.bash")
-            os.remove(getDirPath() + "/commands.bash")
+            os.remove("commands.bash")
             print "\n vulnerabilities installed"
 
         #sets up system to use notify-send from root crontab
@@ -253,7 +260,7 @@ class MyWindow(Gtk.Window):
                 #writeFile.close()
 
             print "\nDeleting elements.csv"
-            do("sudo rm elements.csv")
+            os.remove("elements.csv")
             rawFile.close()
         except:
             if not os.path.isfile('recording'):
@@ -266,7 +273,7 @@ class MyWindow(Gtk.Window):
         with open('/usr/lwasp/score.json', 'w') as scoreFile:
             scoreFile.write("")
             scoreFile.close()
-        do("sudo chmod 664 /usr/lwasp/score.json")
+        os.chmod("/usr/lwasp/score.json", 664)
 
         print '\nSetting up script at /etc/init.d/lwasp to create file watches on boot'
         #run restart every time the image restarts to fun cleanup function
@@ -274,7 +281,8 @@ class MyWindow(Gtk.Window):
         bootfile.write('#!/bin/sh\ncase "$1" in\nstart)\nsudo /usr/bin/python ' + locString + '/restart\n;;\n*)\n;;\nesac\nexit 0')
         bootfile.close()
         shutil.move('lwasp', '/etc/init.d/lwasp')
-        do("sudo chmod ugo+x /etc/init.d/lwasp")
+
+        os.chmod("/etc/init.d/lwasp", 755)
         do("sudo update-rc.d lwasp defaults")
 
         GObject.idle_add(lambda: self.update_progress(0.45, "Compiling Python"))
@@ -434,7 +442,8 @@ class MyWindow(Gtk.Window):
                 with open('/home/' + settings['user'] + '/Desktop/email.desktop', 'w') as deskFile:
                     deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
                     deskFile.close()
-                    do("chmod +x ~/Desktop/email.desktop") # makes executable
+                    os.chmod("/home/" + settings['user'] + "/Desktop/email.desktop", 555)
+                    os.chown("/home/" + settings['user'] + "/Desktop/email.desktop", uid, gid)
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
             sendEmail(message, settings)
 
@@ -488,8 +497,8 @@ class MyWindow(Gtk.Window):
 
         saveSettings(settings)
         saveUserSettings(usersettings)
-        do("sudo chown " + user + " settings.json") #sets the file back to being accessable by the normal user, so that we don't have to use sudo on uid.py
-        do("sudo chown " + user + " /usr/lwasp/settings.json")
+        os.chown("settings.json", uid, gid)
+        os.chown("/usr/lwasp/settings.json", uid, gid)
 
         print "\nDeleting Bash History"
         do("sudo -u " + user + " bash -c 'history -c; echo '' > ~/.bash_history'")

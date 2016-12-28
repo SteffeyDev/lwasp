@@ -31,6 +31,7 @@ from firewall import FirewallBox
 from backdoor import BackdoorBox
 from misc import MiscBox
 from intro import IntroDialog
+from custum import CustumBox
 from gui_utility import *
 
 import w
@@ -68,7 +69,7 @@ class MyWindow(Gtk.Window):
 		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 		self.set_icon_from_file(path[:-5] + 'install/icon.png')
 
-		for i in range(0, 8):
+		for i in range(0, 9):
 			page = Gtk.Box()
 			label = ""
 
@@ -98,6 +99,10 @@ class MyWindow(Gtk.Window):
 				page = MiscBox()
 				self.misc_box = page
 				label = "Other"
+			elif i == 8:
+				page = CustumBox()
+				self.custum_box = page
+				label = "Custum"
 
 
 			page.set_border_width(10)
@@ -113,6 +118,7 @@ class MyWindow(Gtk.Window):
 
 	def done_button_pressed(self, button):
 		self.forensics_box.finalize()
+		self.custum_box.finalize()
 		with open('elements.csv', 'w') as elements:
 			with open('/home/' + sudo_user + '/Desktop/LWASP-Elements-Export.csv', 'w') as export:
 				export.write("Scoring Item,Points,Type\n")
@@ -162,7 +168,7 @@ if continue_on:
 			path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 			self.set_icon_from_file(path[:-5] + 'install/icon.png')
 
-			label = Gtk.Label("Do you want to continue on to the installation (simple) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
+			label = Gtk.Label("Do you want to continue on to the installation (recommended) or stop so you can modify the scoring items in the elements.csv file (advanced)?")
 			label.set_line_wrap(True)
 			button1 = Gtk.Button(label="Continue to Installation")
 			button1.connect("clicked", self.launch_install)

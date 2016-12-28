@@ -12,9 +12,10 @@ from collections import namedtuple
 import subprocess
 from os.path import isfile
 
-Item = namedtuple("Items", "title mode points type parameters")
+Item = namedtuple("Items", "box title mode points type parameters")
 
-type_map = {'FileContents': ['Absolute File Path', '(T/F) Whether the file should contain the search string(s)', 'Search String 1'], 'FileExistance': ['Absolute File Path', '(T/F) Whether the file/directory should exist'], 'Permissions': ['Absolute File Path', 'Permissions Needed in numerical form (e.g. 745)'], 'Command': ['BASH command to run', '(T/F) Whether the output should contain the text', 'Text to look for in output of command']}
+type_list = ['File Contents', 'File Existance', 'Permissions', 'Command']
+type_map = {'File Contents': ['Absolute File Path', '(T/F) Whether the file should contain the search string(s)', 'Search String 1'], 'File Existance': ['Absolute File Path', '(T/F) Whether the file/directory should exist'], 'Permissions': ['Absolute File Path', 'Permissions Needed in numerical form (e.g. 745)'], 'Command': ['BASH command to run', '(T/F) Whether the output should contain the text', 'Text to look for in output of command']}
 
 class CustumBox(Gtk.ScrolledWindow):
     def __init__(self):
@@ -23,6 +24,16 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 
+        title_label_1 = Gtk.Label()
+        title_label_1.set_markup('<big>Custum Scoring Elements</big>')
+        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
+        self.master_box.pack_start(title_label_1, False, False, 0)
+
+        note_label = Gtk.Label()
+        note_label.set_markup('<span foreground="grey"><small>These items are not checked for errors, please refer to the Advanced Users Guide PDF for reference</small></span>')
+        note_label.set_line_wrap(True)
+        self.master_box.pack_start(note_label, False, False, 0)
+
         self.add_box = Gtk.Box()
         add_q = Gtk.Button(label="Add")
         add_q.props.halign = Gtk.Align.END
@@ -30,45 +41,58 @@ class CustumBox(Gtk.ScrolledWindow):
         self.add_box.pack_end(add_q, False, False, 0)
         self.master_box.pack_start(self.add_box, False, False, 0)
 
-        title_label_1 = Gtk.Label()
-        title_label_1.set_markup('<big>Installed Services</big>')
-        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
-        self.master_box.pack_start(title_label_1, False, False, 0)
-
-        self.add_box = Gtk.Box()
-        self.name_entry = Gtk.Entry(placeholder_text="Package Name")
-        self.add_box.pack_start(Gtk.Label("Install Software: "), False, False, 0)
-        self.add_box.pack_start(self.name_entry, False, False, 0)
-        add_app = Gtk.Button(label="Install")
-        add_app.props.halign = Gtk.Align.END
-        add_app.connect("clicked", self.add_app)
-        self.add_box.pack_end(add_app, False, False, 0)
-        self.master_box.pack_end(self.add_box, False, False, 0)
-
         self.add_with_viewport(self.master_box)
 
     def add_row(self, item):
-        user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        new_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        new_row = Gtk.Box(spacing=10)
 
-        user_wrapper_box = Gtk.Box(spacing=5)
+        title_entry = Gtk.Entry(placeholder_text="Title")
+        title_entry.set_width_chars(11)
 
-        label = Gtk.Label(app)
-        user_wrapper_box.pack_start(label, False, True, 0)
-        button = Gtk.Button(label="Expand")
-        button.props.halign = Gtk.Align.END
-        button.index = len(self.items)
-        button.connect("clicked", self.expand_button_clicked)
-        user_wrapper_box.pack_end(button, False, True, 0)
+        mode_combo = gtk.combo_box_new_text()
+        mode_combo.append_text("Vulnerability")
+        mode_combo.append_text("Penalty")
+        mode_combo.set_active(0)
 
-        user_box.pack_start(user_wrapper_box, False, False, 0)
-        self.master_box.pack_start(user_box, False, True, 0)
+        points_entry = Gtk.Entry(placeholder_text="Points")
+        points_entry.set_width_chars(2)
+
+        type_combo = gtk.combo_box_new_text()
+        type_combo.connect("changed", self.changed_cb)
+        for item in type_list:
+            mode_combo.append_text(item)
+        type_combo.set_active(0)
+        type_combo.index = len(self.items)
+
+        new_row.pack_start(title_entry, False, False, 0)
+        new_row.pack_start(mode_combo, False, False, 0)
+        new_row.pack_start(points_entry, False, False, 0)
+        new_row.pack_start(type_combo, False, False, 0)
+
+        new_box.pack_start(new_row, False, False, 0)
+
+        parameters_box = Gtk.Box(spacing=10)
+        parameters_box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
+        for item in type_map['File Contents']:
+            parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+        new_box.pack_start(parameters_box, False, False, 0)
+
+        self.master_box.pack_start(new_box, False, True, 0)
 
         separator = Gtk.HSeparator()
         self.master_box.pack_start(separator, False, True, 0)
 
-        options_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
-        self.items.append(Item(name = app, expanded = False, box = user_box, options_box = options_box))
+
+    def changed_cb(self, type_combo):
+        parameters_box = self.items[type_combo.index].parameters
+        for child in parameters_box.get_children():
+            parameters_box.remove(child)
+        for item in type_map[type_combo.get_active_text()]:
+            parameters_box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
+        parameters_box.show_all()
 
     def delete_q(self, button):
         box = self.items[len(self.items)-1].box
@@ -79,3 +103,14 @@ class CustumBox(Gtk.ScrolledWindow):
         self.add_row()
         self.master_box.reorder_child(self.add_box, len(self.items) * 2)
         self.master_box.show_all()
+
+    def finalize(self):
+        for i in range(0, len(self.items)):
+            self.add_element(i)
+
+    def add_element(self, index):
+        item = self.items[index]
+        parameters = ""
+        for parameter in item.parameters.get_children():
+            parameters += "," + parameter.get_text()
+        add(w.elements, item.title.get_text() + "," + (item.mode.get_active() == 0 ? "V" : "P") + "," + item.points.get_text() + "," + item.type.get_active_text().replace(" ", "") + parameters)
