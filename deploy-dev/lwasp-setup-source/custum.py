@@ -80,7 +80,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
-    def packParameters(items, box):
+    def packParameters(self, items, box):
         box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
         for item in items:
             if "~" in item:
@@ -88,7 +88,7 @@ class CustumBox(Gtk.ScrolledWindow):
             else:
                 box.pack_start(Gtk.Entry(placeholder_text=item), True, True, 0)
 
-    def generateComboBox(items):
+    def generateComboBox(self, items):
         new_store = Gtk.ListStore(str, str)
         if len(items[0]) == 1:
             new_store = Gtk.ListStore(str)
