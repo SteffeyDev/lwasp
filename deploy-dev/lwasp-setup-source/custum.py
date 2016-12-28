@@ -113,4 +113,4 @@ class CustumBox(Gtk.ScrolledWindow):
         parameters = ""
         for parameter in item.parameters.get_children():
             parameters += "," + parameter.get_text()
-        add(w.elements, item.title.get_text() + "," + (item.mode.get_active() == 0 ? "V" : "P") + "," + item.points.get_text() + "," + item.type.get_active_text().replace(" ", "") + parameters)
+        add(w.elements, item.title.get_text() + "," + ("V" if (item.mode.get_active() == 0) else "P") + "," + item.points.get_text() + "," + item.type.get_active_text().replace(" ", "") + parameters)
