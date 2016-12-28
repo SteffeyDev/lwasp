@@ -132,13 +132,17 @@ class CustumBox(Gtk.ScrolledWindow):
         item = self.items[index]
 
         parameters = ""
+        skip = True
         for parameter in item.parameters.get_children():
+            if skip: # Ignore first element
+                skip = False
+                continue
             try:
                 parameters += "," + parameter.get_text()
             except:
                 model = parameter.get_model()
                 tree_iter = parameter.get_active_iter()
-                parameters += model[tree_iter][0]
+                parameters += "," + model[tree_iter][0]
 
         mode_model = item.mode.get_model()
         mode_tree_iter = item.mode.get_active_iter()
