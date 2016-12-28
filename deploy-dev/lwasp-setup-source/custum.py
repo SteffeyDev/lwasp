@@ -69,9 +69,8 @@ class CustumBox(Gtk.ScrolledWindow):
             type_store.append([item])
 
         type_combo = Gtk.ComboBox.new_with_model(type_store)
-        type_combo.connect("changed", self.changed_cb)
+        type_combo.connect("changed", self.changed_cb, len(self.items))
         type_combo.set_active(0)
-        type_combo.index = len(self.items)
 
         new_row.pack_start(title_entry, False, False, 0)
         new_row.pack_start(mode_combo, False, False, 0)
@@ -93,12 +92,12 @@ class CustumBox(Gtk.ScrolledWindow):
         self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
 
-    def changed_cb(self, type_combo):
+    def changed_cb(self, type_combo, index):
         tree_iter = type_combo.get_active_iter()
         if tree_iter != None:
             model = type_combo.get_model()
             new_type = model[tree_iter][0]
-            parameters_box = self.items[type_combo.index].parameters
+            parameters_box = self.items[index].parameters
             for child in parameters_box.get_children():
                 parameters_box.remove(child)
             for item in type_map[new_type]:
