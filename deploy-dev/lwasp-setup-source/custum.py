@@ -50,7 +50,7 @@ class CustumBox(Gtk.ScrolledWindow):
         title_entry = Gtk.Entry(placeholder_text="Title")
         title_entry.set_width_chars(11)
 
-        mode_combo = gtk.combo_box_new_text()
+        mode_combo = Gtk.combo_box_new_text()
         mode_combo.append_text("Vulnerability")
         mode_combo.append_text("Penalty")
         mode_combo.set_active(0)
@@ -58,7 +58,7 @@ class CustumBox(Gtk.ScrolledWindow):
         points_entry = Gtk.Entry(placeholder_text="Points")
         points_entry.set_width_chars(2)
 
-        type_combo = gtk.combo_box_new_text()
+        type_combo = Gtk.combo_box_new_text()
         type_combo.connect("changed", self.changed_cb)
         for item in type_list:
             mode_combo.append_text(item)
