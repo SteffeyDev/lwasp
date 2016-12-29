@@ -62,7 +62,7 @@ class MyWindow(Gtk.Window):
 		done_button = Gtk.Button(label="Finalize & Generate Scoring Files")
 		done_button.props.halign = Gtk.Align.END
 		done_button.connect("clicked", self.done_button_pressed)
-		bottom_box.pack_end(done_button, False, False, 0)
+		bottom_box.pack_end(done_button, False, False, 20)
 		master_box.add(bottom_box)
 
 		self.add(master_box)

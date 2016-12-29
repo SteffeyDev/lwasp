@@ -36,12 +36,19 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
+
         self.add_box = Gtk.Box()
-        add_q = Gtk.Button(label="Add Custom Element")
-        add_q.props.halign = Gtk.Align.START
+
+        dd_q = Gtk.Button(label="Add Custom Element")
         add_q.connect("clicked", self.add_q)
         self.add_box.pack_start(add_q, False, False, 0)
+
+        delete_q = Gtk.Button(label="Remove Last Element")
+        delete_q.connect("clicked", self.delete_q)
+        self.add_box.pack_start(delete_q, False, False, 0)
+
         self.master_box.pack_start(self.add_box, False, False, 0)
+
 
         self.add_with_viewport(self.master_box)
 
@@ -115,9 +122,12 @@ class CustumBox(Gtk.ScrolledWindow):
             parameters_box.show_all()
 
     def delete_q(self, button):
-        box = self.items[len(self.items)-1].box
-        self.master_box.remove(box)
-        del self.items[len(self.items)-1]
+        if len(self.items) > 0:
+            box = self.items[len(self.items)-1].box
+            self.master_box.remove(box)
+            del self.items[len(self.items)-1]
+        else:
+            show_error(self.get_toplevel(), "No Items", "Cannot remove from a list of 0 items")
 
     def add_q(self, button):
         self.add_row()
@@ -127,6 +137,11 @@ class CustumBox(Gtk.ScrolledWindow):
     def finalize(self):
         for i in range(0, len(self.items)):
             self.add_element(i)
+
+    def getComboText(combo):
+        model = combo.get_model()
+        tree_iter = combo.get_active_iter()
+        return model[tree_iter][0]
 
     def add_element(self, index):
         item = self.items[index]
@@ -140,16 +155,9 @@ class CustumBox(Gtk.ScrolledWindow):
             try:
                 parameters += "," + parameter.get_text()
             except:
-                model = parameter.get_model()
-                tree_iter = parameter.get_active_iter()
-                parameters += "," + model[tree_iter][0]
+                parameters += "," + getComboText(parameter)
 
-        mode_model = item.mode.get_model()
-        mode_tree_iter = item.mode.get_active_iter()
-        mode = mode_model[mode_tree_iter][0]
-
-        type_model = item.type.get_model()
-        type_tree_iter = item.type.get_active_iter()
-        type_text = string.replace(type_model[type_tree_iter][0], " ", "")
+        mode = getComboText(item.mode)
+        type_text = string.replace(getComboText(item.type), " ", "")
 
         add(w.elements, item.title.get_text() + "," + mode + "," + item.points.get_text() + "," + type_text + parameters)
