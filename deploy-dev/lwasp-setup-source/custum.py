@@ -37,7 +37,7 @@ class CustumBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
 
-        self.add_box = Gtk.Box()
+        self.add_box = Gtk.Box(spacing=10)
 
         add_q = Gtk.Button(label="Add Custom Element")
         add_q.connect("clicked", self.add_q)
@@ -82,9 +82,9 @@ class CustumBox(Gtk.ScrolledWindow):
         self.packParameters(type_map['File Contents'], parameters_box)
         new_box.pack_start(parameters_box, False, False, 0)
 
-        self.master_box.pack_start(new_box, False, True, 0)
+        new_box.pack_start(Gtk.HSeparator(), False, True, 0)
 
-        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.master_box.pack_start(new_box, False, True, 0)
 
         self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
 
@@ -131,7 +131,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
     def add_q(self, button):
         self.add_row()
-        self.master_box.reorder_child(self.add_box, (len(self.items) * 2) + 3)
+        self.master_box.reorder_child(self.add_box, len(self.items) + 3)
         self.master_box.show_all()
 
     def finalize(self):
