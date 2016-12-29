@@ -82,7 +82,7 @@ class CustumBox(Gtk.ScrolledWindow):
         self.packParameters(type_map['File Contents'], parameters_box)
         new_box.pack_start(parameters_box, False, False, 0)
 
-        new_box.pack_start(Gtk.HSeparator(), False, True, 0)
+        new_box.pack_start(Gtk.HSeparator(), False, False, 0)
 
         self.master_box.pack_start(new_box, False, True, 0)
 
