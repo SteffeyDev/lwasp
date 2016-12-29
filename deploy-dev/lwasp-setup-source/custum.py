@@ -13,7 +13,7 @@ import subprocess
 from os.path import isfile
 import string
 
-Item = namedtuple("Items", "box title mode points type parameters")
+Item = namedtuple("Items", "box title mode points type parameters spacer")
 
 type_list = ['File Contents', 'File Existance', 'Permissions', 'Command']
 type_map = {'File Contents': ['Absolute File Path', 'File should contain search string ~ File should NOT contain search string', 'Search String'], 'File Existance': ['Absolute File Path', 'File/directory should exist ~ File/directory should NOT exist'], 'Permissions': ['Absolute File Path', 'Permissions needed (e.g. 745)'], 'Command': ['BASH command to run', 'Output should contain text ~ Output should NOT contain text', 'Text']}
