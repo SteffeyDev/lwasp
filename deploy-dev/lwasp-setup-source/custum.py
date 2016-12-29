@@ -34,7 +34,7 @@ class CustumBox(Gtk.ScrolledWindow):
         note_label.set_line_wrap(True)
         self.master_box.pack_start(note_label, False, False, 0)
 
-        self.master_box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
 
 
         self.add_box = Gtk.Box(spacing=10)
@@ -82,11 +82,12 @@ class CustumBox(Gtk.ScrolledWindow):
         self.packParameters(type_map['File Contents'], parameters_box)
         new_box.pack_start(parameters_box, False, False, 0)
 
-        new_box.pack_start(Gtk.HSeparator(), False, False, 0)
-
         self.master_box.pack_start(new_box, False, True, 0)
 
-        self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box))
+        spacer = Gtk.HSeparator()
+        self.master_box.pack_start(spacer, False, False, 0)
+
+        self.items.append(Item(box = new_box, title = title_entry, mode = mode_combo, points = points_entry, type = type_combo, parameters = parameters_box, spacer=spacer))
 
     def packParameters(self, items, box):
         box.pack_start(Gtk.Label("Parameters: "), False, False, 0)
@@ -125,13 +126,14 @@ class CustumBox(Gtk.ScrolledWindow):
         if len(self.items) > 0:
             box = self.items[len(self.items)-1].box
             self.master_box.remove(box)
+            self.master_box.remove(self.items[len(self.items)-1].spacer)
             del self.items[len(self.items)-1]
         else:
             show_error(self.get_toplevel(), "No Items", "Cannot remove from a list of 0 items")
 
     def add_q(self, button):
         self.add_row()
-        self.master_box.reorder_child(self.add_box, len(self.items) + 3)
+        self.master_box.reorder_child(self.add_box, (len(self.items) * 2) + 3)
         self.master_box.show_all()
 
     def finalize(self):
