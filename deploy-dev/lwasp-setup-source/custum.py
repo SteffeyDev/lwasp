@@ -39,7 +39,7 @@ class CustumBox(Gtk.ScrolledWindow):
 
         self.add_box = Gtk.Box()
 
-        dd_q = Gtk.Button(label="Add Custom Element")
+        add_q = Gtk.Button(label="Add Custom Element")
         add_q.connect("clicked", self.add_q)
         self.add_box.pack_start(add_q, False, False, 0)
 
