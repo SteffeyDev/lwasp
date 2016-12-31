@@ -23,7 +23,7 @@ class CustumBox(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         self.items = []
 
-        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
 
         title_label_1 = Gtk.Label()
         title_label_1.set_markup('<big>Custum Scoring Elements</big>')
