@@ -152,17 +152,16 @@ class MyWindow(Gtk.Window):
         with open(desktop_path + 'scoring.desktop', 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            os.chmod(desktop_path + "scoring.desktop", 555)
+            os.chmod(desktop_path + "scoring.desktop", 0555)
             os.chown(desktop_path + "scoring.desktop", uid, gid)
-            os.chmod(getDirPath() + "/open.bash", 555)
 
         print '\nAdding Set ID script on desktop'
         with open(desktop_path + "lwasp.desktop", 'w') as deskFile:
             deskFile.write("[Desktop Entry]\nName=Set ID\nExec=python " + locString + "/uid.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
-            os.chmod(desktop_path + "lwasp.desktop", 555)
+            os.chmod(desktop_path + "lwasp.desktop", 0555)
             os.chown(desktop_path + "lwasp.desktop", uid, gid)
-            os.chmod(getDirPath() + "/uid.py", 555)
+            os.chmod(getDirPath() + "/uid.py", 0555)
 
         GObject.idle_add(lambda: self.update_progress(0.3, "Creating Vulnerabilities"))
 
@@ -273,7 +272,7 @@ class MyWindow(Gtk.Window):
         with open('/usr/lwasp/score.json', 'w') as scoreFile:
             scoreFile.write("")
             scoreFile.close()
-        os.chmod("/usr/lwasp/score.json", 664)
+        os.chmod("/usr/lwasp/score.json", 0664)
 
         print '\nSetting up script at /etc/init.d/lwasp to create file watches on boot'
         #run restart every time the image restarts to fun cleanup function
@@ -282,7 +281,7 @@ class MyWindow(Gtk.Window):
         bootfile.close()
         shutil.move('lwasp', '/etc/init.d/lwasp')
 
-        os.chmod("/etc/init.d/lwasp", 755)
+        os.chmod("/etc/init.d/lwasp", 0755)
         do("sudo update-rc.d lwasp defaults")
 
         GObject.idle_add(lambda: self.update_progress(0.45, "Compiling Python"))
@@ -442,7 +441,7 @@ class MyWindow(Gtk.Window):
                 with open('/home/' + settings['user'] + '/Desktop/email.desktop', 'w') as deskFile:
                     deskFile.write("[Desktop Entry]\nName=Send Scoring Report\nExec=python " + locString + "/emailz.py\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
                     deskFile.close()
-                    os.chmod("/home/" + settings['user'] + "/Desktop/email.desktop", 555)
+                    os.chmod("/home/" + settings['user'] + "/Desktop/email.desktop", 0555)
                     os.chown("/home/" + settings['user'] + "/Desktop/email.desktop", uid, gid)
             message = "This is an LWASP test email. It is intentionally blank. Please continue configuring your image."
             sendEmail(message, settings)
