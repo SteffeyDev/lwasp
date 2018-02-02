@@ -29,10 +29,8 @@ You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 If the built in options aren't enough for you, here are some basic steps to extend the service.  You can find a more detailed guide in [the Advanced Users Guide](/Advanced%20Users%20Guide.pdf).
 
 ## Add Scoring Categories
-1. Add a function in analyze.py that can take in the extras as parameters and return True or False as to whether that item should be marked complete according to those parameters
-2. Near the bottom of the analyze.py file, where the recording file is read, add your category beneath all of the others, with the same syntax, but use `function = myNewFunction(extras...)`
-3. In initialize.py, add your new category to line 104 where it checks each type for validity.
-4. That's it! Add your category in the elements.csv file with the needed extras, and start using it. Contact me
+1. Add a python file in `lwasp-install/modules` (`MyModuleName.py`) that contains a `check` function which takes the `extras` as a parameter and returns whether the check was successful (True/False).  You should raise `TypeError` if the array passed in is not long enough for your module to run. You can look at some of the built-in modules for clarification.
+2. Add your category in the elements.csv file with the needed extras, and start using it!
 with any questions.
 
 ## Breakdown of the files
@@ -42,6 +40,7 @@ with any questions.
 ###### These are the python files that do all of the grunt work
 * **initialize.py** - Sets up the scoring engine to run, and puts everything in motion.
 * **analyze.py** - Called every minute from a crontab and every time a file that is scored changes. It parses through what should be scored and determines what score the user of the image has achieved, then writes that back to **recording.json**.
+* **modules/** - Each of the files are used by **analyze.py** to complete the scoring checks.
 * **restart.py** - Sets up the file watches and does several other tasks that must be run on boot. It is called from **cse.bash**.
 
 
@@ -65,7 +64,7 @@ with any questions.
 
 
 ## Notes
-* You can reach me for contact at steffeydev@icloud.com with any questions, concerns, etc.
+* You can reach me for contact at [steffeydev@icloud.com](mailto:steffeydev@icloud.com) with any questions, concerns, etc.
 * Forensics questions are in the CyberPatriot model; only checks the text after “ANSWER: “ (can support multiple answers.)
 * Feel free to read through all of my code, I have tried to comment it as much as needed. If you know any amount of python it should be fairly easy to understand and modify to fit your needs.
 * **main.js** is written in javascript using a framework called React, which was created by Facebook in 2013. Feel free to research and learn it, but I have to warn you that just messing with it as plain javascript may not work that well.

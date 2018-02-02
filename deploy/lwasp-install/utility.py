@@ -4,7 +4,7 @@ from hashlib import md5
 import subprocess, os, string, smtplib, json, urllib2, re, commands, sys
 from os import path
 
-#Function to run a bash command
+# Function to run a bash command
 def do(cmd):
     p = subprocess.Popen(cmd , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()

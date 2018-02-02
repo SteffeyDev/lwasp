@@ -2,25 +2,24 @@
 
 import os.path
 import time
-from os.path import expanduser
 import string
 import os
-import stat
 import datetime
 import json
 import sys
-import subprocess
-import commands
 import re
 import smtplib
 import traceback
-import codecs
 
 from utility import *
 
+# Fetch modules
+moduleNames = ['modules.' + moduleName.split('.')[0] for moduleName in os.listdir('modules')]
+modules = map(__import__, moduleNames)
+
 debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 
-#tracks errors to show messages at end
+# Tracks errors to show messages at end
 fileError = False
 saveError = False
 
@@ -31,139 +30,6 @@ if os.path.isfile('/etc/lwasp/holder'):
 file = open(getDirPath() + '/holder','w')
 file.close()
 
-#method to parse the boolean values in the csv
-def parseBool(string):
-    if string.lower() == "true": return True
-    return False
-
-#method to check the file to see if it contains all or none of the strings in the array of contents
-def checkFileContents(filepath, contents, mode):
-    try:
-        inFile = codecs.open(string.replace(filepath, '~', expanduser("~")),'r','utf-8') # open(string.replace(filepath, '~', expanduser("~")), 'r') # if ~ exists in string, replace it with the user's home directory absolute path
-        text = inFile.read()
-        text = string.replace(text, "\n", "(<^>]")
-        text = ' '.join(text.split())
-        text = string.replace(text, "\"", "")
-        text_list = text.split("(<^>]")
-        inFile.close()
-
-        should_return = not mode
-
-        for contains in contents:
-            if debug:
-                print "Using file path: " + string.replace(filepath, '~', expanduser("~"))
-
-            contains = string.replace(contains, "\"", "")
-            contains = ' '.join(contains.split())
-            contains_pieces = contains.split("~")
-
-            if debug:
-                print "Looking for text:", contains
-                print "File text:", text
-
-            for line in text_list:
-                if contains_pieces[0] in line:
-                    if len(contains_pieces) == 2:
-                        if contains_pieces[1] in line and not isCommented(line, filepath):
-                            should_return = mode
-                    elif not isCommented(line, filepath):
-                        should_return = mode
-
-        return should_return
-
-    except:
-        if debug:
-            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
-        print " * Could not find or process necessary file. Please contact your administrator"
-        return None
-
-def isCommented(line, filename):
-    return (".conf" in filename or ".gsettings" in filename) and line.find("#") == 0
-
-#check if a file exists at a given filepath using os.path
-def checkFileExists(filepath, should):
-    if debug:
-        print "Using Filepath: " + filepath
-    if os.path.isfile(filepath) or os.path.isdir(filepath): return should
-    return not should
-
-#checks if a service is running using the bash command ps -A
-def checkServiceRunning(serviceName, shouldBe):
-    output = subprocess.check_output(['ps', '-A'])
-    if serviceName in output: return shouldBe
-    return not shouldBe
-
-#checks the specific syntax for the CP forensics questions, and can handle multiple answers
-def checkForensicsQuestion(filepath, answers):
-    try:
-        count = 0
-        for ans in answers:
-            if debug:
-                print "Using filepath:", filepath
-            file = open(filepath, 'r')
-            for line in file.read().split('\n'):
-                if line[:7] == "ANSWER:":
-                    if ans.lower() in line[7:].lower(): # case insensitive
-                        count = count + 1
-        if count == len(answers): return True # if all are answered
-        return False
-    except:
-        if debug:
-            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
-        print " * Could not find or process Forensics question at " + filepath + ". Please contact your administrator"
-        return None
-
-#check if updates are installed for a specific service
-def checkUpdates(serviceName, version):
-    cmd = 'dpkg -l ' + serviceName + ' | grep -E \"^ii\" | tr -s \' \' | cut -d\' \' -f3'
-    output,error = subprocess.Popen(cmd, shell=True, executable="/bin/bash", stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-    if version in output:
-        return True
-    return False
-
-#checks whether a port is open
-def checkPort(port, open):
-    try:
-        output = subprocess.check_output(['sudo','netstat','-tunelp'])
-        lines = output.split('\n')
-        for line in lines:
-            if ':' + port in line and 'LISTEN' in line:
-                return open
-        return not open
-    except:
-        if debug:
-            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
-        print " * Could not execute command.  Please contact your administrator"
-        return None
-
-#checks the permissions on a file and returns false if any of the permissions don't match - need to simplify
-def checkPermissions(filepath, permission):
-    try:
-        current = oct(os.stat(filepath)[stat.ST_MODE])[-3:]
-        return int(permission) == int(current)
-    except:
-        if debug:
-            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
-        print " * Could not find necessary file. Please contact your administrator"
-        return None
-
-#generic command analysis for output, allowing greater flexibility
-def checkCommand(command, content, should):
-    try:
-        output, err = subprocess.Popen(command.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE).communicate()
-        shortOutput = ' '.join(output.split()).decode('utf-8')
-        shortErr = ' '.join(err.split()).decode('utf-8')
-        if debug:
-            print "Command Output:", shortOutput
-        if content in shortOutput or content in shortErr:
-            return should
-        return not should
-    except:
-        if debug:
-            print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
-        print " * Could not execute command.  Please contact your administrator"
-        return None
-
 #to send scoring report at end
 def send_email(settings):
     try:
@@ -172,25 +38,21 @@ def send_email(settings):
     except:
         print '\n* Time is up! Exiting script now...\n'
 
-    #prevents email from being sent more than once
+    # Prevents email from being sent more than once
     addSetting('email', 'done', True, False)
 
     sys.exit()
 
-#######################
-# Program starts here #
-#######################
-
-#load the settings dictionary from the encrypted file
+# Load the settings dictionary from the encrypted file
 settings = getSettings()
 
-#if the administrator made this a timed image
+# If the administrator made this a timed image
 if settings['limit'] != -1:
 
-    #get the current time string in seconds
+    # Get the current time string in seconds
     now = datetime.datetime.now()
 
-    #if the email has already been sent, inform the user and get out of here
+    # If the email has already been sent, inform the user and get out of here
     if settings['email'] == 'done':
         print '\n* Time is up! Scoring report has been sent to the Administrator; exiting script now...\n'
         sys.exit()
@@ -199,7 +61,7 @@ if settings['limit'] != -1:
     timeStart = settings['start']
     timeLimit = settings['limit']
 
-    #if time is up, inform user and send email to coach/mentor
+    # If time is up, inform user and send email to coach/mentor
     if timeNow - timeStart > timeLimit:
         notify("Out of Time!", "Your score is frozen.  Please stop working and back away from this image.  It may explode.")
 
@@ -207,10 +69,9 @@ if settings['limit'] != -1:
             print '\n* Time is up! Exiting script now...\n'
             sys.exit()
 
-        #prevents the email from being sent multiple times
+        # Prevents the email from being sent multiple times
         send_email(settings)
 
-#more checks
 changed = False
 new = False
 penalty = False
@@ -219,69 +80,19 @@ with open(getDirPath() + '/recording', 'r') as readFile:
     text = decrypt(readFile)#, "A7jcCd88fl93ndAvy1d8cX0dl")
     rows = json.loads(text)
 
-    #for each line in the recording file
+    # For each line in the recording file
     i = 0
     for row in rows:
         print "Checking element " + str(i+1)
-        function = False # function is goine to be a boolean value
-        if row['type'] == "FileContents":
-            if len(row['extras']) >= 3:
-                function = checkFileContents(row['extras'][0], row['extras'][2:], parseBool(row['extras'][1]))
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "FileExistance":
-            if len(row['extras']) == 2:
-                function = checkFileExists(row['extras'][0], parseBool(row['extras'][1]))
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Service":
-            if len(row['extras']) == 2:
-                function = checkServiceRunning(row['extras'][0], parseBool(row['extras'][1]))
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Forensics":
-            if len(row['extras']) >= 2:
-                function = checkForensicsQuestion(row['extras'][0], row['extras'][1:])
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Updates":
-            if len(row['extras']) == 2:
-                function = checkUpdates(row['extras'][0], row['extras'][1])
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Permissions":
-            if len(row['extras']) == 2:
-                function = checkPermissions(row['extras'][0], row['extras'][1])
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Command":
-            if len(row['extras']) == 3:
-                function = checkCommand(row['extras'][0], row['extras'][2], parseBool(row['extras'][1]))
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
-        elif row['type'] == "Port":
-            if len(row['extras']) == 2:
-                function = checkPort(row['extras'][0], parseBool(row['extras'][1]))
-            else:
-                if debug:
-                    print "Not enough extras in row ", str(i+1)
 
-        #nil case, can't find what is needed for this element
-        if function is None:
-            fileError = True
-        else:
-            #if the new value is different than what it was before...
-            if row['complete'] != function:
+        try:
+            returnVal = modules[row['type']].check(row['extras'])
+
+            # If the new value is different than what it was before...
+            if row['complete'] != returnVal:
                 changed = True #record and save to file
-                row['complete'] = function
-                if function == True:
+                row['complete'] = returnVal
+                if returnVal == True:
                     title = row['title']
                     if row['mode'] == True:
                         notify("You Earned a Point!", title)
@@ -289,18 +100,29 @@ with open(getDirPath() + '/recording', 'r') as readFile:
                     else:
                         penalty = True
                         notify("You Lost Points!", title)
+
+        except TypeError:
+            if debug:
+                print "Not enough extras in row ", str(i+1)
+
+        except:
+            if debug:
+                print "Unexpected error of " + str(sys.exc_info()[0]) + ":", traceback.format_exc()
+            print " * Could not execute command.  Please contact your administrator"
+            fileError = True
+            
         i = i + 1
 
     readFile.close()
-    #if one or more of the values is changed, rewrites the recording file with these changes
+    # If one or more of the values is changed, rewrites the recording file with these changes
     if changed:
 
         try:
-            #updates and re-encrypts recording file
+            # Updates and re-encrypts recording file
             with open(getDirPath() + '/recording', 'w') as recFile:
                 encrypt(json.dumps(rows), recFile)
 
-            #save again to be accessed by scoring report html page
+            # Save again to be accessed by scoring report html page
             with open('/usr/lwasp/score.json', 'w') as scoreFile:
                 newArray = []
                 for row in rows:
@@ -318,7 +140,7 @@ with open(getDirPath() + '/recording', 'r') as readFile:
             saveError = True
             print "\n * Could not save to file"
 
-#logs time for debugging purposes
+# Logs time for debugging purposes
 try:
     with open(getDirPath() + "/log", "a") as logFile:
         logFile.write('Analyze.py ran at ' + time.strftime("%H:%M:%S") + '\n')
@@ -327,7 +149,7 @@ except:
     saveError = True
     print "\n * Could not log"
 
-#informs user of any errors, gives steps to resolve
+# Informs user of any errors, gives steps to resolve
 if fileError:
     if saveError:
         print "\nWARNING: Some of the item checks failed, and thus cannot be scored.  Please check the output of this command denoted with a *."
@@ -338,7 +160,7 @@ if saveError:
 
 if new and penalty:
     playSound('both')
-elif new: #play sound
+elif new:
     playSound('new')
 elif penalty:
     playSound('penalty')

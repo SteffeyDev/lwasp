@@ -223,10 +223,11 @@ class MyWindow(Gtk.Window):
                         print "\n* Syntax error in the points of element " + str(itt) + ". Please make sure that this is an integer value."
                         GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the points of element " + str(itt) + ". Please make sure that this is an integer value."))
 
-                    #checks type ** If you add a custum type you should add it here
+                    #checks type
                     type = elements[3].replace(' ', '')
-                    if not (type == "FileContents" or type == "FileExistance" or type == "Service" or type == "Forensics" or type == "Updates" or type == "Port" or type == "Permissions" or type == "Command"):
-                        print "\n* Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the 8 valid types."
+                    moduleNames = [moduleName.split('.')[0] for moduleName in os.listdir('modules')]
+                    if type not in moduleNames:
+                        print "\n* Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the " + len(moduleNames) + " valid types."
                         GObject.idle_add(lambda: show_fatal(self, "Error in elements.csv file","Syntax error in the type of element " + str(itt) + ". Please make sure it is one of the 8 valid types."))
                     dict['type'] = elements[3]
 
