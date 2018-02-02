@@ -11,21 +11,26 @@
 * Uses Bash and Python for the backend, GTK+3 & Javascript with ReactJS and JQuery for the front end
 
 ## Initialization
-1. Drag the ```deploy``` folder onto the desktop of the image that you want to install LWASP on.
+1. Drag the `deploy` folder onto the desktop of the image that you want to install LWASP on.
 2. Open a command prompt (terminal) on the image and run the following commands:
-  * ``` cd ~/Desktop/deploy ```
-  * ``` ./setup ```
+  * `cd ~/Desktop/deploy`
+  * `./setup`
 3. Check what you want to score, and then follow the prompts to install LWASP on the image.
+
+You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 
 ## Steps for Competitor to Take
 1. Once the image is started and they log in, they double click the "Set ID" shortcut on the desktop to set their unique ID. You will receive this ID and the image ID you set during initialization in the email. This is so that if you have several duplicate images, you can tell them apart.
 2. They try to secure the image, gaining points by what was set in the elements file.
-3. The scoring report will refresh every time a file is changed and once every minute. If this is not often enough or this does not seem to be working, they can type ``` sudo refresh ``` into a terminal to reload the score manually.
+3. The scoring report will refresh every time a file is changed and once every minute. If this is not often enough or this does not seem to be working, they can type `sudo refresh` into a terminal to reload the score manually.
 
 # Modifying LWASP
+
+If the built in options aren't enough for you, here are some basic steps to extend the service.  You can find a more detailed guide in [the Advanced Users Guide](/Advanced%20Users%20Guide.pdf).
+
 ## Add Scoring Categories
 1. Add a function in analyze.py that can take in the extras as parameters and return True or False as to whether that item should be marked complete according to those parameters
-2. Near the bottom of the analyze.py file, where the recording file is read, add your category beneath all of the others, with the same syntax, but use ``` function = myNewFunction(extras...) ```
+2. Near the bottom of the analyze.py file, where the recording file is read, add your category beneath all of the others, with the same syntax, but use `function = myNewFunction(extras...)`
 3. In initialize.py, add your new category to line 104 where it checks each type for validity.
 4. That's it! Add your category in the elements.csv file with the needed extras, and start using it. Contact me
 with any questions.
