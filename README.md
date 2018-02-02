@@ -1,5 +1,6 @@
-![icon.png](https://bitbucket.org/repo/g4odBK/images/4257456251-icon.png)
-#LWASP
+<img alt="LWASP Icon" src="/icon.png" width="150">
+
+# LWASP
 
 ###### The Linux Watchful Adaptive Security Compliance
 
