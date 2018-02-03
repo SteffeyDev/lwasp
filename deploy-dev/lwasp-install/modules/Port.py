@@ -2,7 +2,7 @@ import subprocess
 import sys
 
 #checks whether a port is open
-def check(args):
+def check(args, debug=False):
 
     if (len(args) < 2):
         raise TypeError("Not Enough Arguments")

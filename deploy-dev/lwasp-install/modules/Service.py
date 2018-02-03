@@ -1,5 +1,7 @@
+import subprocess
+
 #checks if a service is running using the bash command ps -A
-def check(args):
+def check(args, debug=False):
 
     if (len(args) < 2):
         raise TypeError("Not Enough Arguments")

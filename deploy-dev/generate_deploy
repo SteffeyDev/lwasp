@@ -1,13 +1,26 @@
+# Zipping setup files into one executable
 cd lwasp-setup-source
 zip -r ../lwasp-setup.zip *
 cd ..
 echo '#!/usr/bin/env python' | cat - lwasp-setup.zip > lwasp-setup
 chmod +x lwasp-setup
 rm lwasp-setup.zip
-cp -Rf lwasp-install ../deploy/
 mv -f lwasp-setup ../deploy/
+
+# Moving install files
+rsync -r --exclude='lwasp-install/scoring-report' lwasp-install ../deploy/
+
+# Generating new web bundle
+cd scoring-report
+npm run build
+cd ..
+mv -f scoring-report/build ../deploy/lwasp-install/lwasp-report
+
+# Moving quick-start files
 cp install ../deploy/
 cp setup ../deploy/
 cd ../deploy/lwasp-install
+
+# Compiling setup GUI
 python -m py_compile initialize_gui.py
 rm initialize_gui.py

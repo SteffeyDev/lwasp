@@ -141,6 +141,7 @@ class MyWindow(Gtk.Window):
         print "\nGenerating front end in /usr/lwasp"
         try:
             shutil.move("lwasp-report", "/usr/lwasp")
+            shutil.move("icon.png", "/usr/lwasp/")
         except:
             if not os.path.isdir('/usr/lwasp'):
                 print ' ** lwasp-report folder not found, lwasp folder has been corrupted in transport, please obtain a copy of lwasp that has the lwasp-report folder in it.'
@@ -149,8 +150,9 @@ class MyWindow(Gtk.Window):
         print "\nCreating Scoring Report on Desktop"
         desktop_path = '/home/' + settings['user'] + '/Desktop/'
         #creates a desktop file to launch a firefox page in its own window, uses icon.png file
+
         with open(desktop_path + 'scoring.desktop', 'w') as deskFile:
-            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/report.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
+            deskFile.write("[Desktop Entry]\nName=Scoring Report\nExec=firefox /usr/lwasp/index.html\nTerminal=false\nType=Application\nIcon=/usr/lwasp/icon.png")
             deskFile.close()
             os.chmod(desktop_path + "scoring.desktop", 0555)
             os.chown(desktop_path + "scoring.desktop", uid, gid)
@@ -300,6 +302,8 @@ class MyWindow(Gtk.Window):
         if not os.path.isfile('utility.pyc'):
             do("sudo python -m py_compile utility.py")
             os.remove('utility.py')
+        do("sudo python -m compileall modules")
+        do("sudo rm -f modules/*.py")
 
         print '\nAdding cron job to reload the scoring every minute.  You can change the frequency of this by running "sudo crontab -e"'
         do("sudo bash cron.bash")

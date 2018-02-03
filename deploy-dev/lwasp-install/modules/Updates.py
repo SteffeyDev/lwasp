@@ -1,7 +1,7 @@
 import subprocess
 
 #check if updates are installed for a specific service
-def check(args):
+def check(args, debug=False):
 
     if (len(args) < 2):
         raise TypeError("Not Enough Arguments")

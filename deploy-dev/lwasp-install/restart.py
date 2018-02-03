@@ -22,7 +22,7 @@ from utility import *
 print 'Adding command "refresh" in /usr/bin'
 #adds refresh command to bash, so users can just type "refresh" to run analyze.py
 bashFile = open('refresh', 'w')
-bashFile.write('#!/bin/bash\npython ' + getSafeDirPath() + '/analyze\n')
+bashFile.write('#!/bin/bash\ncd ' + getSafeDirPath() + '; python analyze\n')
 bashFile.close()
 shutil.move('refresh', '/usr/bin/refresh')
 do('sudo chmod +x /usr/bin/refresh')

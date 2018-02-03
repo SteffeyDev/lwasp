@@ -29,7 +29,8 @@ You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 If the built in options aren't enough for you, here are some basic steps to extend the service.  You can find a more detailed guide in [the Advanced Users Guide](/Advanced%20Users%20Guide.pdf).
 
 ## Add Scoring Categories
-1. Add a python file in `lwasp-install/modules` (`MyModuleName.py`) that contains a `check` function which takes the `extras` as a parameter and returns whether the check was successful (True/False).  You should raise `TypeError` if the array passed in is not long enough for your module to run. You can look at some of the built-in modules for clarification.
+1. Add a python file in `deploy-dev/lwasp-install/modules` (`MyModuleName.py`) that contains a `check` function which takes the `extras` as a parameter and returns whether the check was successful (True/False).  You should raise `TypeError` if the array passed in is not long enough for your module to run. You can look at some of the built-in modules for clarification.
+2. Run `cd deploy-dev; ./generate_deploy` to move your new module and any other changes to the deploy folder.
 2. Add your category in the elements.csv file with the needed extras, and start using it!
 with any questions.
 

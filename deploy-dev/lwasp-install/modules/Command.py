@@ -2,7 +2,7 @@ import subprocess
 import sys
 
 #generic command analysis for output, allowing greater flexibility
-def check(command, content, should):
+def check(args, debug=False):
 
     if (len(args) < 3):
         raise TypeError("Not Enough Arguments")

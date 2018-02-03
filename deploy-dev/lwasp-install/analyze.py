@@ -14,8 +14,9 @@ import traceback
 from utility import *
 
 # Fetch modules
-moduleNames = ['modules.' + moduleName.split('.')[0] for moduleName in os.listdir('modules')]
-modules = map(__import__, moduleNames)
+modulesImports = [__import__('modules.' + moduleName.split('.')[0], fromlist=["modules"]) for moduleName in os.listdir('modules')]
+moduleNames = [moduleName.split('.')[0] for moduleName in os.listdir('modules')]
+modules = dict(zip(moduleNames, modulesImports))
 
 debug = (len(sys.argv) == 2 and sys.argv[1] == "debug")
 
@@ -86,7 +87,7 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         print "Checking element " + str(i+1)
 
         try:
-            returnVal = modules[row['type']].check(row['extras'])
+            returnVal = modules[row['type']].check(row['extras'], debug)
 
             # If the new value is different than what it was before...
             if row['complete'] != returnVal:

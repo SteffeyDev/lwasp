@@ -30,8 +30,8 @@ from passwd import PasswdBox
 from firewall import FirewallBox
 from backdoor import BackdoorBox
 from misc import MiscBox
-from intro import IntroDialog
 from custum import CustumBox
+from intro import IntroductionBox
 from gui_utility import *
 
 import w
@@ -69,48 +69,46 @@ class MyWindow(Gtk.Window):
 		path = str(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 		self.set_icon_from_file(path[:-5] + 'install/icon.png')
 
-		for i in range(0, 9):
+		for i in range(0, 10):
 			page = Gtk.Box()
 			label = ""
 
 			if i == 0:
+				page = IntroductionBox()
+				label = "Intro"
+			elif i == 1:
 				page = UserBox(self.update_users)
 				label = "Users"
-			elif i == 1:
+			elif i == 2:
 				page = AppsBox()
 				label = "Services"
-			elif i == 2:
+			elif i == 3:
 				page = ForensicsBox()
 				self.forensics_box = page
 				label = "Forensics"
-			elif i == 3:
+			elif i == 4:
 				page = UpdatesBox()
 				label = "Updates"
-			elif i == 4:
+			elif i == 5:
 				page = PasswdBox()
 				label = "Password Policy"
-			elif i == 5:
+			elif i == 6:
 				page = FirewallBox()
 				label = "Firewall"
-			elif i == 6:
+			elif i == 7:
 				page = BackdoorBox()
 				label = "Bad Files"
-			elif i == 7:
+			elif i == 8:
 				page = MiscBox()
 				self.misc_box = page
 				label = "Other"
-			elif i == 8:
+			elif i == 9:
 				page = CustumBox()
 				self.custum_box = page
 				label = "Custum"
 
-
 			page.set_border_width(10)
 			self.notebook.append_page(page, Gtk.Label(label))
-
-		dialog = IntroDialog(self)
-		dialog.run()
-		dialog.destroy()
 
 	def update_users(self):
 		if self.misc_box is not None:

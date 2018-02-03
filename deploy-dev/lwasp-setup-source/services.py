@@ -193,7 +193,7 @@ class AppsBox(Gtk.ScrolledWindow):
                 filename = '/usr/bin/' + item.name
 
         if button.type == 0:
-            if item[name] == "ufw":
+            if item.name == "ufw":
                 add(w.elements, 'Service ' + item.name + ' stopped,V,8,Command,sudo ufw status,TRUE,Status: active')
             else:
                 add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + services[item.name] + ',FALSE')

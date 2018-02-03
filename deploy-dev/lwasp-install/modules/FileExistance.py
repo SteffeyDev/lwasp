@@ -1,7 +1,7 @@
 import os
 
 #check if a file exists at a given filepath using os.path
-def check(args):
+def check(args, debug=False):
     
     if (len(args) < 2):
         raise TypeError("Not Enough Arguments")

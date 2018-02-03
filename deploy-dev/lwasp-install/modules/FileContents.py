@@ -5,7 +5,7 @@ from os.path import expanduser
 import sys
 
 #method to check the file to see if it contains all or none of the strings in the array of contents
-def check(args):
+def check(args, debug=False):
 
     if (len(args) < 3):
         raise TypeError("Not Enough Arguments")
