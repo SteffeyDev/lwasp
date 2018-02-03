@@ -5,8 +5,10 @@ set -e
 FILE_NAME="deploy.zip"
 
 LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/steffeydev/lwasp/releases/latest)
+echo $LATEST_RELEASE
 LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
-ARTIFACT_URL="https://github.com/account/project/releases/download/$LATEST_VERSION/$FILE_NAME"
+echo $LATEST_VERSION
+ARTIFACT_URL="https://github.com/steffeydev/lwasp/releases/download/$LATEST_VERSION/$FILE_NAME"
 
 wget $ARTIFACT_URL
 unzip $FILE_NAME

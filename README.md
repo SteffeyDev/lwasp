@@ -4,6 +4,8 @@
 
 ###### The Linux Watchful Adaptive Security Compliance
 
+Note: This repository is under rapid development (beta), do not expect everything to be functioning right now.  I'll be rolling out version 1.0 (stable) soon! Stay tuned.
+
 ## About
 * LWASP is a service to scoring practice linux images in preparation for cyber security competitions
 * Very versatile and open to modification, so that coaches can customize it specifically for their teams if they choose to do so

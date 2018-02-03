@@ -24,7 +24,7 @@ class IntroductionBox(Gtk.ScrolledWindow):
 				label.set_line_wrap(True)
 				box.pack_start(label, False, False, 10)
 
-				label2 = Gtk.Label("Explore the tabs at the top to set up scoring on this image, and then press the button at the bottom right when you are done.")
+				label2 = Gtk.Label("Explore the tabs at the top to set up scoring on this image, and then press the button at the bottom right to go to the next step.")
 				label2.set_line_wrap(True)
 				box.pack_start(label2, False, False, 10)
 
