@@ -1,6 +1,0 @@
-#!/bin/bash
-# Copyright (C) 2015 Peter Steffey
-
-cd lwasp-install
-echo "Loading Installer ..."
-sudo python -B initialize_gui.pyc "$@"

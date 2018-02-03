@@ -1,7 +1,8 @@
 # Zipping setup files into one executable
+mkdir -p ../deploy
 cd lwasp-setup-source
 zip -r ../lwasp-setup.zip *
-cd ..
+cd - 
 echo '#!/usr/bin/env python' | cat - lwasp-setup.zip > lwasp-setup
 chmod +x lwasp-setup
 rm lwasp-setup.zip
@@ -13,8 +14,12 @@ rsync -r --exclude='lwasp-install/scoring-report' lwasp-install ../deploy/
 # Generating new web bundle
 cd scoring-report
 npm run build
-cd ..
-mv -f scoring-report/build ../deploy/lwasp-install/lwasp-report
+sed -i.bak 's|/static|/usr/bin/lwasp/static|g' build/index.html
+sed -i.bak 's/n\.p\+\"static/\"static/g' build/static/js/main.*.js
+rm -f build/*.bak
+rm -f /build/static/js/*.bak
+rsync -r --delete build ../../deploy/lwasp-install/lwasp-report
+cd -
 
 # Moving quick-start files
 cp install ../deploy/

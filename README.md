@@ -10,19 +10,27 @@
 * Tested on Ubuntu 12.04, 14.04, & 16.04, but should work for all Debian-based linux distributions
 * Uses Bash and Python for the backend, GTK+3 & Javascript with ReactJS and JQuery for the front end
 
-## Initialization
-1. Drag the `deploy` folder onto the desktop of the image that you want to install LWASP on.
-2. Open a command prompt (terminal) on the image and run the following commands:
+## Installation & Setup
+### Automatic
+1. Run this command on the virtual machine that you want to set up: `wget -O - https://encompassx.com/lwasp/download_script.sh | bash`
+2. Check what you want to score, and then follow the prompts to install LWASP on the image.
+
+### Manual
+1. Download `deploy.zip` from the [latest release](https://github.com/steffeydev/lwasp/releases/latest).
+2. Unzip the downloaded file.
+3. Drag the `deploy` folder onto the desktop of the image that you want to install LWASP on (or otherwise move the folder onto the virtual machine).
+4. Open a command prompt (terminal) on the image and run the following commands:
   * `cd ~/Desktop/deploy`
   * `./setup`
-3. Check what you want to score, and then follow the prompts to install LWASP on the image.
+5. Check what you want to score, and then follow the prompts to install LWASP on the image.
 
 You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 
 ## Steps for Competitor to Take
-1. Once the image is started and they log in, they double click the "Set ID" shortcut on the desktop to set their unique ID. You will receive this ID and the image ID you set during initialization in the email. This is so that if you have several duplicate images, you can tell them apart.
+1. Once the image is started and they log in, they double click the "Set ID" shortcut on the desktop to set their unique ID. You will receive this ID and the image ID you set during initialization in the email (if enabled). This is so that if you have several duplicate images, you can tell them apart.
 2. They try to secure the image, gaining points by what was set in the elements file.
 3. The scoring report will refresh every time a file is changed and once every minute. If this is not often enough or this does not seem to be working, they can type `sudo refresh` into a terminal to reload the score manually.
+4. The instructor should tell them not to view or modify or view anything in the `/etc/lwasp` and `/usr/lwasp` directories, and they shouldn't touch the `/etc/init.d/lwasp` file.  In addition, if they edit the crontab and remove the scheduled task that calls `sudo refresh` every minute, they may have to run `sudo refresh` manually to see scoring updates. The list of what scores on the image is securely encrypted, so even if they go looking for it in these directories, they won't find it.  The worst they could do is simply break the scoring engine, in which case they can't get more points, which should be enough motivation for them to not touch these files and directories.
 
 # Modifying LWASP
 

@@ -54,7 +54,6 @@ class Main extends Component {
         };
         rtc.createOffer(function (offerDesc) {
             grepSDP(offerDesc.sdp);
-            console.log(offerDesc.sdp);
             rtc.setLocalDescription(offerDesc);
         }, function (e) { parent.setState({"ip": ""}); });
 
@@ -192,7 +191,8 @@ class Main extends Component {
         <center>
         <div className="containerDiv">
           <img alt="icon" src={Icon} />
-          <h1 className="center">LWASP Cyber Security Training Image: {settings['name']}</h1>
+          <h1 className="center" style={{marginBottom: 5}}>{settings['name']}</h1>
+					<h5 className="center" style={{color: 'gray', marginTop: 5}}>LWASP Cyber Security Training Image</h5>
           <h2 className="center">Report Generated at {Date()}</h2>
           {limit == -1 ? null : <h3 className={limitClass2}>Image Running Time: {runningTimeLabel}</h3>}
           {limit == -1 ? null : <h3 className={limitClass}>Image Time Remaining: {timeLeftLabel}</h3>}
@@ -215,7 +215,8 @@ class Main extends Component {
 class ListItem extends Component {
   render() {
     var style = {
-      paddingLeft: 15
+      paddingLeft: 15,
+			textAlign: 'left'
     };
     return <li key={this.props.key} style={style}>{this.props.item['title']} - {this.props.item['points']} pts</li>
   }
