@@ -1,18 +1,17 @@
 # Zipping setup files into one executable
-mkdir -p ../deploy
-cd lwasp-setup-source
+mkdir -p deploy
+cd src/lwasp-setup
 zip -r ../lwasp-setup.zip *
 cd - 
-echo '#!/usr/bin/env python' | cat - lwasp-setup.zip > lwasp-setup
-chmod +x lwasp-setup
-rm lwasp-setup.zip
-mv -f lwasp-setup ../deploy/
+echo '#!/usr/bin/env python' | cat - src/lwasp-setup.zip > deploy/lwasp-setup
+chmod +x deploy/lwasp-setup
+rm src/lwasp-setup.zip
 
 # Moving install files
-rsync -r --exclude='lwasp-install/scoring-report' lwasp-install ../deploy/
+rsync -r --exclude='lwasp-install/scoring-report' src/lwasp-install deploy/
 
 # Generating new web bundle
-cd scoring-report
+cd src/scoring-report
 npm run build
 sed -i.bak 's|/static|/usr/bin/lwasp/static|g' build/index.html
 sed -i.bak 's/n\.p\+\"static/\"static/g' build/static/js/main.*.js
@@ -22,10 +21,14 @@ rsync -r --delete build ../../deploy/lwasp-install/lwasp-report
 cd -
 
 # Moving quick-start files
-cp install ../deploy/
-cp setup ../deploy/
-cd ../deploy/lwasp-install
+cp src/scripts/install deploy/
+cp src/scripts/setup deploy/
 
 # Compiling setup GUI
+cd deploy/lwasp-install
 python -m py_compile initialize_gui.py
 rm initialize_gui.py
+cd -
+
+# Zipping deploy folder for asset release
+zip -r deploy.zip deploy
