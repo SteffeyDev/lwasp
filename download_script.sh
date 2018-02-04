@@ -4,7 +4,7 @@ set -e
 
 FILE_NAME="deploy.zip"
 
-LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/steffeydev/lwasp/releases/latest)
+LATEST_RELEASE=$(wget -q0- --header "Accept: application/json" https://github.com/steffeydev/lwasp/releases/latest)
 echo $LATEST_RELEASE
 LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
 echo $LATEST_VERSION
