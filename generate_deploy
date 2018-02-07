@@ -13,11 +13,12 @@ rsync -r --exclude='lwasp-install/scoring-report' src/lwasp-install deploy/
 # Generating new web bundle
 cd src/scoring-report
 npm run build
-sed -i.bak 's|/static|/usr/bin/lwasp/static|g' build/index.html
+sed -i.bak 's|/static|static|g' build/index.html
 sed -i.bak 's/n\.p\+\"static/\"static/g' build/static/js/main.*.js
 rm -f build/*.bak
 rm -f /build/static/js/*.bak
-rsync -r --delete build ../../deploy/lwasp-install/lwasp-report
+rm -rf ../../deploy/lwasp-install/lwasp-report
+mv build ../../deploy/lwasp-install/lwasp-report
 cd -
 
 # Moving quick-start files

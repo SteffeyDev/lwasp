@@ -439,7 +439,7 @@ class MyWindow(Gtk.Window):
             settings['password'] = self.email_smtp_password_entry.get_text()
 
             if settings['server'] == "smtp.gmail.com":
-                GObject.idle_add(lambda: show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Connected apps & sites > Turn On Allow less secure apps', Gtk.MessageType.INFO))
+                GObject.idle_add(lambda: show_error(self, "Gmail SMTP Setup", 'You need to login to your gmail account on a web browser, Click your avatar in the top right corner > My Account > Apps with account access > Turn On "Allow less secure apps"', Gtk.MessageType.INFO))
             if self.email_desktop_button.get_active():
                 print "Creating Send Scoring Report button on desktop"
                 #creates a desktop file to launch a firefox page in its own window, uses icon.png file
@@ -485,7 +485,7 @@ class MyWindow(Gtk.Window):
 
     def email_not_recieved(self, button):
         self.check_dialog.destroy()
-        show_error(self, "Check Email Address", "Make Sure you put in the correct email address", Gtk.MessageType.INFO)
+        show_error(self, "Check Email Address", "Make Sure you put in the correct email address and SMTP settings.", Gtk.MessageType.INFO)
 
     def finish_installation(self, button=None):
         try:

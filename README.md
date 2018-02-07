@@ -15,7 +15,8 @@ Note: This repository is under rapid development (beta), do not expect everythin
 ## Installation & Setup
 ### Automatic
 1. Run this command on the virtual machine that you want to set up: `wget -O - https://encompassx.com/lwasp/download_script.sh | bash`
-2. Check what you want to score, and then follow the prompts to install LWASP on the image.
+2. If you are not logged in as root, you will have to put in the password for the current user when prompted.
+3. Check what you want to score, and then follow the prompts to install LWASP on the image.
 
 ### Manual
 1. Download `deploy.zip` from the [latest release](https://github.com/steffeydev/lwasp/releases/latest).
@@ -24,7 +25,8 @@ Note: This repository is under rapid development (beta), do not expect everythin
 4. Open a command prompt (terminal) on the image and run the following commands:
   * `cd ~/Desktop/deploy`
   * `./setup`
-5. Check what you want to score, and then follow the prompts to install LWASP on the image.
+5. If you are not logged in as root, you will have to put in the password for the current user when prompted.
+6. Check what you want to score, and then follow the prompts to install LWASP on the image.
 
 You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 
