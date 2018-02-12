@@ -9,10 +9,9 @@ import w
 from collections import namedtuple
 import subprocess
 from os.path import isfile
+import apt
 
 Item = namedtuple("Items", "name expanded options_box box")
-
-services = {'tightvncserver': 'Xtightvnc', 'telnet':'telnet', 'wireshark': 'wireshark', 'wordpress': 'wordpress', 'apparmor': 'apparmor', 'apache2': 'apache2', 'atom': 'atom', 'couchbase-server': 'sync_gateway', 'dovecot-core': 'dovecot', 'vsftpd': 'vsftpd', 'fail2ban': 'fail2ban', 'openssh-server':'sshd', 'php5': 'php5-fpm', 'postfix': 'postfix', 'mysql-server': 'mysqld', 'postgresql': 'postgres', 'nginx': 'nginx', 'thunderbird': 'thunderbird', 'ruby': 'ruby', 'firefox': 'firefox', 'cups': 'cupsd', 'remmina': 'remmina', 'python': 'python', 'nmap': 'nmap', 'wireshark': 'wireshark', 'vsftpd': 'vsftpd', 'netcat-openbsd': 'nc', 'nodejs': 'node', 'oodo': 'oodo', 'openssh-server': 'sshd', 'perl': 'perl', 'xrdp': 'xrdp', 'ufw': 'ufw', 'chkrootkit': 'chkrootkit', 'logwatch': 'logwatch', 'bum': 'bum', 'denyhosts': 'denyhosts', 'psad': 'psad', 'rkhunter': 'rkhunter', 'snort': 'snort', 'openssl': 'openssl'}
 
 class AppsBox(Gtk.ScrolledWindow):
     def __init__(self):
@@ -21,17 +20,7 @@ class AppsBox(Gtk.ScrolledWindow):
 
         self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 
-        self.valid_services = []
-        for service in services:
-            self.valid_services.append(service)
-
-        # time consuming
-        updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[1]
-        self.updates = updates_string.split('\n')
-        self.updates_map = {}
-
         self.entries = []
-
         for i in range(0,3):
             container_box = Gtk.Box(spacing=5)
             check_button = Gtk.CheckButton('Score for installing software: ')
@@ -48,29 +37,21 @@ class AppsBox(Gtk.ScrolledWindow):
         self.master_box.pack_start(Gtk.HSeparator(), False, False, 0)
         self.master_box.pack_start(title_label_1, False, False, 0)
 
-        apps = subprocess.Popen(["dpkg", "-l"], stdout=subprocess.PIPE).communicate()[0]
-        apps_list = apps.split('\n')
-        for app in apps_list:
-            if len(app.split(" ")) > 2:
-                app_name = app.split(" ")[2]
-                if app_name in self.valid_services:
-                    self.add_row(app_name)
+        self.apps_list = [app.split(' ')[5] for app in subprocess.check_output(["service", "--status-all"]).split('\n') if len(app.split(' ')) > 5]
+        for app in self.apps_list:
+				    self.add_row(app)
 
         self.add_box = Gtk.Box()
-        self.name_entry = Gtk.Entry(placeholder_text="Package Name")
-        self.add_box.pack_start(Gtk.Label("Install Software: "), False, False, 0)
-        self.add_box.pack_start(self.name_entry, False, False, 0)
-        add_app = Gtk.Button(label="Install")
+        self.add_box.pack_start(Gtk.Label("To install more services, run 'apt-get install' in another terminal and then reload"), False, False, 0)
+        add_app = Gtk.Button(label="Reload Services")
         add_app.props.halign = Gtk.Align.END
-        add_app.connect("clicked", self.add_app)
+        add_app.connect("clicked", self.refresh_list)
         self.add_box.pack_end(add_app, False, False, 0)
         self.master_box.pack_end(self.add_box, False, False, 0)
 
-
-
         self.add_with_viewport(self.master_box)
 
-    def add_row(self, app, removeable = False):
+    def add_row(self, app):
         user_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
         user_wrapper_box = Gtk.Box(spacing=5)
@@ -82,17 +63,6 @@ class AppsBox(Gtk.ScrolledWindow):
         button.index = len(self.items)
         button.connect("clicked", self.expand_button_clicked)
         user_wrapper_box.pack_end(button, False, True, 0)
-        updates_available = False
-        for update in self.updates:
-            if app in update:
-                self.updates_map[app] = update
-                note_label = Gtk.Label()
-                updates_available = True
-                note_label.set_markup('<span foreground="grey"><small>Updates Available</small></span>')
-                note_label.set_line_wrap(True)
-                note_label.props.halign = Gtk.Align.END
-                user_wrapper_box.pack_end(note_label, False, False, 0)
-                break
         user_box.pack_start(user_wrapper_box, False, False, 0)
         self.master_box.pack_start(user_box, False, True, 0)
 
@@ -101,7 +71,7 @@ class AppsBox(Gtk.ScrolledWindow):
 
         options_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 
-        for i in range(0,5):
+        for i in range(0,4):
 
             label = ""
             if i == 0:
@@ -112,22 +82,12 @@ class AppsBox(Gtk.ScrolledWindow):
                 label = "Penalize for Stopping (Critical Service)"
             elif i == 3:
                 label = "Penalize for Uninstalling (Critical Service)"
-            elif i == 4:
-                print app
-                if not updates_available: break
-                label = "Score for Updating"
 
             check_button = Gtk.CheckButton(label)
             check_button.connect("clicked", self.check_button_clicked)
             check_button.type = i
             check_button.index = len(self.items)
             options_box.pack_start(check_button, True, True, 0)
-
-        if removeable:
-            delete_button = Gtk.Button("Uninstall App")
-            delete_button.index = len(self.items)
-            delete_button.connect("clicked", self.delete_app)
-            options_box.pack_end(delete_button, False, False, 0)
 
         self.items.append(Item(name = app, expanded = False, box = user_box, options_box = options_box))
 
@@ -149,74 +109,26 @@ class AppsBox(Gtk.ScrolledWindow):
         self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
         self.master_box.remove(self.master_box.get_children()[len(self.master_box.get_children()) - 2])
 
-    def add_app(self, button):
-        app = self.name_entry.get_text()
-        for item in self.items:
-            if app == item.name:
-                show_error(self.get_toplevel(), "App Exists", "This service is already installed on your system.")
-                return
-        if app == "":
-            show_error(self.get_toplevel(), "Insufficient Information", "You must provide the name of the service to install")
-            return
-        check = subprocess.Popen(["apt-cache", "search", "--names-only", "^" + app + "$"], stdout=subprocess.PIPE).communicate()[0]
-        if check == "":
-            show_error(self.get_toplevel(), "App Does Not Exist", "The service you want to add is not available in the apt-get repositories on this system.")
-            return
-        self.add_row(app, True)
-        self.refresh_after_add()
-        if app not in self.valid_services:
-            services[app] = app
-            self.valid_services.append(app)
-        add(w.commands, "sudo apt-get install " + app + " -y --force-yes")
-
-    def refresh_after_add(self):
+    def refresh_list(self, button):
+        new_apps_list = [app.split(' ')[5] for app in subprocess.check_output(["service", "--status-all"]).split('\n') if len(app.split(' ')) > 5]
+        new_apps = list(set(new_apps_list) - set(self.apps_list))
+        for app in new_apps:
+            self.add_row(app)
         self.master_box.show_all()
-        self.name_entry.set_text("")
         self.master_box.reorder_child(self.add_box, (len(self.items) * 2) + 5)
+        self.apps_list = new_apps_list
 
     def check_button_clicked(self, button):
         item = self.items[button.index]
-        filename = ""
-
-        if button.type == 1 or button.type == 3:
-            if isfile('/etc/init.d/' + item.name):
-                filename = "/etc/init.d/" + item.name
-            elif isfile('/usr/bin/' + services[item.name]):
-                filename = '/usr/bin/' + services[item.name]
-            elif isfile('/usr/sbin/' + services[item.name]):
-                filename = '/usr/sbin/' + services[item.name]
-            elif isfile('/bin/' + services[item.name]):
-                filename = '/bin/' + services[item.name]
-            elif isfile('/sbin/' + services[item.name]):
-                filename = '/sbin/' + services[item.name]
-            else:
-                filename = '/usr/bin/' + item.name
 
         if button.type == 0:
-            if item.name == "ufw":
-                add(w.elements, 'Service ' + item.name + ' stopped,V,8,Command,sudo ufw status,TRUE,Status: active')
-            else:
-                add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + services[item.name] + ',FALSE')
+            add(w.elements, 'Service ' + item.name + ' stopped,V,8,Service,' + item.name + ',FALSE,active')
         elif button.type == 1:
-            add(w.elements, 'Service ' + item.name + ' is no longer installed,V,10,FileExistance,' + filename + ',FALSE')
+            add(w.elements, 'Service ' + item.name + ' is no longer installed,V,10,Service,' + item.name + ',FALSE,loaded')
         elif button.type == 2:
-            if item.name == "ufw":
-                add(w.elements, 'Service ' + item.name + ' stopped,P,8,Command,sudo ufw status,TRUE,Status: inactive')
-            else:
-                add(w.elements, 'Service ' + item.name + ' stopped,P,8,Service,' + services[item.name] + ',FALSE')
+            add(w.elements, 'Service ' + item.name + ' stopped,P,8,Service,' + item.name + ',FALSE,active')
         elif button.type == 3:
-            add(w.elements, 'Service ' + item.name + ' is no longer installed,P,10,FileExistance,' + filename + ',FALSE')
-        elif button.type == 4:
-
-            dpkg_update = subprocess.Popen(["apt-cache", "policy", self.updates_map[item.name]], stdout=subprocess.PIPE).communicate()[0]
-            dpkg_update_list = dpkg_update.split('\n')
-            version = ""
-            for line in dpkg_update_list:
-                if "Candidate:" in line:
-                    version = line.rstrip().split(" ")[3]
-
-            print version
-            add(w.elements, 'Service ' + item.name + ' is updated,V,7,Updates,' + self.updates_map[item.name] + ',' + version)
+            add(w.elements, 'Service ' + item.name + ' is no longer installed,P,10,Service,' + item.name + ',FALSE,loaded')
 
     def expand_button_clicked(self, button):
         item = self.items[button.index]
@@ -250,4 +162,4 @@ class AppsBox(Gtk.ScrolledWindow):
         elif title == "" or check == "": return
         self.entries[i].set_editable(not button.get_active())
 
-        add(w.elements, title + " installed and running,V,6,Command,dpkg -l,TRUE," + title)
+        add(w.elements, title + " installed,V,6,Command,dpkg -l,TRUE," + title)

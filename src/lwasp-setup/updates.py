@@ -8,11 +8,14 @@ from gui_utility import *
 import w
 from collections import namedtuple
 
+Item = namedtuple("Items", "name box")
+
 class UpdatesBox(Gtk.ScrolledWindow):
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
+        self.items = []
 
-        master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        self.master_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
 
         for i in range(0,5):
 
@@ -26,9 +29,42 @@ class UpdatesBox(Gtk.ScrolledWindow):
             check_button = Gtk.CheckButton(label)
             check_button.connect("clicked", self.check_button_clicked)
             check_button.type = i
-            master_box.pack_start(check_button, False, False, 0)
+            self.master_box.pack_start(check_button, False, False, 0)
 
-        self.add_with_viewport(master_box)
+        # time consuming
+        updates_string = subprocess.Popen(["/usr/lib/update-notifier/apt-check", "-p"], stderr=subprocess.PIPE, stdout=subprocess.PIPE).communicate()[1]
+        self.updates = updates_string.split('\n')
+
+        for update in self.updates:
+            self.add_row(update)
+
+        self.add_with_viewport(self.master_box)
+
+    def add_row(self, app):
+        update_row = Gtk.Box(spacing=5)
+
+        label = Gtk.Label(app)
+        update_row.pack_start(label, False, True, 0)
+
+        check_button = Gtk.CheckButton("Score for Updating")
+        check_button.connect("clicked", self.update_button_clicked)
+        check_button.props.halign = Gtk.Align.END
+        check_button.index = len(self.items)
+        update_row.pack_end(check_button, False, True, 0)
+
+        separator = Gtk.HSeparator()
+        self.master_box.pack_start(separator, False, True, 0)
+
+        self.master_box.pack_start(update_row, False, True, 0)
+
+        self.items.append(Item(name = app, box = update_row))
+
+    def update_button_clicked(self, button):
+        item = self.items[button.index]
+        dpkg_update_step1 = subprocess.Popen(["apt-cache", "policy", item.name], stdout=subprocess.PIPE)
+        dpkg_update = subprocess.check_output(["grep", "Candidate"], stdin=dpkg_update_step1.stdout)
+        version = dpkg_update.strip().split(' ')[1]
+        add(w.elements, 'Service ' + item.name + ' is updated,V,7,Package,' + item.name + ',updated,' + version)
 
     def check_button_clicked(self, button):
         i = button.type

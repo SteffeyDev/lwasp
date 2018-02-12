@@ -1,5 +1,4 @@
 #!/bin/bash
 # Copyright (C) 2015 Peter Steffey
 echo "Loading ..."
-sudo apt-get install python-apt
-sudo ./lwasp-setup
+sudo apt-get install python-apt && sudo ./lwasp-setup || echo "Cannot setup LWASP until dpkg error is resolved"
