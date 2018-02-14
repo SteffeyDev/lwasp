@@ -8,7 +8,7 @@ chmod +x deploy/lwasp-setup
 rm src/lwasp-setup.zip
 
 # Moving install files
-rsync -r --exclude='lwasp-install/scoring-report' src/lwasp-install deploy/
+rsync -r --exclude='lwasp-install/scoring-report' --exclude='lwasp-install/tests' src/lwasp-install deploy/
 
 # Generating new web bundle
 cd src/scoring-report

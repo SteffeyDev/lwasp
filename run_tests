@@ -1,0 +1,3 @@
+#!/bin/bash
+cd src/lwasp-install
+python -m pytest tests/

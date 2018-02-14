@@ -1,4 +1,5 @@
-<img alt="LWASP Icon" src="/icon.png" width="150">
+EADME.md
+
 
 # LWASP
 
@@ -35,6 +36,41 @@ You can see a step-by-step guide in [the Tutorial](/Tutorial.pdf).
 2. They try to secure the image, gaining points by what was set in the elements file.
 3. The scoring report will refresh every time a file is changed and once every minute. If this is not often enough or this does not seem to be working, they can type `sudo refresh` into a terminal to reload the score manually.
 4. The instructor should tell them not to view or modify or view anything in the `/etc/lwasp` and `/usr/lwasp` directories, and they shouldn't touch the `/etc/init.d/lwasp` file.  In addition, if they edit the crontab and remove the scheduled task that calls `sudo refresh` every minute, they may have to run `sudo refresh` manually to see scoring updates. The list of what scores on the image is securely encrypted, so even if they go looking for it in these directories, they won't find it.  The worst they could do is simply break the scoring engine, in which case they can't get more points, which should be enough motivation for them to not touch these files and directories.
+
+# LWASP Advanced Usage and Modification
+
+## How it works
+LWASP is a two part service: The setup utility and the installer. The setup utility is a simple GUI (graphical user interface) with several tabs, one for each category of what can score. The setup utility reads what the user enters/checks should be scored and generate two files: `elements.csv` and `commands.bash`.
+The `elements.csv` is a CSV (comma-separated value) file that contains the scoring elements, or what will show up in the scoring report as the student secures the image. The commands.bash is a BASH (bourne-again shell) script that creates the needed vulnerabilities on the image so that when fixed, they can be scored. BASH commands are just commands that can be run at the command line. The setup utility places these two files in the `lwasp-install` directory after they are generated. The installer downloads various libraries, runs the command.bash script, turns the elements.csv file into an encrypted scoring.json file, and runs various other commands to install the scoring engine on the virtual machine.
+There are two ways that advanced users can leverage these characteristics of LWASP to score more advanced vulnerabilities on a Linux system. First, you can create your own vulnerabilities on the image, such as modifying boot files in the /boot folder to create a low-level backdoor, and then add how to score this in the elements.csv file before you run the installer. Secondly, you can modify the scoring engine code itself (written in python) so that you can score different types of vulnerabilities, such as whether a given file has been modified by a specific daemon. This guide will document both ways.
+
+## The `elements.csv` file
+
+### Format
+
+Each line in the `elements.csv` file is in the form: 
+`Display Name,Mode,Points,Module,Module Parameters`
+* The Mode can be `V` for vulnerability or `P` for penalty.  If it is marked as a vulnerability, then the student will earn that number of points when the module, given the parameters, returns true.  A penalty will *subtract* that number of points from their score when the module returns true, and alert the student that a penalty is being assessed.
+* The `Points` should be an integer value greater than 0
+
+### Modules
+
+#### FileContents
+Use: Returns if the file contains or does not contains the given search strings 
+
+Parameter 1: Absolute File Path
+Parameter 2: (T/F) Whether the file should contain the search string(s) 
+Parameter 3: The first search string
+Parameter 4: The second search string (optional)
+Parameter X: Any number of search strings can be passed in
+
+Example: `User baduser removed from system,V,10,FileContents,/etc/passwd,false,baduser`
+Example: `A maximum and minumum password age is set,V,15,FileContents,/etc/login.defs,true,PASS_MAX_DAYS 30,PASS_MIN_DAYS 1`
+
+Notes:
+* Search strings should be provided as regular expressions.  If you don't know how regular expressions (regex) works, start here: [RegexOne](https://regexone.com).
+* The module automatically sanatizes each line of the input file to remove leading and trailing spaces, and converting all gaps between non-space characters to spaces.  This means that your regex can assume the the there is no white space before the first character of a line, and you will only have to match a maximum of one space between words (no tabs).
+* Each expression is tested on each line, so you can't pattern match accross several lines of the file.  Instead, you should just pass one search string for each line you want to match.
 
 # Modifying LWASP
 
@@ -77,7 +113,16 @@ with any questions.
 
 
 ## Notes
+
 * You can reach me for contact at [steffeydev@icloud.com](mailto:steffeydev@icloud.com) with any questions, concerns, etc.
 * Forensics questions are in the CyberPatriot model; only checks the text after “ANSWER: “ (can support multiple answers.)
 * Feel free to read through all of my code, I have tried to comment it as much as needed. If you know any amount of python it should be fairly easy to understand and modify to fit your needs.
-* **main.js** is written in javascript using a framework called React, which was created by Facebook in 2013. Feel free to research and learn it, but I have to warn you that just messing with it as plain javascript may not work that well.
+* The scoring report generator is written in javascript using a framework called [React](https://reactjs.org), which was created by Facebook in 2013. Feel free to research and learn it, but I have to warn you that just messing with it as plain javascript may not work that well.
+
+## Contributing
+
+PRs are welcome!  I would love some help creating more modules, adding more pre-configured elements in the setup GUI, etc.
+
+Feature requests and discussions are also welcome! I'm always looking for more ways to make LWASP as useful and simple as possible, for both new linux users and linux ninjas.
+
+Finally, if you want to help port LWASP to RHEL-based or even *BSD systems, I would love to work with you on that as well.  I've set the system up so that this kind of port should not be too complicated, but extensive testing and validation would be needed.
