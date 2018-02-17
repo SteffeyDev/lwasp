@@ -87,7 +87,11 @@ with open(getDirPath() + '/recording', 'r') as readFile:
         print "Checking element " + str(i+1)
 
         try:
-            returnVal = modules[row['type']].check(row['extras'], debug)
+            moduleName = row['type'].replace("!", "")
+            inverse = "!" in row['type']
+            returnVal = modules[moduleName].check(row['extras'], debug)
+            if inverse:
+              returnVal = !returnVal
 
             # If the new value is different than what it was before...
             if row['complete'] != returnVal:

@@ -9,7 +9,7 @@ def check(args, debug=False):
         raise TypeError("Not Enough Arguments")
 
     filepath = args[0]
-    permission = args[1]
+    permissions = [int(perm) for perm in args[1:] ]
 
-    current = oct(os.stat(filepath)[stat.ST_MODE])[-3:]
-    return int(permission) == int(current)
+    current = int(oct(os.stat(filepath)[stat.ST_MODE])[-3:])
+    return current in permissions

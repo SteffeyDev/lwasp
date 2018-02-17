@@ -7,16 +7,16 @@ def check(args, debug=False):
         return TypeError("Not Enough Arguments")
 
     filepath = args[0]
-    answers = args[1:]
+    answers_needed = [ str.lower() for str in args[1:] ]
 
-    count = 0
-    for ans in answers:
-        if debug:
-            print "Using filepath:", filepath
-        file = open(filepath, 'r')
-        for line in file.read().split('\n'):
-            if line[:7] == "ANSWER:":
-                if ans.lower() in line[7:].lower(): # case insensitive
-                    count = count + 1
-    if count == len(answers): return True # if all are answered
-    return False
+    answers_provided = []
+    file = open(filepath, 'r')
+    for line in file.read().split('\n'):
+        if line[:7] == "ANSWER:":
+            answers_provided.append(line[7:].lower().lstrip())
+
+    if debug:
+        print "Answers needed:", set(answers_needed)
+        print "Answers provided:", set(answers_provided)
+
+    return set(answers_needed) == set(answers_provided)

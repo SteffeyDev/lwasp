@@ -54,9 +54,10 @@ Each line in the `elements.csv` file is in the form:
 * The `Points` should be an integer value greater than 0
 
 ### Modules
+Each module takes its own set of parameters.  If you want to take the inverse of a module's check result, you can include the `!` symbol next to the module name (see example in FileExistance).
 
 #### FileContents
-Use: Returns if the file contains or does not contains the given search strings 
+Checks if the file contains or does not contains the given search strings 
 
 Parameter 1: Absolute File Path
 Parameter 2: (T/F) Whether the file should contain the search string(s) 
@@ -71,6 +72,62 @@ Notes:
 * Search strings should be provided as regular expressions.  If you don't know how regular expressions (regex) works, start here: [RegexOne](https://regexone.com).
 * The module automatically sanatizes each line of the input file to remove leading and trailing spaces, and converting all gaps between non-space characters to spaces.  This means that your regex can assume the the there is no white space before the first character of a line, and you will only have to match a maximum of one space between words (no tabs).
 * Each expression is tested on each line, so you can't pattern match accross several lines of the file.  Instead, you should just pass one search string for each line you want to match.
+
+#### FileExistance
+Checks if the path provided is a valid file or directory
+
+Parameter 1: Absolute File Path
+Parameter 2: (T/F) Whether the file or direcotry should exist
+
+Example: `Invalid hacking tool 'John the Ripper' removed,V,8,!FileExistance,/home/user/Downloads/john.zip`
+
+#### Forensics
+Checks if the student has provided the correct answer to a forensics question in a file.
+
+Parameter 1: Absolute File Path
+Parameter 2: First required answer
+Parameter 3: Second required answer (optional)
+Parameter X: Any number of required answers (optional)
+
+Example: `Forensics question 1 correct,V,15,Forensics,/home/user/Desktop/ForensicsQuestion1.txt/,644`
+File contents:
+```
+What file permissions allow the owner to read and write, and everyone else to only read? Answer should be 3 numbers with no spaces in between (e.g. 146)
+
+ANSWER:
+```
+
+Notes:
+* Support included for multiple answers; if the set of answers provided in the file matches the set of answers required by the line in `elements.csv` (case-insensitive), then the check passes.  Each answer in the file must be provided on its own line followed by `ANSWER:`
+
+#### Package
+Checks whether a package is installed, and optionally whether it matches a given version
+
+Parameter 1: Package Name (as seen in `dpkg -l`)
+Parameter 2: `installed` or `updated`
+Parameter 3: (`updated` only) The version that should be updated to
+
+Example: `Telnet no longer installed,V,10,!Package,telnet-common,installed`
+Example: `Critical service ssh is no longer installed,P,5,!Package,openssh-server,installed`
+Example: `MySQL server has been updated,V,8,Package,mysql-server,updated,5.7.21-0ubuntu0.16.04`
+
+#### Service
+Checks the `service` output to see if a package is loaded (exists) or active (running)
+
+Parameter 1: Service Name (as seen in `service --status-all`)
+Parameter 2: `loaded` or `active`
+
+Example: `Critical service Apache is not running,P,8,!Service,apache2,active`
+Example: `CUPS print server has been removed,V,10,!Service,cups,loaded`
+
+#### Permissions
+Checks file permissions
+
+Parameter 1: Absolute File Path
+Parameter 2: Permission Octal Code (3-digit, e.g. `644`)
+Parameter X: Additional valid permission string
+
+Example: `Shadow file secures,V,15,Permissions,/etc/shadow,640,600`
 
 # Modifying LWASP
 
